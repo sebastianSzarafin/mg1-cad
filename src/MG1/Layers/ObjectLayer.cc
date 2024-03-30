@@ -147,9 +147,9 @@ namespace mg1
 
     EspJob::done_all_jobs();
     node->get_parent()->remove_child(node);
-    m_scene->destroy_entity(info->m_id);
     ObjectRemovedEvent obj_removed_event{ info->m_name };
     post_event(obj_removed_event);
+    m_scene->destroy_entity(info->m_id);
   }
   void ObjectLayer::try_add_node_to_selected(Node* node)
   {

@@ -205,9 +205,9 @@ namespace mg1
 
     EspJob::done_all_jobs();
     parent->remove_child(node);
-    m_scene->destroy_entity(info->m_id);
     ObjectRemovedEvent event{ info->m_name };
     post_event(event);
+    m_scene->destroy_entity(info->m_id);
   }
 
   void CursorLayer::push_cursor()
