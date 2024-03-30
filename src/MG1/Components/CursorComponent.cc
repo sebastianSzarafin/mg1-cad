@@ -1,11 +1,6 @@
 #include "CursorComponent.hh"
+#include "MG1/Common/Math.hh"
 #include "MG1/Events/Object/ObjectEvents.hh"
-
-struct Plane
-{
-  glm::vec3 n;
-  float D;
-};
 
 #define SCENE_PLANE \
   Plane { { 0, 1, 0 }, 0 }
@@ -14,8 +9,6 @@ struct Plane
 #define CURSOR_COLOR_OY glm::vec3(0, 1, 0)
 #define CURSOR_COLOR_OZ glm::vec3(0, 0, 1)
 
-static glm::vec3 ray_cast(float x, float y, glm::mat4 view, glm::mat4 projection);
-static glm::vec3 intersect_vector_plane(glm::vec3 start, glm::vec3 dir, Plane p);
 static std::vector<Vertex> generate_cursor_vertices();
 static std::vector<uint32_t> generate_cursor_indices();
 
@@ -70,7 +63,7 @@ namespace mg1
   {
     auto camera = Scene::get_current_camera();
     glm::vec3 ray_mouse =
-        ray_cast(EspInput::get_mouse_x_cs(), EspInput::get_mouse_y_cs(), camera->get_view(), camera->get_projection());
+        cast_ray(EspInput::get_mouse_x_cs(), EspInput::get_mouse_y_cs(), camera->get_view(), camera->get_projection());
     m_previous_position = m_node->get_translation();
     m_node->set_translation(intersect_vector_plane(camera->get_position(), ray_mouse, SCENE_PLANE));
     m_info->m_position = m_node->get_translation();
@@ -139,25 +132,6 @@ namespace mg1
     }
   }
 } // namespace mg1
-
-static glm::vec3 ray_cast(float x, float y, glm::mat4 view, glm::mat4 projection)
-{
-  glm::vec4 ray_clip  = glm::vec4(x, y, 1.f, 1.f);
-  glm::vec4 ray_eye   = glm::inverse(projection) * ray_clip;
-  glm::vec4 ray_world = glm::inverse(view) * ray_eye;
-  ray_world           = normalize(ray_world);
-
-  return { ray_world.x, ray_world.y, ray_world.z };
-}
-
-static glm::vec3 intersect_vector_plane(glm::vec3 start, glm::vec3 dir, Plane p)
-{
-  float denominator = glm::dot(dir, p.n);
-
-  float t = (p.D - glm::dot(start, p.n)) / denominator;
-
-  return start + t * dir;
-}
 
 static void generate_cursor(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices) {}
 

@@ -1,4 +1,5 @@
 #include "PointComponent.hh"
+#include "MG1/Common/Math.hh"
 #include "MG1/Events/Object/ObjectEvents.hh"
 
 static void generate_point(float r, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
@@ -29,11 +30,10 @@ namespace mg1
 
     auto camera = Scene::get_current_camera();
 
-    glm::vec3 translation      = m_node->get_translation();
-    glm::vec4 translation_clip = camera->get_projection() * camera->get_view() * glm::vec4(translation, 1);
-    glm::vec3 translation_hom  = translation_clip / translation_clip.w;
-    if (fabsf(translation_hom.x - EspInput::get_mouse_x_cs()) <= m_info->m_r / 4 &&
-        fabsf(translation_hom.y - EspInput::get_mouse_y_cs()) <= m_info->m_r / 2)
+    glm::vec3 ray_mouse =
+        cast_ray(EspInput::get_mouse_x_cs(), EspInput::get_mouse_y_cs(), camera->get_view(), camera->get_projection());
+
+    if (intersect_vector_sphere(camera->get_position(), ray_mouse, { m_node->get_translation(), m_info->m_r * 3 }))
     {
       m_info->select();
     }

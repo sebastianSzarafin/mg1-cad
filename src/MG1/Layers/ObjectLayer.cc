@@ -42,11 +42,6 @@ namespace mg1
   {
     update_objects<TorusComponent>();
     update_objects<PointComponent>();
-
-    for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
-    {
-      point.check_if_clicked();
-    }
   }
 
   void ObjectLayer::post_update(float dt)
@@ -73,6 +68,9 @@ namespace mg1
                                               ESP_BIND_EVENT_FOR_FUN(ObjectLayer::gui_button_clicked_event_handler));
     Event::try_handler<CursorPosChangedEvent>(event,
                                               ESP_BIND_EVENT_FOR_FUN(ObjectLayer::cursor_pos_changed_event_handler));
+    Event::try_handler<MouseButtonPressedEvent>(
+        event,
+        ESP_BIND_EVENT_FOR_FUN(ObjectLayer::mouse_button_pressed_event_handler));
   }
 
   bool ObjectLayer::gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event)
@@ -97,6 +95,18 @@ namespace mg1
   {
     if (!(event == ObjectLabel::cursor_pos_changed_event && event.is_type(CursorType::Mouse))) { return false; }
     m_mouse_cursor_pos = event.get_position();
+
+    return false;
+  }
+
+  bool ObjectLayer::mouse_button_pressed_event_handler(esp::MouseButtonPressedEvent& event)
+  {
+    if (event.get_button_code() != GLFW_MOUSE_BUTTON_LEFT) { return false; }
+
+    for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
+    {
+      point.check_if_clicked();
+    }
 
     return false;
   }
