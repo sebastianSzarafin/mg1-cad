@@ -1,6 +1,7 @@
 #ifndef ESPERT_SANDBOX_COMPONENTS_HH
 #define ESPERT_SANDBOX_COMPONENTS_HH
 
+#include "BezierCurveComponent.hh"
 #include "CursorComponent.hh"
 #include "GridComponent.hh"
 #include "PointComponent.hh"

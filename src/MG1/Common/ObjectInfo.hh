@@ -26,15 +26,15 @@ namespace mg1
 
     ObjectInfo(uint32_t id, const std::string& name) : m_id{ id }, m_name{ name }, m_state{ ObjectState::None } {}
 
-    inline void select()
+    virtual inline void select()
     {
       if (m_state == ObjectState::None) { m_state = ObjectState::Selected; }
     }
-    inline void unselect()
+    virtual inline void unselect()
     {
       if (m_state == ObjectState::Selected) { m_state = ObjectState::None; }
     }
-    inline void remove() { m_state = ObjectState::Removed; }
+    virtual inline void remove() { m_state = ObjectState::Removed; }
 
     inline bool selected() { return m_state == ObjectState::Selected; }
     inline bool removed() { return m_state == ObjectState::Removed; }
@@ -88,6 +88,46 @@ namespace mg1
       ImGui::InputFloat("R", &m_r, 0.05f, 1.0f, "%.2f");
       if (ImGui::IsItemDeactivatedAfterEdit()) { m_dirty = true; }
       ImGui::Spacing();
+    }
+  };
+
+  struct BezierCurveInfo : public ObjectInfo
+  {
+    std::vector<ObjectInfo*> m_control_points;
+
+    bool m_dirty{ true };
+
+    BezierCurveInfo(uint32_t id, const std::string& name, std::vector<ObjectInfo*> control_points) :
+        ObjectInfo(id, name), m_control_points{ control_points }
+    {
+    }
+
+    inline void select() override
+    {
+      if (m_state == ObjectState::None) { m_state = ObjectState::Selected; }
+      for (auto point : m_control_points)
+      {
+        point->select();
+      }
+    }
+    inline void unselect() override
+    {
+      if (m_state == ObjectState::Selected) { m_state = ObjectState::None; }
+      for (auto point : m_control_points)
+      {
+        point->unselect();
+      }
+    }
+    // inline void remove() override { m_state = ObjectState::Removed; }
+
+    inline void render() override
+    {
+      ImGui::SeparatorText("Info:");
+      ImGui::Spacing();
+      for (auto point : m_control_points)
+      {
+        ImGui::Text("%s", point->m_name.c_str());
+      }
     }
   };
 

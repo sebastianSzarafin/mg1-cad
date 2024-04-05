@@ -1,4 +1,5 @@
 #include "ObjectLayer.hh"
+#include "MG1/Common/Constants.hh"
 #include "MG1/Common/InitInfo.hh"
 #include "MG1/Components/Components.hh"
 
@@ -22,12 +23,35 @@ namespace mg1
       m_shader->set_rasterizer_settings({ .m_polygon_mode = ESP_POLYGON_MODE_LINE, .m_cull_mode = ESP_CULL_MODE_NONE });
       m_shader->build_worker();
     }
+
+    // create bezier curve shader
+    {
+      auto uniform_meta_data = EspUniformMetaData::create();
+      uniform_meta_data->establish_descriptor_set();
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_VTX_STAGE, sizeof(glm::mat4));
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(glm::vec3));
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_GEOM_STAGE, sizeof(glm::mat4));
+
+      m_bezier_curve_shader = ShaderSystem::acquire("Shaders/MG1/ObjectLayer/BezierCurve/shader");
+      m_bezier_curve_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
+      m_bezier_curve_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
+      m_bezier_curve_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT,
+                                               EspCompareOp::ESP_COMPARE_OP_LESS);
+      m_bezier_curve_shader->set_vertex_layouts({ BezierCurveInit::S_MODEL_PARAMS.get_vertex_layouts() });
+      m_bezier_curve_shader->set_worker_layout(std::move(uniform_meta_data));
+      m_bezier_curve_shader->set_rasterizer_settings(
+          { .m_polygon_mode = ESP_POLYGON_MODE_POINT, .m_cull_mode = ESP_CULL_MODE_NONE });
+      m_bezier_curve_shader->set_input_assembly_settings(
+          { .m_primitive_topology = ESP_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY });
+      m_bezier_curve_shader->build_worker();
+    }
   }
 
   void ObjectLayer::pre_update(float dt)
   {
     remove_or_reconstruct<TorusComponent>();
     remove_or_reconstruct<PointComponent>();
+    remove_or_reconstruct<BezierCurveComponent>();
 
     pre_update_unselected_objects<TorusComponent>();
     pre_update_unselected_objects<PointComponent>();
@@ -42,6 +66,14 @@ namespace mg1
   {
     update_objects<TorusComponent>();
     update_objects<PointComponent>();
+    update_objects<BezierCurveComponent>();
+
+    // TODO: refactor
+    for (auto&& [entity, obj, model] : m_scene->get_view<BezierCurveComponent, ModelComponent>())
+    {
+      auto& uniform_manager = model.get_uniform_manager();
+      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(glm::mat4), &BERNSTEIN_BASE);
+    }
   }
 
   void ObjectLayer::post_update(float dt)
@@ -52,9 +84,10 @@ namespace mg1
       // initial scene
       create_torus({ 2, 0, -5 });
       create_torus({ -2, 0, -5 });
-      create_point({ 1, 1, -1 });
-      create_point({ 0, 1, -1 });
-      create_point({ -1, 1, -1 });
+      create_point({ 1.5f, 1, -1 });
+      create_point({ .5f, 1, -1 });
+      create_point({ -.5f, 1, -1 });
+      create_point({ -1.5f, 1, -1 });
       first_loop = false;
     }
   }
@@ -87,6 +120,7 @@ namespace mg1
   {
     if (event == GuiLabel::create_torus_button) { create_torus(m_mouse_cursor_pos); }
     if (event == GuiLabel::create_point_button) { create_point(m_mouse_cursor_pos); }
+    if (event == GuiLabel::create_bezier_curve_button) { create_bezier_curve(); }
 
     return true;
   }
@@ -142,13 +176,38 @@ namespace mg1
     auto model               = std::make_shared<Model>(vertices,
                                          indices,
                                          std::vector<std::shared_ptr<EspTexture>>{},
-                                         TorusInit::S_MODEL_PARAMS);
+                                         PointInit::S_MODEL_PARAMS);
     entity->add_component<ModelComponent>(model, m_shader);
 
     point.get_node()->attach_entity(entity);
     point.get_node()->translate(position);
 
     m_scene->get_root().add_child(point.get_node());
+  }
+
+  void ObjectLayer::create_bezier_curve()
+  {
+    std::vector<PointComponent> control_points{};
+    for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
+    {
+      if (point.get_info()->selected()) { control_points.push_back(point); }
+    }
+
+    auto entity = m_scene->create_entity();
+
+    entity->add_component<BezierCurveComponent>(entity->get_id(), control_points);
+    auto& bezier_curve = entity->get_component<BezierCurveComponent>();
+
+    auto [vertices, indices] = bezier_curve.reconstruct();
+    auto model               = std::make_shared<Model>(vertices,
+                                         indices,
+                                         std::vector<std::shared_ptr<EspTexture>>{},
+                                         BezierCurveInit::S_MODEL_PARAMS);
+    entity->add_component<ModelComponent>(model, m_bezier_curve_shader);
+
+    bezier_curve.get_node()->attach_entity(entity);
+
+    m_scene->get_root().add_child(bezier_curve.get_node());
   }
 
   void ObjectLayer::remove_object(Node* node, ObjectInfo* info)

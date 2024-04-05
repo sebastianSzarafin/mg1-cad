@@ -28,6 +28,7 @@ namespace mg1
     std::unique_ptr<GuiObjectInfoSelectableListBox> m_objects_list_box;
     std::unique_ptr<GuiButton> m_create_torus_button;
     std::unique_ptr<GuiButton> m_create_point_button;
+    std::unique_ptr<GuiButton> m_create_bezier_curve_button;
 
    public:
     GuiLayer();
