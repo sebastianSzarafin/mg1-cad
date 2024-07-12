@@ -32,7 +32,7 @@ namespace mg1
 
   struct PointInit
   {
-    static constexpr float S_R = .1f;
+    static constexpr float S_R = .025f;
     static const esp::ModelParams S_MODEL_PARAMS;
   };
 

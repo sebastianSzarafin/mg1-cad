@@ -16,7 +16,7 @@ namespace mg1
     glm::vec4 ray_clip  = glm::vec4(x, y, 1.f, 1.f);
     glm::vec4 ray_eye   = glm::inverse(projection) * ray_clip;
     glm::vec4 ray_world = glm::inverse(view) * ray_eye;
-    ray_world           = normalize(ray_world);
+    ray_world           = glm::normalize(ray_world);
 
     return { ray_world.x, ray_world.y, ray_world.z };
   }
@@ -24,7 +24,7 @@ namespace mg1
   static glm::vec3 intersect_vector_plane(glm::vec3 start, glm::vec3 dir, Plane p)
   {
     float t = -(glm::dot(start, p.n) + p.D) / glm::dot(dir, p.n);
-    
+
     return start + t * dir;
   }
 
