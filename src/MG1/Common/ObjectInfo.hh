@@ -74,11 +74,29 @@ namespace mg1
 
   struct PointInfo : public ObjectInfo
   {
+   private:
+    static int s_selected_index;
+
+   public:
     float m_r;
 
     bool m_dirty{ false };
 
+    int m_selected_index{ -1 };
+
     PointInfo(uint32_t id, const std::string& name) : ObjectInfo(id, name) { m_renameable = m_removeable = true; }
+
+    inline void select() override
+    {
+      if (m_state == ObjectState::None) { m_state = ObjectState::Selected; }
+      m_selected_index = ++PointInfo::s_selected_index;
+    }
+    inline void unselect() override
+    {
+      if (m_state == ObjectState::Selected) { m_state = ObjectState::None; }
+      PointInfo::s_selected_index--;
+      m_selected_index = -1;
+    }
 
     inline void render() override
     {
@@ -93,11 +111,11 @@ namespace mg1
 
   struct BezierCurveInfo : public ObjectInfo
   {
-    std::vector<ObjectInfo*> m_control_points;
+    std::vector<PointInfo*> m_control_points;
 
-    bool m_dirty{ true };
+    bool m_dirty{ false };
 
-    BezierCurveInfo(uint32_t id, const std::string& name, std::vector<ObjectInfo*> control_points) :
+    BezierCurveInfo(uint32_t id, const std::string& name, std::vector<PointInfo*> control_points) :
         ObjectInfo(id, name), m_control_points{ control_points }
     {
     }

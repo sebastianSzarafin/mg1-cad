@@ -2,14 +2,17 @@
 
 namespace mg1
 {
-  BezierCurveComponent::BezierCurveComponent(uint32_t id, std::vector<PointComponent> control_points) :
-      IComponent(id), m_control_points{ std::move(control_points) }
+  BezierCurveComponent::BezierCurveComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points) :
+      IComponent(id, scene)
   {
-    std::vector<ObjectInfo*> infos{};
-    std::transform(m_control_points.begin(),
-                   m_control_points.end(),
+    std::vector<PointInfo*> infos{};
+    std::transform(control_points.begin(),
+                   control_points.end(),
                    std::back_inserter(infos),
                    [](PointComponent pc) { return pc.get_info(); });
+    std::sort(infos.begin(),
+              infos.end(),
+              [](const PointInfo* p1, const PointInfo* p2) { return p1->m_selected_index < p2->m_selected_index; });
 
     m_info = std::make_shared<BezierCurveInfo>(m_id, "Bezier curve " + std::to_string(m_id), infos);
 
@@ -22,17 +25,30 @@ namespace mg1
     std::vector<Vertex> vertices{};
     std::vector<uint32_t> indices{};
 
-    auto size = m_control_points.size();
+    auto points = m_info->m_control_points;
+
+    auto size = points.size();
     if (size < 4) { size = 0; }
     else if (size != 4 && (size + 1) % 4 != 0) { size -= size % 4; }
 
-    vertices.reserve(size);
-    for (int i = 0; i < size; i++)
+    vertices.resize(size);
+
+    int i = 0;
+    for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
     {
-      vertices.emplace_back(m_control_points[i].get_node()->get_translation());
-      indices.push_back(i);
-      if (i != 0 && i % 3 == 0) { indices.push_back(i); }
+      auto it = std::find_if(points.begin(), points.end(), [&point](PointInfo* p) { return p == point.get_info(); });
+      if (it != points.end())
+      {
+        auto idx = std::distance(points.begin(), it);
+        if (idx < 0 || idx >= size) { continue; }
+        vertices[idx] = { point.get_node()->get_translation() };
+        indices.push_back(i);
+        if (i != 0 && i % 3 == 0) { indices.push_back(i); }
+        i++;
+      }
     }
+
+    m_info->m_dirty = false;
 
     return { vertices, indices };
   }

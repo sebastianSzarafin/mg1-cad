@@ -15,13 +15,11 @@ namespace mg1
    private:
     std::shared_ptr<BezierCurveInfo> m_info;
 
-    std::vector<PointComponent> m_control_points;
-
    public:
-    BezierCurveComponent(uint32_t id, std::vector<PointComponent> control_points);
+    BezierCurveComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points);
     ~BezierCurveComponent() = default;
 
-    std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct(); // TODO: don't create fake model
+    std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
 
     inline BezierCurveInfo* get_info() { return m_info.get(); }
   };

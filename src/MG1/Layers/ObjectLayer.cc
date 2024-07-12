@@ -53,6 +53,16 @@ namespace mg1
     remove_or_reconstruct<PointComponent>();
     remove_or_reconstruct<BezierCurveComponent>();
 
+    // TODO: refactor
+    for (auto&& [entity, obj] : m_scene->get_view<BezierCurveComponent>())
+    {
+      auto info = obj.get_info();
+      for (auto& point : info->m_control_points)
+      {
+        if (point->selected()) { info->m_dirty = true; }
+      }
+    }
+
     pre_update_unselected_objects<TorusComponent>();
     pre_update_unselected_objects<PointComponent>();
 
@@ -199,7 +209,7 @@ namespace mg1
 
     auto entity = m_scene->create_entity();
 
-    entity->add_component<BezierCurveComponent>(entity->get_id(), control_points);
+    entity->add_component<BezierCurveComponent>(entity->get_id(), m_scene, control_points);
     auto& bezier_curve = entity->get_component<BezierCurveComponent>();
 
     auto [vertices, indices] = bezier_curve.reconstruct();
