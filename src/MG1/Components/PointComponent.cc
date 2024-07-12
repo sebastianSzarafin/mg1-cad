@@ -35,7 +35,7 @@ namespace mg1
 
     if (intersect_vector_sphere(camera->get_position(), ray_mouse, { { m_node->get_translation() }, m_info->m_r * 4 }))
     {
-      m_info->select();
+      m_info->selected() ? m_info->unselect() : m_info->select();
     }
   }
 
