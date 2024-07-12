@@ -85,9 +85,12 @@ namespace mg1
       create_torus({ 2, 0, -5 });
       create_torus({ -2, 0, -5 });
       create_point({ 1.5f, 1, -1 });
-      create_point({ .5f, 1, -1 });
+      create_point({ .5f, 1, 1 });
       create_point({ -.5f, 1, -1 });
-      create_point({ -1.5f, 1, -1 });
+      create_point({ -1.5f, 1, 1 });
+      create_point({ -2.5f, 1, 0 });
+      create_point({ -3.5f, 1, 0 });
+      create_point({ -4.5f, 1, 0 });
       first_loop = false;
     }
   }
@@ -192,6 +195,7 @@ namespace mg1
     {
       if (point.get_info()->selected()) { control_points.push_back(point); }
     }
+    if (control_points.empty()) { return; }
 
     auto entity = m_scene->create_entity();
 

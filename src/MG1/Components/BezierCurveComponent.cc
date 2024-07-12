@@ -3,11 +3,11 @@
 namespace mg1
 {
   BezierCurveComponent::BezierCurveComponent(uint32_t id, std::vector<PointComponent> control_points) :
-      IComponent(id), m_control_points{ control_points }
+      IComponent(id), m_control_points{ std::move(control_points) }
   {
     std::vector<ObjectInfo*> infos{};
-    std::transform(control_points.begin(),
-                   control_points.end(),
+    std::transform(m_control_points.begin(),
+                   m_control_points.end(),
                    std::back_inserter(infos),
                    [](PointComponent pc) { return pc.get_info(); });
 
@@ -22,11 +22,16 @@ namespace mg1
     std::vector<Vertex> vertices{};
     std::vector<uint32_t> indices{};
 
-    vertices.reserve(m_control_points.size());
-    for (int i = 0; i < m_control_points.size(); i++)
+    auto size = m_control_points.size();
+    if (size < 4) { size = 0; }
+    else if (size != 4 && (size + 1) % 4 != 0) { size -= size % 4; }
+
+    vertices.reserve(size);
+    for (int i = 0; i < size; i++)
     {
       vertices.emplace_back(m_control_points[i].get_node()->get_translation());
       indices.push_back(i);
+      if (i != 0 && i % 3 == 0) { indices.push_back(i); }
     }
 
     return { vertices, indices };
