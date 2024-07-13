@@ -8,5 +8,6 @@
 #include "GuiRadioButton.hh"
 #include "GuiSelectableCombo.hh"
 #include "GuiSelectableListBox.hh"
+#include "GuiToggleButton.hh"
 
 #endif // ESPERT_SANDBOX_GUIFIELDS_HH

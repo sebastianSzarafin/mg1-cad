@@ -28,7 +28,7 @@ namespace mg1
     auto& points = m_info->m_control_points;
 
     auto size = points.size();
-    if (size > 4 && (size + 1) % 4 != 0) { size -= size % 4; }
+    if (size > 4 && (size - 4) % 3 != 0) { size -= (size - 4) % 3; }
 
     vertices.resize(size);
 
@@ -47,6 +47,13 @@ namespace mg1
     m_info->m_dirty = false;
 
     return { vertices, indices };
+  }
+
+  void BezierCurveComponent::handle_event(ObjectAddedEvent& event)
+  {
+    auto* info = dynamic_cast<PointInfo*>(event.get_info());
+
+    if (info) { m_info->m_control_points.push_back(info); }
   }
 
   void BezierCurveComponent::handle_event(ObjectRemovedEvent& event)

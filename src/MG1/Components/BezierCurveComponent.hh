@@ -15,6 +15,8 @@ namespace mg1
    private:
     std::shared_ptr<BezierCurveInfo> m_info;
 
+    // TODO: m_control_points list for improving performance when using reconstruct()
+
    public:
     BezierCurveComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points);
     ~BezierCurveComponent() = default;
@@ -23,6 +25,7 @@ namespace mg1
 
     inline BezierCurveInfo* get_info() { return m_info.get(); }
 
+    void handle_event(ObjectAddedEvent& event);
     void handle_event(ObjectRemovedEvent& event);
   };
 } // namespace mg1

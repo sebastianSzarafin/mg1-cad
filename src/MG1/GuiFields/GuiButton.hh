@@ -10,11 +10,11 @@ namespace mg1
 
   class GuiButton : public GuiField<void*> // TODO: std::function<void()>
   {
-   private:
+   protected:
     glm::vec2 m_size;
     bool m_max_width{ false };
 
-    bool m_clicked;
+    bool m_clicked{ false };
 
    public:
     GuiButton(const std::string& label, glm::vec2 size = { 0, 0 }) : GuiField(label, nullptr), m_size{ size } {}

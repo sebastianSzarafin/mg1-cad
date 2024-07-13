@@ -53,6 +53,9 @@ namespace mg1
     std::shared_ptr<EspShader> m_shader;
     std::shared_ptr<EspShader> m_bezier_curve_shader;
 
+    bool m_create_torus_toggle_on{ false };
+    bool m_create_point_toggle_on{ false };
+
    public:
     ObjectLayer(Scene* scene);
 
@@ -64,8 +67,10 @@ namespace mg1
    private:
     bool gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event);
     bool gui_button_clicked_event_handler(GuiButtonClickedEvent& event);
+    bool gui_toggle_button_clicked_event_handler(GuiToggleButtonClickedEvent& event);
     bool cursor_pos_changed_event_handler(CursorPosChangedEvent& event);
     bool mouse_button_pressed_event_handler(MouseButtonPressedEvent& event);
+    bool object_added_event_handler(ObjectAddedEvent& event);
     bool object_removed_event_handler(ObjectRemovedEvent& event);
 
     void create_torus(glm::vec3 position = { 0, 0, 0 });

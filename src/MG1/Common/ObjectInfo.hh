@@ -109,6 +109,8 @@ namespace mg1
     }
   };
 
+  inline int PointInfo::s_selected_index = -1;
+
   struct BezierCurveInfo : public ObjectInfo
   {
     std::vector<PointInfo*> m_control_points;

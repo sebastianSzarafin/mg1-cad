@@ -112,11 +112,15 @@ namespace mg1
         ESP_BIND_EVENT_FOR_FUN(ObjectLayer::gui_selectable_changed_event_handler));
     Event::try_handler<GuiButtonClickedEvent>(event,
                                               ESP_BIND_EVENT_FOR_FUN(ObjectLayer::gui_button_clicked_event_handler));
+    Event::try_handler<GuiToggleButtonClickedEvent>(
+        event,
+        ESP_BIND_EVENT_FOR_FUN(ObjectLayer::gui_toggle_button_clicked_event_handler));
     Event::try_handler<CursorPosChangedEvent>(event,
                                               ESP_BIND_EVENT_FOR_FUN(ObjectLayer::cursor_pos_changed_event_handler));
     Event::try_handler<MouseButtonPressedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(ObjectLayer::mouse_button_pressed_event_handler));
+    Event::try_handler<ObjectAddedEvent>(event, ESP_BIND_EVENT_FOR_FUN(ObjectLayer::object_added_event_handler));
     Event::try_handler<ObjectRemovedEvent>(event, ESP_BIND_EVENT_FOR_FUN(ObjectLayer::object_removed_event_handler));
   }
 
@@ -132,9 +136,15 @@ namespace mg1
 
   bool ObjectLayer::gui_button_clicked_event_handler(mg1::GuiButtonClickedEvent& event)
   {
-    if (event == GuiLabel::create_torus_button) { create_torus(m_mouse_cursor_pos); }
-    if (event == GuiLabel::create_point_button) { create_point(m_mouse_cursor_pos); }
     if (event == GuiLabel::create_bezier_curve_button) { create_bezier_curve(); }
+
+    return true;
+  }
+
+  bool ObjectLayer::gui_toggle_button_clicked_event_handler(mg1::GuiToggleButtonClickedEvent& event)
+  {
+    if (event == GuiLabel::create_torus_button) { m_create_torus_toggle_on = event.get_state(); }
+    if (event == GuiLabel::create_point_button) { m_create_point_toggle_on = event.get_state(); }
 
     return true;
   }
@@ -149,8 +159,14 @@ namespace mg1
 
   bool ObjectLayer::mouse_button_pressed_event_handler(esp::MouseButtonPressedEvent& event)
   {
-    if (event.get_button_code() != GLFW_MOUSE_BUTTON_LEFT) { return false; }
+    // if (event.get_button_code() != GLFW_MOUSE_BUTTON_LEFT) { return false; }
 
+    if (event.get_button_code() == GLFW_MOUSE_BUTTON_MIDDLE)
+    {
+      if (m_create_torus_toggle_on) { create_torus(m_mouse_cursor_pos); }
+      if (m_create_point_toggle_on) { create_point(m_mouse_cursor_pos); }
+    }
+    
     for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
     {
       point.check_if_clicked();
@@ -159,10 +175,22 @@ namespace mg1
     return false;
   }
 
+  bool ObjectLayer::object_added_event_handler(ObjectAddedEvent& event)
+  {
+    if (!(event == ObjectLabel::object_created_event)) { return false; }
+
+    for (auto&& [entity, obj] : m_scene->get_view<BezierCurveComponent>())
+    {
+      if (obj.get_info()->selected()) { obj.handle_event(event); }
+    }
+
+    return false;
+  }
+
   bool ObjectLayer::object_removed_event_handler(mg1::ObjectRemovedEvent& event)
   {
     if (!(event == ObjectLabel::object_removed_event)) { return false; }
-    
+
     for (auto&& [entity, obj] : m_scene->get_view<BezierCurveComponent>())
     {
       obj.handle_event(event);

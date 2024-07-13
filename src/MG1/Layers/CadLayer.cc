@@ -177,6 +177,8 @@ namespace mg1
 
   bool CadLayer::gui_camera_type_changed_event_handler(mg1::GuiCameraTypeChangedEvent& event)
   {
+    if (event != GuiLabel::gui_camera_type_changed_event) { return false; }
+
     switch (event.get_type())
     {
     case Fps:

@@ -10,5 +10,6 @@
 #include "GuiMouseStateChangedEvent.hh"
 #include "GuiSelectableChangedEvent.hh"
 #include "GuiSelectableListBoxAnySelectedEvent.hh"
+#include "GuiToggleButtonClickedEvent.hh"
 
 #endif // ESPERT_SANDBOX_GUIEVENTS_HH

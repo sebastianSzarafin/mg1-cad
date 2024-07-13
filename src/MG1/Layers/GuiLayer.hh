@@ -26,8 +26,8 @@ namespace mg1
     std::unique_ptr<GuiCheckbox> m_grid_checkbox;
     std::unique_ptr<GuiSelectableCombo> m_actions_combo;
     std::unique_ptr<GuiObjectInfoSelectableListBox> m_objects_list_box;
-    std::unique_ptr<GuiButton> m_create_torus_button;
-    std::unique_ptr<GuiButton> m_create_point_button;
+    std::unique_ptr<GuiToggleButton> m_create_torus_button;
+    std::unique_ptr<GuiToggleButton> m_create_point_button;
     std::unique_ptr<GuiButton> m_create_bezier_curve_button;
 
    public:

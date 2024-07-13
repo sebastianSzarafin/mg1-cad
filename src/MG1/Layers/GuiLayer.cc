@@ -22,9 +22,9 @@ namespace mg1
         GuiSelectables{
             std::make_shared<GuiSelectable>(GuiLabel::object_none, true),
         });
-    m_create_torus_button = std::make_unique<GuiButton>(GuiLabel::create_torus_button);
+    m_create_torus_button = std::make_unique<GuiToggleButton>(GuiLabel::create_torus_button);
     m_create_torus_button->set_max_width();
-    m_create_point_button = std::make_unique<GuiButton>(GuiLabel::create_point_button);
+    m_create_point_button = std::make_unique<GuiToggleButton>(GuiLabel::create_point_button);
     m_create_point_button->set_max_width();
     m_create_bezier_curve_button = std::make_unique<GuiButton>(GuiLabel::create_bezier_curve_button);
     m_create_bezier_curve_button->set_max_width();
