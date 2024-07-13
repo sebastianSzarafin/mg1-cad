@@ -117,6 +117,7 @@ namespace mg1
     Event::try_handler<MouseButtonPressedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(ObjectLayer::mouse_button_pressed_event_handler));
+    Event::try_handler<ObjectRemovedEvent>(event, ESP_BIND_EVENT_FOR_FUN(ObjectLayer::object_removed_event_handler));
   }
 
   bool ObjectLayer::gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event)
@@ -153,6 +154,18 @@ namespace mg1
     for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
     {
       point.check_if_clicked();
+    }
+
+    return false;
+  }
+
+  bool ObjectLayer::object_removed_event_handler(mg1::ObjectRemovedEvent& event)
+  {
+    if (!(event == ObjectLabel::object_removed_event)) { return false; }
+    
+    for (auto&& [entity, obj] : m_scene->get_view<BezierCurveComponent>())
+    {
+      obj.handle_event(event);
     }
 
     return false;
@@ -230,7 +243,7 @@ namespace mg1
 
     EspJob::done_all_jobs();
     node->get_parent()->remove_child(node);
-    ObjectRemovedEvent obj_removed_event{ info->m_name };
+    ObjectRemovedEvent obj_removed_event{ info };
     post_event(obj_removed_event);
     m_scene->destroy_entity(info->m_id);
   }

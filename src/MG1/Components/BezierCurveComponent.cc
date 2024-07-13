@@ -25,31 +25,39 @@ namespace mg1
     std::vector<Vertex> vertices{};
     std::vector<uint32_t> indices{};
 
-    auto points = m_info->m_control_points;
+    auto& points = m_info->m_control_points;
 
     auto size = points.size();
-    if (size < 4) { size = 0; }
-    else if (size != 4 && (size + 1) % 4 != 0) { size -= size % 4; }
+    if (size > 4 && (size + 1) % 4 != 0) { size -= size % 4; }
 
     vertices.resize(size);
 
     int i = 0;
     for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
     {
-      auto it = std::find_if(points.begin(), points.end(), [&point](PointInfo* p) { return p == point.get_info(); });
-      if (it != points.end())
-      {
-        auto idx = std::distance(points.begin(), it);
-        if (idx < 0 || idx >= size) { continue; }
-        vertices[idx] = { point.get_node()->get_translation() };
-        indices.push_back(i);
-        if (i != 0 && i % 3 == 0) { indices.push_back(i); }
-        i++;
-      }
+      auto it  = std::find_if(points.begin(), points.end(), [&point](PointInfo* p) { return p == point.get_info(); });
+      auto idx = std::distance(points.begin(), it);
+      if (idx < 0 || idx >= size) { continue; }
+      vertices[idx] = { point.get_node()->get_translation() };
+      indices.push_back(i);
+      if (i != 0 && i % 3 == 0) { indices.push_back(i); }
+      i++;
     }
 
     m_info->m_dirty = false;
 
     return { vertices, indices };
+  }
+
+  void BezierCurveComponent::handle_event(ObjectRemovedEvent& event)
+  {
+    auto& points = m_info->m_control_points;
+
+    auto it = std::find_if(points.begin(), points.end(), [&event](PointInfo* p) { return p == event.get_info(); });
+    if (it != points.end())
+    {
+      points.erase(it);
+      m_info->m_dirty = true;
+    }
   }
 } // namespace mg1

@@ -205,7 +205,7 @@ namespace mg1
 
     EspJob::done_all_jobs();
     parent->remove_child(node);
-    ObjectRemovedEvent event{ info->m_name };
+    ObjectRemovedEvent event{ info };
     post_event(event);
     m_scene->destroy_entity(info->m_id);
   }

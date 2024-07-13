@@ -12,12 +12,13 @@ namespace mg1
   class ObjectRemovedEvent : public ObjectEvent
   {
    private:
-    std::string m_name;
+    ObjectInfo* m_info;
 
    public:
-    ObjectRemovedEvent(const std::string& name) : ObjectEvent(ObjectLabel::object_removed_event), m_name{ name } {}
+    ObjectRemovedEvent(ObjectInfo* info) : ObjectEvent(ObjectLabel::object_removed_event), m_info{ info } {}
 
-    inline std::string get_name() { return m_name; }
+    inline ObjectInfo* get_info() { return m_info; }
+    inline std::string get_name() { return m_info->m_name; }
 
     EVENT_CLASS_TYPE(EventTypeLayer)
     EVENT_CLASS_SUBTYPE(Nothing)
