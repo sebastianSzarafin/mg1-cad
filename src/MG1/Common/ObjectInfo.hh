@@ -120,6 +120,7 @@ namespace mg1
     BezierCurveInfo(uint32_t id, const std::string& name, std::vector<PointInfo*> control_points) :
         ObjectInfo(id, name), m_control_points{ control_points }
     {
+      m_removeable = true;
     }
 
     inline void select() override
@@ -138,7 +139,6 @@ namespace mg1
         point->unselect();
       }
     }
-    // inline void remove() override { m_state = ObjectState::Removed; }
 
     inline void render() override
     {
