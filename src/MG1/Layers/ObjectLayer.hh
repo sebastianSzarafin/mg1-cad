@@ -51,7 +51,7 @@ namespace mg1
     Scene* m_scene;
 
     std::shared_ptr<EspShader> m_shader;
-    std::shared_ptr<EspShader> m_bezier_curve_shader;
+    std::shared_ptr<EspShader> m_spline_shader;
 
     bool m_create_torus_toggle_on{ false };
     bool m_create_point_toggle_on{ false };
@@ -76,7 +76,7 @@ namespace mg1
 
     void create_torus(glm::vec3 position = { 0, 0, 0 });
     void create_point(glm::vec3 position = { 0, 0, 0 });
-    void create_bezier_curve();
+    void create_spline();
     void remove_object(Node* node, ObjectInfo* info);
 
     void try_add_node_to_selected(Node* node);

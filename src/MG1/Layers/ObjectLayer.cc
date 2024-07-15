@@ -5,7 +5,7 @@
 
 namespace mg1
 {
-  struct BezierCurveGeomUbo
+  struct SplineGeomUbo
   {
     glm::mat4 m_spline_base;
     int m_display_control_line;
@@ -30,26 +30,25 @@ namespace mg1
       m_shader->build_worker();
     }
 
-    // create bezier curve shader
+    // create spline shader
     {
       auto uniform_meta_data = EspUniformMetaData::create();
       uniform_meta_data->establish_descriptor_set();
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_VTX_STAGE, sizeof(glm::mat4));
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(glm::vec3));
-      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_GEOM_STAGE, sizeof(BezierCurveGeomUbo));
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_GEOM_STAGE, sizeof(SplineGeomUbo));
 
-      m_bezier_curve_shader = ShaderSystem::acquire("Shaders/MG1/ObjectLayer/BezierCurve/shader");
-      m_bezier_curve_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
-      m_bezier_curve_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
-      m_bezier_curve_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT,
-                                               EspCompareOp::ESP_COMPARE_OP_LESS);
-      m_bezier_curve_shader->set_vertex_layouts({ BezierCurveInit::S_MODEL_PARAMS.get_vertex_layouts() });
-      m_bezier_curve_shader->set_worker_layout(std::move(uniform_meta_data));
-      m_bezier_curve_shader->set_rasterizer_settings(
+      m_spline_shader = ShaderSystem::acquire("Shaders/MG1/ObjectLayer/Spline/shader");
+      m_spline_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
+      m_spline_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
+      m_spline_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT, EspCompareOp::ESP_COMPARE_OP_LESS);
+      m_spline_shader->set_vertex_layouts({ SplineInit::S_MODEL_PARAMS.get_vertex_layouts() });
+      m_spline_shader->set_worker_layout(std::move(uniform_meta_data));
+      m_spline_shader->set_rasterizer_settings(
           { .m_polygon_mode = ESP_POLYGON_MODE_POINT, .m_cull_mode = ESP_CULL_MODE_NONE });
-      m_bezier_curve_shader->set_input_assembly_settings(
+      m_spline_shader->set_input_assembly_settings(
           { .m_primitive_topology = ESP_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY });
-      m_bezier_curve_shader->build_worker();
+      m_spline_shader->build_worker();
     }
   }
 
@@ -57,10 +56,10 @@ namespace mg1
   {
     remove_or_reconstruct<TorusComponent>();
     remove_or_reconstruct<PointComponent>();
-    remove_or_reconstruct<BezierCurveComponent>();
+    remove_or_reconstruct<SplineComponent>();
 
     // TODO: refactor
-    for (auto&& [entity, obj] : m_scene->get_view<BezierCurveComponent>())
+    for (auto&& [entity, obj] : m_scene->get_view<SplineComponent>())
     {
       auto info = obj.get_info();
       for (auto& point : info->m_control_points)
@@ -82,14 +81,14 @@ namespace mg1
   {
     update_objects<TorusComponent>();
     update_objects<PointComponent>();
-    update_objects<BezierCurveComponent>();
+    update_objects<SplineComponent>();
 
     // TODO: refactor
-    for (auto&& [entity, obj, model] : m_scene->get_view<BezierCurveComponent, ModelComponent>())
+    for (auto&& [entity, obj, model] : m_scene->get_view<SplineComponent, ModelComponent>())
     {
       auto& uniform_manager = model.get_uniform_manager();
-      BezierCurveGeomUbo ubo{ BERNSTEIN_BASE, obj.display_control_line() };
-      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(BezierCurveGeomUbo), &ubo);
+      SplineGeomUbo ubo{ BERNSTEIN_BASE, obj.display_control_line() };
+      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(SplineGeomUbo), &ubo);
     }
   }
 
@@ -146,7 +145,7 @@ namespace mg1
 
   bool ObjectLayer::gui_button_clicked_event_handler(mg1::GuiButtonClickedEvent& event)
   {
-    if (event == GuiLabel::create_bezier_curve_button) { create_bezier_curve(); }
+    if (event == GuiLabel::create_spline_button) { create_spline(); }
 
     return true;
   }
@@ -177,19 +176,19 @@ namespace mg1
       if (m_create_point_toggle_on) { create_point(m_mouse_cursor_pos); }
     }
 
-    std::vector<BezierCurveComponent> selected_bezier_curves{};
-    for (auto&& [entity, curve] : m_scene->get_view<BezierCurveComponent>())
+    std::vector<SplineComponent> selected_splines{};
+    for (auto&& [entity, spline] : m_scene->get_view<SplineComponent>())
     {
-      selected_bezier_curves.emplace_back(curve);
+      selected_splines.emplace_back(spline);
     }
 
     for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
     {
       if (point.check_if_clicked() && event.get_button_code() == GLFW_MOUSE_BUTTON_MIDDLE)
       {
-        for (auto& curve : selected_bezier_curves)
+        for (auto& spline : selected_splines)
         {
-          curve.push_back(point);
+          spline.push_back(point);
         }
       }
     }
@@ -201,7 +200,7 @@ namespace mg1
   {
     if (!(event == ObjectLabel::object_created_event)) { return false; }
 
-    for (auto&& [entity, obj] : m_scene->get_view<BezierCurveComponent>())
+    for (auto&& [entity, obj] : m_scene->get_view<SplineComponent>())
     {
       if (obj.get_info()->selected()) { obj.handle_event(event); }
     }
@@ -213,7 +212,7 @@ namespace mg1
   {
     if (!(event == ObjectLabel::object_removed_event)) { return false; }
 
-    for (auto&& [entity, obj] : m_scene->get_view<BezierCurveComponent>())
+    for (auto&& [entity, obj] : m_scene->get_view<SplineComponent>())
     {
       obj.handle_event(event);
     }
@@ -225,7 +224,7 @@ namespace mg1
   {
     if (!(event == GuiLabel::control_line_checkbox)) { return false; }
 
-    for (auto&& [entity, obj] : m_scene->get_view<BezierCurveComponent>())
+    for (auto&& [entity, obj] : m_scene->get_view<SplineComponent>())
     {
       obj.handle_event(event);
     }
@@ -273,7 +272,7 @@ namespace mg1
     m_scene->get_root().add_child(point.get_node());
   }
 
-  void ObjectLayer::create_bezier_curve()
+  void ObjectLayer::create_spline()
   {
     std::vector<PointComponent> control_points{};
     for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
@@ -284,19 +283,19 @@ namespace mg1
 
     auto entity = m_scene->create_entity();
 
-    entity->add_component<BezierCurveComponent>(entity->get_id(), m_scene, control_points);
-    auto& bezier_curve = entity->get_component<BezierCurveComponent>();
+    entity->add_component<SplineComponent>(entity->get_id(), m_scene, control_points);
+    auto& spline = entity->get_component<SplineComponent>();
 
-    auto [vertices, indices] = bezier_curve.reconstruct();
+    auto [vertices, indices] = spline.reconstruct();
     auto model               = std::make_shared<Model>(vertices,
                                          indices,
                                          std::vector<std::shared_ptr<EspTexture>>{},
-                                         BezierCurveInit::S_MODEL_PARAMS);
-    entity->add_component<ModelComponent>(model, m_bezier_curve_shader);
+                                         SplineInit::S_MODEL_PARAMS);
+    entity->add_component<ModelComponent>(model, m_spline_shader);
 
-    bezier_curve.get_node()->attach_entity(entity);
+    spline.get_node()->attach_entity(entity);
 
-    m_scene->get_root().add_child(bezier_curve.get_node());
+    m_scene->get_root().add_child(spline.get_node());
   }
 
   void ObjectLayer::remove_object(Node* node, ObjectInfo* info)

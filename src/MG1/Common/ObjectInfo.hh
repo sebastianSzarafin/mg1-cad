@@ -113,7 +113,7 @@ namespace mg1
 
   inline int PointInfo::s_selected_index = -1;
 
-  struct BezierCurveInfo : public ObjectInfo
+  struct SplineInfo : public ObjectInfo
   {
    private:
     std::shared_ptr<GuiCheckbox> m_control_line_checkbox;
@@ -123,7 +123,7 @@ namespace mg1
 
     bool m_dirty{ false };
 
-    BezierCurveInfo(uint32_t id, const std::string& name, std::vector<PointInfo*> control_points) :
+    SplineInfo(uint32_t id, const std::string& name, std::vector<PointInfo*> control_points) :
         ObjectInfo(id, name), m_control_points{ control_points }
     {
       m_control_line_checkbox = std::make_shared<GuiCheckbox>(GuiLabel::control_line_checkbox, false);

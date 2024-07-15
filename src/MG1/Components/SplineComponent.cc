@@ -1,8 +1,8 @@
-#include "BezierCurveComponent.hh"
+#include "SplineComponent.hh"
 
 namespace mg1
 {
-  BezierCurveComponent::BezierCurveComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points) :
+  SplineComponent::SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points) :
       IComponent(id, scene)
   {
     std::vector<PointInfo*> infos{};
@@ -14,13 +14,13 @@ namespace mg1
               infos.end(),
               [](const PointInfo* p1, const PointInfo* p2) { return p1->m_selected_index < p2->m_selected_index; });
 
-    m_info = std::make_shared<BezierCurveInfo>(m_id, "Bezier curve " + std::to_string(m_id), infos);
+    m_info = std::make_shared<SplineInfo>(m_id, "Spline " + std::to_string(m_id), infos);
 
     ObjectAddedEvent e{ m_info.get() };
     post_event(e);
   }
 
-  std::tuple<std::vector<Vertex>, std::vector<uint32_t>> BezierCurveComponent::reconstruct()
+  std::tuple<std::vector<Vertex>, std::vector<uint32_t>> SplineComponent::reconstruct()
   {
     std::vector<Vertex> vertices{};
     std::vector<uint32_t> indices{};
@@ -49,16 +49,16 @@ namespace mg1
     return { vertices, indices };
   }
 
-  void BezierCurveComponent::push_back(PointComponent& point) { m_info->m_control_points.push_back(point.get_info()); }
+  void SplineComponent::push_back(PointComponent& point) { m_info->m_control_points.push_back(point.get_info()); }
 
-  void BezierCurveComponent::handle_event(ObjectAddedEvent& event)
+  void SplineComponent::handle_event(ObjectAddedEvent& event)
   {
     auto* info = dynamic_cast<PointInfo*>(event.get_info());
 
     if (info) { m_info->m_control_points.push_back(info); }
   }
 
-  void BezierCurveComponent::handle_event(ObjectRemovedEvent& event)
+  void SplineComponent::handle_event(ObjectRemovedEvent& event)
   {
     auto& points = m_info->m_control_points;
 
@@ -70,8 +70,5 @@ namespace mg1
     }
   }
 
-  void BezierCurveComponent::handle_event(GuiCheckboxChangedEvent& event)
-  {
-    m_display_control_line = event.get_value();
-  }
+  void SplineComponent::handle_event(GuiCheckboxChangedEvent& event) { m_display_control_line = event.get_value(); }
 } // namespace mg1

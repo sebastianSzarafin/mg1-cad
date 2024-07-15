@@ -38,12 +38,12 @@ namespace mg1
 
   inline const esp::ModelParams PointInit::S_MODEL_PARAMS = { .m_position = true };
 
-  struct BezierCurveInit
+  struct SplineInit
   {
     static const esp::ModelParams S_MODEL_PARAMS;
   };
 
-  inline const esp::ModelParams BezierCurveInit::S_MODEL_PARAMS = { .m_position = true };
+  inline const esp::ModelParams SplineInit::S_MODEL_PARAMS = { .m_position = true };
 } // namespace mg1
 
 #endif // ESPERT_SANDBOX_INITINFO_HH

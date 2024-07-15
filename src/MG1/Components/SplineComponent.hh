@@ -1,5 +1,5 @@
-#ifndef ESPERT_SANDBOX_BEZIERCURVECOMPONENT_HH
-#define ESPERT_SANDBOX_BEZIERCURVECOMPONENT_HH
+#ifndef ESPERT_SANDBOX_SPLINECOMPONENT_HH
+#define ESPERT_SANDBOX_SPLINECOMPONENT_HH
 
 #include "Espert.hh"
 #include "MG1/Common/ObjectInfo.hh"
@@ -10,23 +10,23 @@ using namespace esp;
 
 namespace mg1
 {
-  class BezierCurveComponent : public IComponent, public IEventable
+  class SplineComponent : public IComponent, public IEventable
   {
    private:
-    std::shared_ptr<BezierCurveInfo> m_info;
+    std::shared_ptr<SplineInfo> m_info;
 
     bool m_display_control_line{ false };
     // TODO: m_control_points list for improving performance when using reconstruct()
 
    public:
-    BezierCurveComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points);
-    ~BezierCurveComponent() = default;
+    SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points);
+    ~SplineComponent() = default;
 
     std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
 
     void push_back(PointComponent& point);
 
-    inline BezierCurveInfo* get_info() { return m_info.get(); }
+    inline SplineInfo* get_info() { return m_info.get(); }
     inline bool display_control_line() { return m_display_control_line; }
 
     void handle_event(ObjectAddedEvent& event);
@@ -35,4 +35,4 @@ namespace mg1
   };
 } // namespace mg1
 
-#endif // ESPERT_SANDBOX_BEZIERCURVECOMPONENT_HH
+#endif // ESPERT_SANDBOX_SPLINECOMPONENT_HH
