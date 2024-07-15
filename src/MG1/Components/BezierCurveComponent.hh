@@ -23,6 +23,8 @@ namespace mg1
 
     std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
 
+    void push_back(PointComponent& point);
+
     inline BezierCurveInfo* get_info() { return m_info.get(); }
 
     void handle_event(ObjectAddedEvent& event);

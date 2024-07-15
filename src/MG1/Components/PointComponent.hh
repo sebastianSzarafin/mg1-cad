@@ -23,7 +23,8 @@ namespace mg1
     ~PointComponent() = default;
 
     std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
-    void check_if_clicked();
+
+    bool check_if_clicked();
 
     inline PointInfo* get_info() { return m_info.get(); }
 

@@ -166,10 +166,22 @@ namespace mg1
       if (m_create_torus_toggle_on) { create_torus(m_mouse_cursor_pos); }
       if (m_create_point_toggle_on) { create_point(m_mouse_cursor_pos); }
     }
-    
+
+    std::vector<BezierCurveComponent> selected_bezier_curves{};
+    for (auto&& [entity, curve] : m_scene->get_view<BezierCurveComponent>())
+    {
+      selected_bezier_curves.emplace_back(curve);
+    }
+
     for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
     {
-      point.check_if_clicked();
+      if (point.check_if_clicked() && event.get_button_code() == GLFW_MOUSE_BUTTON_MIDDLE)
+      {
+        for (auto& curve : selected_bezier_curves)
+        {
+          curve.push_back(point);
+        }
+      }
     }
 
     return false;

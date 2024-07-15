@@ -24,9 +24,13 @@ namespace mg1
     return { vertices, indices };
   }
 
-  void PointComponent::check_if_clicked()
+  bool PointComponent::check_if_clicked()
   {
-    if (!EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_LEFT)) { return; }
+    if (!EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_LEFT) &&
+        !EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_MIDDLE))
+    {
+      return false;
+    }
 
     auto camera = Scene::get_current_camera();
 
@@ -36,7 +40,10 @@ namespace mg1
     if (intersect_vector_sphere(camera->get_position(), ray_mouse, { { m_node->get_translation() }, m_info->m_r * 4 }))
     {
       m_info->selected() ? m_info->unselect() : m_info->select();
+      return true;
     }
+
+    return false;
   }
 
   void PointComponent::handle_event(CursorPosChangedEvent& event)

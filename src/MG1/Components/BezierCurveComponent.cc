@@ -49,6 +49,8 @@ namespace mg1
     return { vertices, indices };
   }
 
+  void BezierCurveComponent::push_back(PointComponent& point) { m_info->m_control_points.push_back(point.get_info()); }
+
   void BezierCurveComponent::handle_event(ObjectAddedEvent& event)
   {
     auto* info = dynamic_cast<PointInfo*>(event.get_info());
