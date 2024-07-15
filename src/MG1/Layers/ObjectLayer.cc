@@ -5,6 +5,12 @@
 
 namespace mg1
 {
+  struct BezierCurveGeomUbo
+  {
+    glm::mat4 m_spline_base;
+    int m_display_control_line;
+  };
+
   ObjectLayer::ObjectLayer(Scene* scene) : m_scene{ scene }
   {
     // create shader
@@ -30,7 +36,7 @@ namespace mg1
       uniform_meta_data->establish_descriptor_set();
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_VTX_STAGE, sizeof(glm::mat4));
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(glm::vec3));
-      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_GEOM_STAGE, sizeof(glm::mat4));
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_GEOM_STAGE, sizeof(BezierCurveGeomUbo));
 
       m_bezier_curve_shader = ShaderSystem::acquire("Shaders/MG1/ObjectLayer/BezierCurve/shader");
       m_bezier_curve_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
@@ -82,7 +88,8 @@ namespace mg1
     for (auto&& [entity, obj, model] : m_scene->get_view<BezierCurveComponent, ModelComponent>())
     {
       auto& uniform_manager = model.get_uniform_manager();
-      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(glm::mat4), &BERNSTEIN_BASE);
+      BezierCurveGeomUbo ubo{ BERNSTEIN_BASE, obj.display_control_line() };
+      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(BezierCurveGeomUbo), &ubo);
     }
   }
 
@@ -122,6 +129,9 @@ namespace mg1
         ESP_BIND_EVENT_FOR_FUN(ObjectLayer::mouse_button_pressed_event_handler));
     Event::try_handler<ObjectAddedEvent>(event, ESP_BIND_EVENT_FOR_FUN(ObjectLayer::object_added_event_handler));
     Event::try_handler<ObjectRemovedEvent>(event, ESP_BIND_EVENT_FOR_FUN(ObjectLayer::object_removed_event_handler));
+    Event::try_handler<GuiCheckboxChangedEvent>(
+        event,
+        ESP_BIND_EVENT_FOR_FUN(ObjectLayer::gui_checkbox_changed_event_handler));
   }
 
   bool ObjectLayer::gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event)
@@ -202,6 +212,18 @@ namespace mg1
   bool ObjectLayer::object_removed_event_handler(mg1::ObjectRemovedEvent& event)
   {
     if (!(event == ObjectLabel::object_removed_event)) { return false; }
+
+    for (auto&& [entity, obj] : m_scene->get_view<BezierCurveComponent>())
+    {
+      obj.handle_event(event);
+    }
+
+    return false;
+  }
+
+  bool ObjectLayer::gui_checkbox_changed_event_handler(mg1::GuiCheckboxChangedEvent& event)
+  {
+    if (!(event == GuiLabel::control_line_checkbox)) { return false; }
 
     for (auto&& [entity, obj] : m_scene->get_view<BezierCurveComponent>())
     {

@@ -72,6 +72,7 @@ namespace mg1
     bool mouse_button_pressed_event_handler(MouseButtonPressedEvent& event);
     bool object_added_event_handler(ObjectAddedEvent& event);
     bool object_removed_event_handler(ObjectRemovedEvent& event);
+    bool gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event);
 
     void create_torus(glm::vec3 position = { 0, 0, 0 });
     void create_point(glm::vec3 position = { 0, 0, 0 });

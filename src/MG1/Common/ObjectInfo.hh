@@ -2,6 +2,8 @@
 #define ESPERT_SANDBOX_OBJECTINFO_HH
 
 #include "Espert.hh"
+#include "MG1/GuiFields/GuiCheckbox.hh"
+#include "MG1/Utils.hh"
 
 namespace mg1
 {
@@ -113,6 +115,10 @@ namespace mg1
 
   struct BezierCurveInfo : public ObjectInfo
   {
+   private:
+    std::shared_ptr<GuiCheckbox> m_control_line_checkbox;
+
+   public:
     std::vector<PointInfo*> m_control_points;
 
     bool m_dirty{ false };
@@ -120,6 +126,8 @@ namespace mg1
     BezierCurveInfo(uint32_t id, const std::string& name, std::vector<PointInfo*> control_points) :
         ObjectInfo(id, name), m_control_points{ control_points }
     {
+      m_control_line_checkbox = std::make_shared<GuiCheckbox>(GuiLabel::control_line_checkbox, false);
+
       m_removeable = true;
     }
 
@@ -148,6 +156,9 @@ namespace mg1
       {
         ImGui::Text("%s", point->m_name.c_str());
       }
+      ImGui::Spacing();
+      m_control_line_checkbox->render();
+      ImGui::Spacing();
     }
   };
 

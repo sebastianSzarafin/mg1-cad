@@ -69,4 +69,9 @@ namespace mg1
       m_info->m_dirty = true;
     }
   }
+
+  void BezierCurveComponent::handle_event(GuiCheckboxChangedEvent& event)
+  {
+    m_display_control_line = event.get_value();
+  }
 } // namespace mg1

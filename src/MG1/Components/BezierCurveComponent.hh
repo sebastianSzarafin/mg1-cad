@@ -15,6 +15,7 @@ namespace mg1
    private:
     std::shared_ptr<BezierCurveInfo> m_info;
 
+    bool m_display_control_line{ false };
     // TODO: m_control_points list for improving performance when using reconstruct()
 
    public:
@@ -26,9 +27,11 @@ namespace mg1
     void push_back(PointComponent& point);
 
     inline BezierCurveInfo* get_info() { return m_info.get(); }
+    inline bool display_control_line() { return m_display_control_line; }
 
     void handle_event(ObjectAddedEvent& event);
     void handle_event(ObjectRemovedEvent& event);
+    void handle_event(GuiCheckboxChangedEvent& event);
   };
 } // namespace mg1
 
