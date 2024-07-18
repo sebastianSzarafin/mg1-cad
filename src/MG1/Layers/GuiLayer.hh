@@ -29,6 +29,7 @@ namespace mg1
     std::unique_ptr<GuiToggleButton> m_create_torus_button;
     std::unique_ptr<GuiToggleButton> m_create_point_button;
     std::unique_ptr<GuiButton> m_create_spline_button;
+    std::unique_ptr<GuiButton> m_create_c2_spline_button;
 
    public:
     GuiLayer();

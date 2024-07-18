@@ -28,6 +28,8 @@ namespace mg1
     m_create_point_button->set_max_width();
     m_create_spline_button = std::make_unique<GuiButton>(GuiLabel::create_spline_button);
     m_create_spline_button->set_max_width();
+    m_create_c2_spline_button = std::make_unique<GuiButton>(GuiLabel::create_c2_spline_button);
+    m_create_c2_spline_button->set_max_width();
   }
 
   void GuiLayer::update(float dt)
@@ -68,6 +70,7 @@ namespace mg1
     m_create_torus_button->render();
     m_create_point_button->render();
     m_create_spline_button->render();
+    m_create_c2_spline_button->render();
 
     EspGui::end();
 

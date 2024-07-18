@@ -5,7 +5,7 @@
 #include "GuiField.hh"
 #include "GuiInputFloat.hh"
 #include "GuiInputInt.hh"
-#include "GuiRadioButton.hh"
+#include "GuiRadioButtons.hh"
 #include "GuiSelectableCombo.hh"
 #include "GuiSelectableListBox.hh"
 #include "GuiToggleButton.hh"

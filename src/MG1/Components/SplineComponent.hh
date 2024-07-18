@@ -12,7 +12,7 @@ namespace mg1
 {
   class SplineComponent : public IComponent, public IEventable
   {
-   private:
+   protected:
     std::shared_ptr<SplineInfo> m_info;
 
     bool m_display_control_line{ false };
@@ -20,18 +20,23 @@ namespace mg1
 
    public:
     SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points);
+    SplineComponent(uint32_t id, Scene* scene);
     ~SplineComponent() = default;
 
-    std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
+    virtual std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
 
     void push_back(PointComponent& point);
 
     inline SplineInfo* get_info() { return m_info.get(); }
-    inline bool display_control_line() { return m_display_control_line; }
+    inline bool display_control_line() const { return m_display_control_line; }
 
-    void handle_event(ObjectAddedEvent& event);
-    void handle_event(ObjectRemovedEvent& event);
-    void handle_event(GuiCheckboxChangedEvent& event);
+    virtual void handle_event(ObjectAddedEvent& event);
+    virtual void handle_event(ObjectRemovedEvent& event);
+    virtual void handle_event(GuiCheckboxChangedEvent& event);
+
+   protected:
+    static std::vector<PointInfo*> create_point_infos(std::vector<PointComponent>& control_points);
+    static std::vector<uint32_t> get_spline_indices(uint32_t vertex_count);
   };
 } // namespace mg1
 

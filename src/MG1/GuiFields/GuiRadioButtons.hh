@@ -1,5 +1,5 @@
-#ifndef ESPERT_SANDBOX_GUIRADIOBUTTON_HH
-#define ESPERT_SANDBOX_GUIRADIOBUTTON_HH
+#ifndef ESPERT_SANDBOX_GUIRADIOBUTTONS_HH
+#define ESPERT_SANDBOX_GUIRADIOBUTTONS_HH
 
 #include <memory>
 
@@ -8,14 +8,14 @@
 
 namespace mg1
 {
-  class GuiRadioButton : public GuiField<int>
+  class GuiRadioButtons : public GuiField<int>
   {
    private:
     std::vector<std::string> m_labels;
     int m_prev_value;
 
    public:
-    GuiRadioButton(const std::string& label, int value, std::vector<std::string> labels) :
+    GuiRadioButtons(const std::string& label, int value, std::vector<std::string> labels) :
         GuiField(label, value), m_labels{ labels }, m_prev_value{ value }
     {
     }
@@ -26,12 +26,18 @@ namespace mg1
       {
         ImGui::RadioButton(m_labels[i].c_str(), &m_value, i);
         if (i < m_labels.size() - 1) { ImGui::SameLine(); }
+
+        if (changed()) { create_and_post_event(); }
       }
     }
 
-    inline std::shared_ptr<Event> create_event() { return std::make_shared<GuiInputIntChangedEvent>(m_label, m_value); }
+    inline void create_and_post_event() override
+    {
+      GuiInputIntChangedEvent e{ m_label, m_value };
+      post_event(e);
+    }
 
-    inline virtual bool changed() override
+    inline bool changed() override
     {
       if (m_prev_value != m_value)
       {
@@ -43,4 +49,4 @@ namespace mg1
   };
 } // namespace mg1
 
-#endif // ESPERT_SANDBOX_GUIRADIOBUTTON_HH
+#endif // ESPERT_SANDBOX_GUIRADIOBUTTONS_HH

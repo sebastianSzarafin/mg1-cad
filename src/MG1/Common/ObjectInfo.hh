@@ -3,6 +3,7 @@
 
 #include "Espert.hh"
 #include "MG1/GuiFields/GuiCheckbox.hh"
+#include "MG1/GuiFields/GuiRadioButtons.hh"
 #include "MG1/Utils.hh"
 
 namespace mg1
@@ -159,6 +160,30 @@ namespace mg1
       ImGui::Spacing();
       m_control_line_checkbox->render();
       ImGui::Spacing();
+    }
+  };
+
+  struct C2SplineInfo : public SplineInfo
+  {
+   private:
+    std::shared_ptr<GuiRadioButtons> m_spline_base_radio_buttons;
+
+   public:
+    C2SplineInfo(uint32_t id, const std::string& name, std::vector<PointInfo*> control_points) :
+        SplineInfo(id, name, control_points)
+    {
+      m_spline_base_radio_buttons =
+          std::make_shared<GuiRadioButtons>(GuiLabel::m_spline_base_radio_buttons,
+                                            0,
+                                            std::vector<std::string>{ "Bernstein", "B-Spline" });
+    }
+
+    inline void render() override
+    {
+      SplineInfo::render();
+
+      ImGui::Text("Spline base: ");
+      m_spline_base_radio_buttons->render();
     }
   };
 

@@ -57,9 +57,20 @@ namespace mg1
     remove_or_reconstruct<TorusComponent>();
     remove_or_reconstruct<PointComponent>();
     remove_or_reconstruct<SplineComponent>();
+    remove_or_reconstruct<C2SplineComponent>();
 
     // TODO: refactor
     for (auto&& [entity, obj] : m_scene->get_view<SplineComponent>())
+    {
+      auto info = obj.get_info();
+      for (auto& point : info->m_control_points)
+      {
+        if (point->selected()) { info->m_dirty = true; }
+      }
+    }
+
+    // TODO: refactor
+    for (auto&& [entity, obj] : m_scene->get_view<C2SplineComponent>())
     {
       auto info = obj.get_info();
       for (auto& point : info->m_control_points)
@@ -82,12 +93,31 @@ namespace mg1
     update_objects<TorusComponent>();
     update_objects<PointComponent>();
     update_objects<SplineComponent>();
+    update_objects<C2SplineComponent>();
 
     // TODO: refactor
     for (auto&& [entity, obj, model] : m_scene->get_view<SplineComponent, ModelComponent>())
     {
       auto& uniform_manager = model.get_uniform_manager();
       SplineGeomUbo ubo{ BERNSTEIN_BASE, obj.display_control_line() };
+      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(SplineGeomUbo), &ubo);
+    }
+
+    // TODO: refactor
+    for (auto&& [entity, obj, model] : m_scene->get_view<C2SplineComponent, ModelComponent>())
+    {
+      auto& uniform_manager = model.get_uniform_manager();
+      auto spline_base      = glm::mat4{};
+      switch (obj.get_spline_base())
+      {
+      case Bernstein:
+        spline_base = BERNSTEIN_BASE;
+        break;
+      case BSpline:
+        spline_base = BSPLINE_BASE;
+        break;
+      }
+      SplineGeomUbo ubo{ spline_base, obj.display_control_line() };
       uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(SplineGeomUbo), &ubo);
     }
   }
@@ -131,6 +161,9 @@ namespace mg1
     Event::try_handler<GuiCheckboxChangedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(ObjectLayer::gui_checkbox_changed_event_handler));
+    Event::try_handler<GuiInputIntChangedEvent>(
+        event,
+        ESP_BIND_EVENT_FOR_FUN(ObjectLayer::gui_input_int_field_changed_event_handler));
   }
 
   bool ObjectLayer::gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event)
@@ -146,6 +179,7 @@ namespace mg1
   bool ObjectLayer::gui_button_clicked_event_handler(mg1::GuiButtonClickedEvent& event)
   {
     if (event == GuiLabel::create_spline_button) { create_spline(); }
+    if (event == GuiLabel::create_c2_spline_button) { create_c2_spline(); }
 
     return true;
   }
@@ -181,6 +215,10 @@ namespace mg1
     {
       selected_splines.emplace_back(spline);
     }
+    for (auto&& [entity, spline] : m_scene->get_view<C2SplineComponent>())
+    {
+      selected_splines.emplace_back(spline);
+    }
 
     for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
     {
@@ -205,6 +243,11 @@ namespace mg1
       if (obj.get_info()->selected()) { obj.handle_event(event); }
     }
 
+    for (auto&& [entity, obj] : m_scene->get_view<C2SplineComponent>())
+    {
+      if (obj.get_info()->selected()) { obj.handle_event(event); }
+    }
+
     return false;
   }
 
@@ -217,6 +260,11 @@ namespace mg1
       obj.handle_event(event);
     }
 
+    for (auto&& [entity, obj] : m_scene->get_view<C2SplineComponent>())
+    {
+      obj.handle_event(event);
+    }
+
     return false;
   }
 
@@ -225,6 +273,23 @@ namespace mg1
     if (!(event == GuiLabel::control_line_checkbox)) { return false; }
 
     for (auto&& [entity, obj] : m_scene->get_view<SplineComponent>())
+    {
+      obj.handle_event(event);
+    }
+
+    for (auto&& [entity, obj] : m_scene->get_view<C2SplineComponent>())
+    {
+      obj.handle_event(event);
+    }
+
+    return false;
+  }
+
+  bool ObjectLayer::gui_input_int_field_changed_event_handler(mg1::GuiInputIntChangedEvent& event)
+  {
+    if (!(event == GuiLabel::m_spline_base_radio_buttons)) { return false; }
+
+    for (auto&& [entity, obj] : m_scene->get_view<C2SplineComponent>())
     {
       obj.handle_event(event);
     }
@@ -285,6 +350,32 @@ namespace mg1
 
     entity->add_component<SplineComponent>(entity->get_id(), m_scene, control_points);
     auto& spline = entity->get_component<SplineComponent>();
+
+    auto [vertices, indices] = spline.reconstruct();
+    auto model               = std::make_shared<Model>(vertices,
+                                         indices,
+                                         std::vector<std::shared_ptr<EspTexture>>{},
+                                         SplineInit::S_MODEL_PARAMS);
+    entity->add_component<ModelComponent>(model, m_spline_shader);
+
+    spline.get_node()->attach_entity(entity);
+
+    m_scene->get_root().add_child(spline.get_node());
+  }
+
+  void ObjectLayer::create_c2_spline()
+  {
+    std::vector<PointComponent> control_points{};
+    for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
+    {
+      if (point.get_info()->selected()) { control_points.push_back(point); }
+    }
+    if (control_points.empty()) { return; }
+
+    auto entity = m_scene->create_entity();
+
+    entity->add_component<C2SplineComponent>(entity->get_id(), m_scene, control_points);
+    auto& spline = entity->get_component<C2SplineComponent>();
 
     auto [vertices, indices] = spline.reconstruct();
     auto model               = std::make_shared<Model>(vertices,

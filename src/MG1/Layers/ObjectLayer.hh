@@ -73,10 +73,12 @@ namespace mg1
     bool object_added_event_handler(ObjectAddedEvent& event);
     bool object_removed_event_handler(ObjectRemovedEvent& event);
     bool gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event);
+    bool gui_input_int_field_changed_event_handler(GuiInputIntChangedEvent& event);
 
     void create_torus(glm::vec3 position = { 0, 0, 0 });
     void create_point(glm::vec3 position = { 0, 0, 0 });
     void create_spline();
+    void create_c2_spline();
     void remove_object(Node* node, ObjectInfo* info);
 
     void try_add_node_to_selected(Node* node);
