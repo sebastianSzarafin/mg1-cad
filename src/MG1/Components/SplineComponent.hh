@@ -30,7 +30,6 @@ namespace mg1
     inline SplineInfo* get_info() { return m_info.get(); }
     inline bool display_control_line() const { return m_display_control_line; }
 
-    virtual void handle_event(ObjectAddedEvent& event);
     virtual void handle_event(ObjectRemovedEvent& event);
     virtual void handle_event(GuiCheckboxChangedEvent& event);
 

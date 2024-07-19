@@ -37,13 +37,6 @@ namespace mg1
 
   void SplineComponent::push_back(PointComponent& point) { m_info->m_control_points.push_back(point.get_info()); }
 
-  void SplineComponent::handle_event(ObjectAddedEvent& event)
-  {
-    auto* info = dynamic_cast<PointInfo*>(event.get_info());
-
-    if (info) { m_info->m_control_points.push_back(info); }
-  }
-
   void SplineComponent::handle_event(ObjectRemovedEvent& event)
   {
     auto& points = m_info->m_control_points;

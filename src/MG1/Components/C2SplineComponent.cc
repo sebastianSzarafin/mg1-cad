@@ -25,8 +25,6 @@ namespace mg1
     return { vertices, get_spline_indices(vertices.size()) };
   }
 
-  void C2SplineComponent::handle_event(ObjectAddedEvent& event) { SplineComponent::handle_event(event); }
-
   void C2SplineComponent::handle_event(ObjectRemovedEvent& event) { SplineComponent::handle_event(event); }
 
   void C2SplineComponent::handle_event(GuiCheckboxChangedEvent& event) { SplineComponent::handle_event(event); }

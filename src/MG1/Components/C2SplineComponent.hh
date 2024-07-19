@@ -18,9 +18,8 @@ namespace mg1
 
     inline SplineBase get_spline_base() const { return m_spline_base; }
 
-    void handle_event(ObjectAddedEvent& event);
-    void handle_event(ObjectRemovedEvent& event);
-    void handle_event(GuiCheckboxChangedEvent& event);
+    void handle_event(ObjectRemovedEvent& event) override;
+    void handle_event(GuiCheckboxChangedEvent& event) override;
     void handle_event(GuiInputIntChangedEvent& event);
   };
 } // namespace mg1

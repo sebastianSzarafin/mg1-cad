@@ -70,7 +70,6 @@ namespace mg1
     bool gui_toggle_button_clicked_event_handler(GuiToggleButtonClickedEvent& event);
     bool cursor_pos_changed_event_handler(CursorPosChangedEvent& event);
     bool mouse_button_pressed_event_handler(MouseButtonPressedEvent& event);
-    bool object_added_event_handler(ObjectAddedEvent& event);
     bool object_removed_event_handler(ObjectRemovedEvent& event);
     bool gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event);
     bool gui_input_int_field_changed_event_handler(GuiInputIntChangedEvent& event);

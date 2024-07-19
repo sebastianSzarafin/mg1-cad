@@ -156,7 +156,6 @@ namespace mg1
     Event::try_handler<MouseButtonPressedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(ObjectLayer::mouse_button_pressed_event_handler));
-    Event::try_handler<ObjectAddedEvent>(event, ESP_BIND_EVENT_FOR_FUN(ObjectLayer::object_added_event_handler));
     Event::try_handler<ObjectRemovedEvent>(event, ESP_BIND_EVENT_FOR_FUN(ObjectLayer::object_removed_event_handler));
     Event::try_handler<GuiCheckboxChangedEvent>(
         event,
@@ -229,23 +228,6 @@ namespace mg1
           spline.push_back(point);
         }
       }
-    }
-
-    return false;
-  }
-
-  bool ObjectLayer::object_added_event_handler(ObjectAddedEvent& event)
-  {
-    if (!(event == ObjectLabel::object_created_event)) { return false; }
-
-    for (auto&& [entity, obj] : m_scene->get_view<SplineComponent>())
-    {
-      if (obj.get_info()->selected()) { obj.handle_event(event); }
-    }
-
-    for (auto&& [entity, obj] : m_scene->get_view<C2SplineComponent>())
-    {
-      if (obj.get_info()->selected()) { obj.handle_event(event); }
     }
 
     return false;
