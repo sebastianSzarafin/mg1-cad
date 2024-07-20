@@ -1,16 +1,9 @@
 #include "ObjectLayer.hh"
-#include "MG1/Common/Constants.hh"
 #include "MG1/Common/InitInfo.hh"
 #include "MG1/Components/Components.hh"
 
 namespace mg1
 {
-  struct SplineGeomUbo
-  {
-    glm::mat4 m_spline_base;
-    int m_display_control_line;
-  };
-
   ObjectLayer::ObjectLayer(Scene* scene) : m_scene{ scene }
   {
     // create shader
@@ -36,7 +29,7 @@ namespace mg1
       uniform_meta_data->establish_descriptor_set();
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_VTX_STAGE, sizeof(glm::mat4));
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(glm::vec3));
-      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_GEOM_STAGE, sizeof(SplineGeomUbo));
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_GEOM_STAGE, sizeof(int));
 
       m_spline_shader = ShaderSystem::acquire("Shaders/MG1/ObjectLayer/Spline/shader");
       m_spline_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
@@ -99,26 +92,16 @@ namespace mg1
     for (auto&& [entity, obj, model] : m_scene->get_view<SplineComponent, ModelComponent>())
     {
       auto& uniform_manager = model.get_uniform_manager();
-      SplineGeomUbo ubo{ BERNSTEIN_BASE, obj.display_control_line() };
-      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(SplineGeomUbo), &ubo);
+      auto ubo              = obj.display_control_line();
+      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(int), &ubo);
     }
 
     // TODO: refactor
     for (auto&& [entity, obj, model] : m_scene->get_view<C2SplineComponent, ModelComponent>())
     {
       auto& uniform_manager = model.get_uniform_manager();
-      auto spline_base      = glm::mat4{};
-      switch (obj.get_spline_base())
-      {
-      case Bernstein:
-        spline_base = BERNSTEIN_BASE;
-        break;
-      case BSpline:
-        spline_base = BSPLINE_BASE;
-        break;
-      }
-      SplineGeomUbo ubo{ spline_base, obj.display_control_line() };
-      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(SplineGeomUbo), &ubo);
+      auto ubo              = obj.display_control_line();
+      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(int), &ubo);
     }
   }
 

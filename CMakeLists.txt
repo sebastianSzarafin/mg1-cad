@@ -8,8 +8,6 @@ file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cc)
 
 add_executable(${PROJECT_NAME}
     ${SOURCES}
-        src/MG1/Components/C2SplineComponent.hh
-        src/MG1/Components/C2SplineComponent.cc
 )
 
 if(WIN32)
