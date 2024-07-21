@@ -24,28 +24,6 @@ namespace mg1
     return { vertices, indices };
   }
 
-  bool PointComponent::check_if_clicked()
-  {
-    if (!EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_LEFT) &&
-        !EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_MIDDLE))
-    {
-      return false;
-    }
-
-    auto camera = Scene::get_current_camera();
-
-    glm::vec3 ray_mouse =
-        cast_ray(EspInput::get_mouse_x_cs(), EspInput::get_mouse_y_cs(), camera->get_view(), camera->get_projection());
-
-    if (intersect_vector_sphere(camera->get_position(), ray_mouse, { { m_node->get_translation() }, m_info->m_r * 4 }))
-    {
-      m_info->selected() ? m_info->unselect() : m_info->select();
-      return true;
-    }
-
-    return false;
-  }
-
   void PointComponent::handle_event(CursorPosChangedEvent& event)
   {
     if (EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_LEFT))
@@ -55,6 +33,24 @@ namespace mg1
       if (EspInput::is_key_pressed(GLFW_KEY_Y)) { m_node->translate({ 0, -d_pos.z, 0 }); }
       if (EspInput::is_key_pressed(GLFW_KEY_Z)) { m_node->translate({ 0, 0, d_pos.z }); }
     }
+  }
+
+  void PointComponent::handle_event(esp::MouseButtonPressedEvent& event)
+  {
+    auto button_code = event.get_button_code();
+    if (button_code != GLFW_MOUSE_BUTTON_LEFT && button_code != GLFW_MOUSE_BUTTON_MIDDLE) { return; }
+
+    auto camera = Scene::get_current_camera();
+
+    glm::vec3 ray_mouse =
+        cast_ray(EspInput::get_mouse_x_cs(), EspInput::get_mouse_y_cs(), camera->get_view(), camera->get_projection());
+
+    if (intersect_vector_sphere(camera->get_position(), ray_mouse, { { m_node->get_translation() }, m_info->m_r * 4 }))
+    {
+      m_info->selected() ? m_info->unselect() : m_info->select();
+      m_clicked = true;
+    }
+    else { m_clicked = false; }
   }
 } // namespace mg1
 

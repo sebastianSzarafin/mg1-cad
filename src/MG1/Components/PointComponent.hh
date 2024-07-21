@@ -18,16 +18,18 @@ namespace mg1
    private:
     std::shared_ptr<PointInfo> m_info;
 
+    bool m_clicked{ false };
+
    public:
     PointComponent(uint32_t id, float r = PointInit::S_R);
     ~PointComponent() = default;
 
     std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
 
-    bool check_if_clicked();
-
     inline PointInfo* get_info() { return m_info.get(); }
+    inline bool clicked() const { return m_clicked; }
 
+    void handle_event(MouseButtonPressedEvent& event);
     void handle_event(CursorPosChangedEvent& event);
   };
 } // namespace mg1

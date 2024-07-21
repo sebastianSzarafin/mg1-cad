@@ -15,12 +15,17 @@ namespace mg1
       if (clicked()) { ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyle().Colors[ImGuiCol_ButtonActive]); }
       else { ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyle().Colors[ImGuiCol_Button]); }
 
+      bool changed = false;
       if (m_max_width) { m_size.x = ImGui::GetContentRegionAvail().x; }
-      if (ImGui::Button(m_label.c_str(), ImVec2(m_size.x, m_size.y))) { m_clicked = !m_clicked; }
+      if (ImGui::Button(m_label.c_str(), ImVec2(m_size.x, m_size.y)))
+      {
+        m_clicked = !m_clicked;
+        changed   = true;
+      }
 
       ImGui::PopStyleColor(1);
 
-      if (clicked()) { create_and_post_event(); }
+      if (changed) { create_and_post_event(); }
     }
 
     inline void create_and_post_event() override
