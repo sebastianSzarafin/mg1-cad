@@ -26,7 +26,7 @@ namespace mg1
 
     virtual std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
 
-    void push_back(PointComponent& point);
+    virtual void push_back(PointComponent& point);
 
     inline SplineInfo* get_info() { return m_info.get(); }
     inline bool display_control_line() const { return m_display_control_line; }

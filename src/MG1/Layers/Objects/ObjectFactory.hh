@@ -26,10 +26,11 @@ namespace mg1
 
     static std::unique_ptr<ObjectFactory> create(Scene* scene, ObjectSelector* object_selector);
 
-    static Entity* create_torus(glm::vec3 position = { 0, 0, 0 });
-    static Entity* create_point(glm::vec3 position = { 0, 0, 0 });
-    static Entity* create_spline();
-    static Entity* create_c2_spline();
+    static TorusComponent& create_torus(glm::vec3 position = { 0, 0, 0 });
+    static PointComponent& create_point(glm::vec3 position = { 0, 0, 0 });
+    static PointComponent& create_bernstein_point(glm::vec3 position = { 0, 0, 0 });
+    static SplineComponent& create_spline();
+    static C2SplineComponent& create_c2_spline();
 
     // ---------------------------------------- TEMPLATE FUNCTIONS ----------------------------------------
     template<typename ObjComponent> static void remove_object(ObjComponent obj)

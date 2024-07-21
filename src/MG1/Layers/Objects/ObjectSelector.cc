@@ -17,6 +17,7 @@ namespace mg1
     }
     for (auto&& [entity, obj] : m_scene->get_view<PointComponent>())
     {
+      if (obj.bernstein_point()) { continue; }
       if (!obj.get_info()->selected()) { try_deselect_node(obj.get_node()); }
     }
 
@@ -28,6 +29,7 @@ namespace mg1
     }
     for (auto&& [entity, obj] : m_scene->get_view<PointComponent>())
     {
+      if (obj.bernstein_point()) { continue; }
       if (obj.get_info()->selected()) { try_select_node(obj.get_node()); }
     }
   }

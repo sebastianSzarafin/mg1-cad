@@ -30,7 +30,9 @@ namespace mg1
       glm::mat4 mvp         = camera->get_projection() * camera->get_view() * obj.get_node()->get_model_mat();
       uniform_manager.update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
 
-      glm::vec3 color = obj.get_info()->selected() ? ObjectConstants::selected_color : ObjectConstants::default_color;
+      glm::vec3 color = ObjectConstants::default_color;
+      if (obj.bernstein_point()) { color = ObjectConstants::bernstein_point_color; }
+      if (obj.get_info()->selected()) { color = ObjectConstants::selected_color; }
       uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(glm::vec3), &color);
     }
   }
@@ -59,6 +61,7 @@ namespace mg1
         ESP_BIND_EVENT_FOR_FUN(PointLayer::gui_toggle_button_clicked_event_handler));
     Event::try_handler<MouseButtonPressedEvent>(event,
                                                 ESP_BIND_EVENT_FOR_FUN(PointLayer::mouse_button_pressed_event_handler));
+    Event::try_handler<CursorPosChangedEvent>(event, ESP_BIND_EVENT_FOR_FUN(PointLayer::cursor_pos_changed_event));
   }
 
   bool PointLayer::gui_toggle_button_clicked_event_handler(GuiToggleButtonClickedEvent& event)
@@ -74,6 +77,18 @@ namespace mg1
     {
       if (m_create_point_toggle_on) { ObjectFactory::create_point(get_cursor_pos()); }
     }
+
+    for (auto&& [entity, obj] : m_scene->get_view<PointComponent>())
+    {
+      obj.handle_event(event);
+    }
+
+    return false;
+  }
+
+  bool PointLayer::cursor_pos_changed_event(CursorPosChangedEvent& event)
+  {
+    if (event != ObjectLabel::cursor_pos_changed_event) { return false; }
 
     for (auto&& [entity, obj] : m_scene->get_view<PointComponent>())
     {

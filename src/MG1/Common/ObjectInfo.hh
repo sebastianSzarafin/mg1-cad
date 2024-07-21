@@ -22,6 +22,7 @@ namespace mg1
     ObjectState m_state;
     bool m_renameable{ false };
     bool m_removeable{ false };
+    bool m_visible{ true };
 
    public:
     uint32_t m_id;
@@ -38,11 +39,13 @@ namespace mg1
       if (m_state == ObjectState::Selected) { m_state = ObjectState::None; }
     }
     virtual inline void remove() { m_state = ObjectState::Removed; }
+    virtual inline void set_visibility(bool visibility) { m_visible = visibility; }
 
     inline bool selected() { return m_state == ObjectState::Selected; }
     inline bool removed() { return m_state == ObjectState::Removed; }
     inline bool is_renameable() { return m_renameable; }
     inline bool is_removeable() { return m_removeable; }
+    inline bool is_visible() { return m_visible; }
 
     virtual void render() = 0;
   };

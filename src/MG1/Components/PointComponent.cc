@@ -1,15 +1,19 @@
 #include "PointComponent.hh"
-#include "MG1/Common/Math.hh"
 #include "MG1/Events/Object/ObjectEvents.hh"
+#include "MG1/Math.hh"
 
 static void generate_point(float r, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 
 namespace mg1
 {
-  PointComponent::PointComponent(uint32_t id, float r) : IComponent(id)
+  PointComponent::PointComponent(uint32_t id, bool bernstein_point, float r) : IComponent(id)
   {
     m_info      = std::make_shared<PointInfo>(m_id, "Point " + std::to_string(m_id));
     m_info->m_r = r;
+
+    m_bernstein_point = bernstein_point;
+
+    if (m_bernstein_point) { m_info->set_visibility(false); }
 
     ObjectAddedEvent e{ m_info.get() };
     post_event(e);
@@ -22,17 +26,6 @@ namespace mg1
     generate_point(m_info->m_r, vertices, indices);
 
     return { vertices, indices };
-  }
-
-  void PointComponent::handle_event(CursorPosChangedEvent& event)
-  {
-    if (EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_LEFT))
-    {
-      auto d_pos = event.get_delta_position();
-      m_node->translate({ d_pos.x, 0, 0 });
-      if (EspInput::is_key_pressed(GLFW_KEY_Y)) { m_node->translate({ 0, -d_pos.z, 0 }); }
-      if (EspInput::is_key_pressed(GLFW_KEY_Z)) { m_node->translate({ 0, 0, d_pos.z }); }
-    }
   }
 
   void PointComponent::handle_event(esp::MouseButtonPressedEvent& event)
@@ -51,6 +44,17 @@ namespace mg1
       m_clicked = true;
     }
     else { m_clicked = false; }
+  }
+
+  void PointComponent::handle_event(CursorPosChangedEvent& event)
+  {
+    if (bernstein_point() && m_info->selected() && EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_LEFT))
+    {
+      auto d_pos = event.get_delta_position();
+      m_node->translate({ d_pos.x, 0, 0 });
+      if (EspInput::is_key_pressed(GLFW_KEY_Y)) { m_node->translate({ 0, -d_pos.z, 0 }); }
+      if (EspInput::is_key_pressed(GLFW_KEY_Z)) { m_node->translate({ 0, 0, d_pos.z }); }
+    }
   }
 } // namespace mg1
 

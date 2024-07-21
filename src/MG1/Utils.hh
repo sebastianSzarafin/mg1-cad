@@ -112,10 +112,12 @@ namespace mg1
   {
     static const glm::vec3 default_color;
     static const glm::vec3 selected_color;
+    static const glm::vec3 bernstein_point_color;
   };
 
-  inline const glm::vec3 ObjectConstants::default_color  = { 1, 1, 1 };
-  inline const glm::vec3 ObjectConstants::selected_color = { 1, 1, 0 };
+  inline const glm::vec3 ObjectConstants::default_color         = { 1, 1, 1 };
+  inline const glm::vec3 ObjectConstants::selected_color        = { 1, 1, 0 };
+  inline const glm::vec3 ObjectConstants::bernstein_point_color = { 0, 0, 1 };
 } // namespace mg1
 
 #endif // ESPERT_SANDBOX_UTILS_HH

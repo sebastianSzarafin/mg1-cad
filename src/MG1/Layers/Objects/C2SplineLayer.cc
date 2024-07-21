@@ -47,7 +47,24 @@ namespace mg1
     }
   }
 
-  void C2SplineLayer::post_update(float dt) {}
+  void C2SplineLayer::post_update(float dt)
+  {
+    static bool first_loop = true;
+    if (first_loop)
+    {
+      // initial scene
+      for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
+      {
+        point.get_info()->select();
+      }
+      ObjectFactory::create_c2_spline();
+      for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
+      {
+        point.get_info()->unselect();
+      }
+      first_loop = false;
+    }
+  }
 
   void C2SplineLayer::handle_event(Event& event, float dt)
   {

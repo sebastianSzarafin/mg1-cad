@@ -3,6 +3,7 @@
 
 #include "Espert.hh"
 #include "MG1/Events/Gui/GuiEvents.hh"
+#include "MG1/Events/Object/ObjectEvents.hh"
 
 using namespace esp;
 
@@ -26,6 +27,7 @@ namespace mg1
    private:
     bool gui_toggle_button_clicked_event_handler(GuiToggleButtonClickedEvent& event);
     bool mouse_button_pressed_event_handler(MouseButtonPressedEvent& event);
+    bool cursor_pos_changed_event(CursorPosChangedEvent& event);
 
     glm::vec3 get_cursor_pos();
   };

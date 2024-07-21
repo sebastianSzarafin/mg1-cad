@@ -55,7 +55,7 @@ namespace mg1
     return std::unique_ptr<ObjectFactory>{ ObjectFactory::s_instance };
   }
 
-  Entity* ObjectFactory::create_torus(glm::vec3 position)
+  TorusComponent& ObjectFactory::create_torus(glm::vec3 position)
   {
     auto entity = s_instance->m_scene->create_entity();
 
@@ -74,14 +74,14 @@ namespace mg1
 
     s_instance->m_scene->get_root().add_child(torus.get_node());
 
-    return entity.get();
+    return torus;
   }
 
-  Entity* ObjectFactory::create_point(glm::vec3 position)
+  PointComponent& ObjectFactory::create_point(glm::vec3 position)
   {
     auto entity = s_instance->m_scene->create_entity();
 
-    entity->add_component<PointComponent>(entity->get_id());
+    entity->add_component<PointComponent>(entity->get_id(), false);
     auto& point = entity->get_component<PointComponent>();
 
     auto [vertices, indices] = point.reconstruct();
@@ -96,17 +96,38 @@ namespace mg1
 
     s_instance->m_scene->get_root().add_child(point.get_node());
 
-    return entity.get();
+    return point;
   }
 
-  Entity* ObjectFactory::create_spline()
+  PointComponent& ObjectFactory::create_bernstein_point(glm::vec3 position)
+  {
+    auto entity = s_instance->m_scene->create_entity();
+
+    entity->add_component<PointComponent>(entity->get_id(), true);
+    auto& point = entity->get_component<PointComponent>();
+
+    auto [vertices, indices] = point.reconstruct();
+    auto model               = std::make_shared<Model>(vertices,
+                                         indices,
+                                         std::vector<std::shared_ptr<EspTexture>>{},
+                                         PointInit::S_MODEL_PARAMS);
+    entity->add_component<ModelComponent>(model, s_instance->m_object_shader);
+
+    point.get_node()->attach_entity(entity);
+    point.get_node()->translate(position);
+
+    s_instance->m_scene->get_root().add_child(point.get_node());
+
+    return point;
+  }
+
+  SplineComponent& ObjectFactory::create_spline()
   {
     std::vector<PointComponent> control_points{};
     for (auto&& [entity, point] : s_instance->m_scene->get_view<PointComponent>())
     {
       if (point.get_info()->selected()) { control_points.push_back(point); }
     }
-    if (control_points.empty()) { return nullptr; }
 
     auto entity = s_instance->m_scene->create_entity();
 
@@ -124,17 +145,16 @@ namespace mg1
 
     s_instance->m_scene->get_root().add_child(spline.get_node());
 
-    return entity.get();
+    return spline;
   }
 
-  Entity* ObjectFactory::create_c2_spline()
+  C2SplineComponent& ObjectFactory::create_c2_spline()
   {
     std::vector<PointComponent> control_points{};
     for (auto&& [entity, point] : s_instance->m_scene->get_view<PointComponent>())
     {
       if (point.get_info()->selected()) { control_points.push_back(point); }
     }
-    if (control_points.empty()) { return nullptr; }
 
     auto entity = s_instance->m_scene->create_entity();
 
@@ -152,6 +172,6 @@ namespace mg1
 
     s_instance->m_scene->get_root().add_child(spline.get_node());
 
-    return entity.get();
+    return spline;
   }
 } // namespace mg1
