@@ -15,8 +15,9 @@ namespace mg1
    protected:
     std::shared_ptr<SplineInfo> m_info;
 
+    std::vector<PointComponent> m_control_points{};
+
     bool m_display_control_line{ false };
-    // TODO: m_control_points list for improving performance when using reconstruct()
 
    public:
     SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points);

@@ -10,9 +10,16 @@ namespace mg1
   C2SplineComponent::C2SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points) :
       SplineComponent(id, scene)
   {
+    std::sort(control_points.begin(),
+              control_points.end(),
+              [](PointComponent& p1, PointComponent& p2)
+              { return p1.get_info()->m_selected_index < p2.get_info()->m_selected_index; });
+
     m_info =
         std::make_shared<C2SplineInfo>(m_id, "C2 spline " + std::to_string(m_id), create_point_infos(control_points));
 
+    m_control_points = control_points;
+    
     ObjectAddedEvent e{ m_info.get() };
     post_event(e);
   }

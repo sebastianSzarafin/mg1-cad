@@ -5,7 +5,14 @@ namespace mg1
   SplineComponent::SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points) :
       IComponent(id, scene)
   {
+    std::sort(control_points.begin(),
+              control_points.end(),
+              [](PointComponent& p1, PointComponent& p2)
+              { return p1.get_info()->m_selected_index < p2.get_info()->m_selected_index; });
+
     m_info = std::make_shared<SplineInfo>(m_id, "Spline " + std::to_string(m_id), create_point_infos(control_points));
+
+    m_control_points = control_points;
 
     ObjectAddedEvent e{ m_info.get() };
     post_event(e);
@@ -15,19 +22,14 @@ namespace mg1
 
   std::tuple<std::vector<Vertex>, std::vector<uint32_t>> SplineComponent::reconstruct()
   {
-    std::vector<Vertex> vertices{};
+    auto size = m_control_points.size();
 
-    auto& points = m_info->m_control_points;
+    std::vector<Vertex> vertices(size);
 
-    auto size = points.size();
-    vertices.resize(size);
-
-    for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
+    auto idx = 0;
+    for (auto& point : m_control_points)
     {
-      auto it  = std::find_if(points.begin(), points.end(), [&point](PointInfo* p) { return p == point.get_info(); });
-      auto idx = std::distance(points.begin(), it);
-      if (idx < 0 || idx >= size) { continue; }
-      vertices[idx] = { point.get_node()->get_translation() };
+      vertices[idx++] = { point.get_node()->get_translation() };
     }
 
     m_info->m_dirty = false;
@@ -35,17 +37,32 @@ namespace mg1
     return { vertices, get_spline_indices(size) };
   }
 
-  void SplineComponent::push_back(PointComponent& point) { m_info->m_control_points.push_back(point.get_info()); }
+  void SplineComponent::push_back(PointComponent& point)
+  {
+    m_info->m_control_points.push_back(point.get_info());
+    m_control_points.push_back(point);
+  }
 
   void SplineComponent::handle_event(ObjectRemovedEvent& event)
   {
-    auto& points = m_info->m_control_points;
-
-    auto it = std::find_if(points.begin(), points.end(), [&event](PointInfo* p) { return p == event.get_info(); });
-    if (it != points.end())
+    // remove point from info's control points
     {
-      points.erase(it);
-      m_info->m_dirty = true;
+      auto it = std::find_if(m_info->m_control_points.begin(),
+                             m_info->m_control_points.end(),
+                             [&event](PointInfo* p) { return p == event.get_info(); });
+      if (it != m_info->m_control_points.end())
+      {
+        m_info->m_control_points.erase(it);
+        m_info->m_dirty = true;
+      }
+    }
+
+    // remove point from spline's control points
+    {
+      auto it = std::find_if(m_control_points.begin(),
+                             m_control_points.end(),
+                             [&event](PointComponent& p) { return p.get_info() == event.get_info(); });
+      if (it != m_control_points.end()) { m_control_points.erase(it); }
     }
   }
 
@@ -59,10 +76,6 @@ namespace mg1
                    control_points.end(),
                    std::back_inserter(infos),
                    [](PointComponent pc) { return pc.get_info(); });
-
-    std::sort(infos.begin(),
-              infos.end(),
-              [](const PointInfo* p1, const PointInfo* p2) { return p1->m_selected_index < p2->m_selected_index; });
 
     return std::move(infos);
   }

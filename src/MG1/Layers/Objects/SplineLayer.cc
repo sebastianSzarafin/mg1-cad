@@ -71,17 +71,19 @@ namespace mg1
 
   bool SplineLayer::mouse_button_pressed_event_handler(MouseButtonPressedEvent& event)
   {
-    std::vector<SplineComponent> selected_splines{};
-    for (auto&& [entity, spline] : m_scene->get_view<SplineComponent>())
-    {
-      selected_splines.emplace_back(spline);
-    }
+    if (event.get_button_code() != GLFW_MOUSE_BUTTON_MIDDLE) { return false; }
 
+    std::vector<PointComponent> clicked_points{};
     for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
     {
-      if (point.clicked() && event.get_button_code() == GLFW_MOUSE_BUTTON_MIDDLE)
+      if (point.clicked()) { clicked_points.emplace_back(point); }
+    }
+
+    for (auto&& [entity, spline] : m_scene->get_view<SplineComponent>())
+    {
+      if (spline.get_info()->selected())
       {
-        for (auto& spline : selected_splines)
+        for (auto& point : clicked_points)
         {
           spline.push_back(point);
         }
