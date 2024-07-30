@@ -15,7 +15,7 @@ namespace mg1
    protected:
     std::shared_ptr<SplineInfo> m_info;
 
-    std::vector<PointComponent> m_control_points{};
+    std::vector<uint32_t> m_control_points{};
 
     bool m_display_control_line{ false };
 
@@ -27,6 +27,7 @@ namespace mg1
     virtual std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
 
     virtual void push_back(PointComponent& point);
+    virtual void set_dirty_flag();
 
     inline SplineInfo* get_info() { return m_info.get(); }
     inline bool display_control_line() const { return m_display_control_line; }
@@ -35,8 +36,11 @@ namespace mg1
     virtual void handle_event(GuiCheckboxChangedEvent& event);
 
    protected:
+    static std::vector<uint32_t> create_control_points(std::vector<PointComponent>& control_points);
     static std::vector<PointInfo*> create_point_infos(std::vector<PointComponent>& control_points);
     static std::vector<uint32_t> get_spline_indices(uint32_t vertex_count);
+
+    PointComponent& get_control_point(uint32_t id);
   };
 } // namespace mg1
 

@@ -12,7 +12,7 @@ namespace mg1
 
     m_info = std::make_shared<SplineInfo>(m_id, "Spline " + std::to_string(m_id), create_point_infos(control_points));
 
-    m_control_points = control_points;
+    m_control_points = create_control_points(control_points);
 
     ObjectAddedEvent e{ m_info.get() };
     post_event(e);
@@ -29,7 +29,7 @@ namespace mg1
     auto idx = 0;
     for (auto& point : m_control_points)
     {
-      vertices[idx++] = { point.get_node()->get_translation() };
+      vertices[idx++] = { get_control_point(point).get_position() };
     }
 
     m_info->m_dirty = false;
@@ -40,7 +40,19 @@ namespace mg1
   void SplineComponent::push_back(PointComponent& point)
   {
     m_info->m_control_points.push_back(point.get_info());
-    m_control_points.push_back(point);
+    m_control_points.push_back(point.get_id());
+  }
+
+  void SplineComponent::set_dirty_flag()
+  {
+    for (auto& point : m_control_points)
+    {
+      if (glm::length2(get_control_point(point).get_delta_position()) > 0.f)
+      {
+        m_info->m_dirty = true;
+        return;
+      }
+    }
   }
 
   void SplineComponent::handle_event(ObjectRemovedEvent& event)
@@ -61,12 +73,27 @@ namespace mg1
     {
       auto it = std::find_if(m_control_points.begin(),
                              m_control_points.end(),
-                             [&event](PointComponent& p) { return p.get_info() == event.get_info(); });
+                             [&event](uint32_t& p) { return p == event.get_info()->m_id; });
       if (it != m_control_points.end()) { m_control_points.erase(it); }
     }
   }
 
-  void SplineComponent::handle_event(GuiCheckboxChangedEvent& event) { m_display_control_line = event.get_value(); }
+  void SplineComponent::handle_event(GuiCheckboxChangedEvent& event)
+  {
+    if (m_info->selected()) { m_display_control_line = event.get_value(); }
+  }
+
+  std::vector<uint32_t> SplineComponent::create_control_points(std::vector<PointComponent>& control_points)
+  {
+    std::vector<uint32_t> control_points_ids{};
+
+    std::transform(control_points.begin(),
+                   control_points.end(),
+                   std::back_inserter(control_points_ids),
+                   [](PointComponent& pc) { return pc.get_id(); });
+
+    return std::move(control_points_ids);
+  }
 
   std::vector<PointInfo*> SplineComponent::create_point_infos(std::vector<PointComponent>& control_points)
   {
@@ -75,7 +102,7 @@ namespace mg1
     std::transform(control_points.begin(),
                    control_points.end(),
                    std::back_inserter(infos),
-                   [](PointComponent pc) { return pc.get_info(); });
+                   [](PointComponent& pc) { return pc.get_info(); });
 
     return std::move(infos);
   }
@@ -93,4 +120,6 @@ namespace mg1
 
     return indices;
   }
+
+  PointComponent& SplineComponent::get_control_point(uint32_t id) { return m_scene->get_component<PointComponent>(id); }
 } // namespace mg1

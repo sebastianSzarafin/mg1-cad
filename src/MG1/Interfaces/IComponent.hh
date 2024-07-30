@@ -18,6 +18,7 @@ namespace mg1
     IComponent(uint32_t id, Scene* scene = nullptr) : m_id{ id }, m_node{ Node::create() }, m_scene{ scene } {}
 
     inline Node* get_node() { return m_node.get(); }
+    inline uint32_t get_id() { return m_id; }
   };
 } // namespace mg1
 

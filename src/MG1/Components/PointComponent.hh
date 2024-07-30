@@ -21,6 +21,8 @@ namespace mg1
     bool m_clicked{ false };
     bool m_bernstein_point{ false };
 
+    glm::vec3 m_delta_position{ 0.f };
+
    public:
     PointComponent(uint32_t id, bool bernstein_point, float r = PointInit::S_R);
     ~PointComponent() = default;
@@ -32,6 +34,7 @@ namespace mg1
     inline bool bernstein_point() const { return m_bernstein_point; }
 
     inline glm::vec3 get_position() const { return m_node->get_translation(); }
+    inline glm::vec3 get_delta_position() const { return m_delta_position; }
 
     void handle_event(MouseButtonPressedEvent& event);
     void handle_event(CursorPosChangedEvent& event);

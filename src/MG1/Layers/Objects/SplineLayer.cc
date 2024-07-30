@@ -20,11 +20,7 @@ namespace mg1
           model.get_model().set_index_buffer(indices, 0);
         }
 
-        auto info = obj.get_info();
-        for (auto& point : info->m_control_points)
-        {
-          if (point->selected()) { info->m_dirty = true; }
-        }
+        obj.set_dirty_flag();
       }
     }
   }

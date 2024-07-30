@@ -48,12 +48,15 @@ namespace mg1
 
   void PointComponent::handle_event(CursorPosChangedEvent& event)
   {
-    if (bernstein_point() && m_info->selected() && EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_LEFT))
+    m_delta_position = { 0, 0, 0 };
+
+    if (m_info->selected() && EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_LEFT))
     {
-      auto d_pos = event.get_delta_position();
-      m_node->translate({ d_pos.x, 0, 0 });
-      if (EspInput::is_key_pressed(GLFW_KEY_Y)) { m_node->translate({ 0, -d_pos.z, 0 }); }
-      if (EspInput::is_key_pressed(GLFW_KEY_Z)) { m_node->translate({ 0, 0, d_pos.z }); }
+      auto d_pos       = event.get_delta_position();
+      m_delta_position = { d_pos.x,
+                           EspInput::is_key_pressed(GLFW_KEY_Y) ? -d_pos.z : 0,
+                           EspInput::is_key_pressed(GLFW_KEY_Z) ? d_pos.z : 0 };
+      if (bernstein_point()) { m_node->translate(m_delta_position); }
     }
   }
 } // namespace mg1

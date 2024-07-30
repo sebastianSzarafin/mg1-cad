@@ -10,7 +10,7 @@ namespace mg1
    private:
     SplineBase m_spline_base{ Bernstein };
 
-    std::vector<PointComponent> m_bernstein_control_points{};
+    std::vector<uint32_t> m_bernstein_control_points{};
 
    public:
     C2SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points);
@@ -19,6 +19,7 @@ namespace mg1
     std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct() override;
 
     void push_back(PointComponent& point) override;
+    void set_dirty_flag() override;
 
     inline SplineBase get_spline_base() const { return m_spline_base; }
 
@@ -28,6 +29,10 @@ namespace mg1
 
    private:
     std::vector<Vertex> create_bernstein_vertices();
+    std::vector<uint32_t> create_bernstein_control_points();
+
+    void recreate_bernstein_control_points();
+    void update_control_points_positions(int bernstein_point_idx);
   };
 } // namespace mg1
 
