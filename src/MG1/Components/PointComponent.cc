@@ -56,7 +56,6 @@ namespace mg1
       m_delta_position = { d_pos.x,
                            EspInput::is_key_pressed(GLFW_KEY_Y) ? -d_pos.z : 0,
                            EspInput::is_key_pressed(GLFW_KEY_Z) ? d_pos.z : 0 };
-      if (bernstein_point()) { m_node->translate(m_delta_position); }
     }
   }
 } // namespace mg1
