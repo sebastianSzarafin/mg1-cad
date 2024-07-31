@@ -36,8 +36,8 @@ namespace mg1
 
   enum SplineBase
   {
-    Bernstein,
-    BSpline
+    Bernstein = 0,
+    BSpline   = 1
   };
 
   struct GuiLabel

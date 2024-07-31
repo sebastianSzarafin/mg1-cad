@@ -34,15 +34,29 @@ namespace mg1
 
     auto vertices = create_bernstein_vertices();
 
-    for (int i = 0; i < m_bernstein_control_points.size(); ++i)
+    if (m_spline_base == SplineBase::Bernstein)
     {
-      auto& bernstein_point = get_control_point(m_bernstein_control_points[i]);
-      bernstein_point.get_node()->set_translation(vertices[i + 2].m_position);
+      for (int i = 0; i < m_bernstein_control_points.size(); ++i)
+      {
+        auto& bernstein_point = get_control_point(m_bernstein_control_points[i]);
+        bernstein_point.get_node()->set_translation(vertices[i + 2].m_position);
+      }
     }
 
     m_info->m_dirty = false;
 
     return { vertices, get_spline_indices(vertices.size()) };
+  }
+
+  void C2SplineComponent::handle_spline_base()
+  {
+    bool bernstein_empty = m_bernstein_control_points.empty();
+
+    if (m_spline_base == SplineBase::Bernstein && bernstein_empty)
+    {
+      m_bernstein_control_points = create_bernstein_control_points();
+    }
+    if (m_spline_base == SplineBase::BSpline && !bernstein_empty) { clear_bernstein_control_points(); }
   }
 
   void C2SplineComponent::push_back(mg1::PointComponent& point)
@@ -70,6 +84,19 @@ namespace mg1
     }
   }
 
+  C2SplineUbo C2SplineComponent::get_ubo()
+  {
+    C2SplineUbo ubo{};
+    ubo.m_display_control_line = display_control_line();
+    ubo.m_spline_base          = m_spline_base;
+    for (auto i = 0; i < m_control_points.size(); i++)
+    {
+      ubo.m_bezier_points[i] = { get_control_point(m_control_points[i]).get_position(), 1.f };
+    }
+
+    return ubo;
+  }
+
   void C2SplineComponent::handle_event(ObjectRemovedEvent& event)
   {
     auto prev_size = m_control_points.size();
@@ -86,7 +113,7 @@ namespace mg1
 
   void C2SplineComponent::handle_event(GuiInputIntChangedEvent& event)
   {
-    m_spline_base = (SplineBase)event.get_value();
+    if (m_info->selected()) { m_spline_base = (SplineBase)event.get_value(); }
   }
 
   void C2SplineComponent::update_control_points_positions(int bernstein_point_idx)
@@ -175,13 +202,19 @@ namespace mg1
     return std::move(vertices);
   }
 
-  void C2SplineComponent::recreate_bernstein_control_points()
+  void C2SplineComponent::clear_bernstein_control_points()
   {
     for (auto& id : m_bernstein_control_points)
     {
       auto& bernstein_point = get_control_point(id);
       ObjectFactory::remove_object(bernstein_point);
     }
+    m_bernstein_control_points.clear();
+  }
+
+  void C2SplineComponent::recreate_bernstein_control_points()
+  {
+    clear_bernstein_control_points();
     m_bernstein_control_points = create_bernstein_control_points();
 
     m_info->m_dirty = true;

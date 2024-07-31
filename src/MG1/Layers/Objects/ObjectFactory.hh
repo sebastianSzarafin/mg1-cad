@@ -16,6 +16,7 @@ namespace mg1
 
     std::shared_ptr<EspShader> m_object_shader;
     std::shared_ptr<EspShader> m_spline_shader;
+    std::shared_ptr<EspShader> m_c2_spline_shader;
 
     Scene* m_scene;
     ObjectSelector* m_object_selector;
