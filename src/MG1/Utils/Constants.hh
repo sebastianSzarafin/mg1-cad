@@ -15,7 +15,7 @@ namespace mg1
 
   inline const glm::vec3 ObjectConstants::default_color         = { 1, 1, 1 };
   inline const glm::vec3 ObjectConstants::selected_color        = { 1, 1, 0 };
-  inline const glm::vec3 ObjectConstants::bernstein_point_color = { 0, 0, 1 };
+  inline const glm::vec3 ObjectConstants::bernstein_point_color = { 1, .41f, .7f };
   inline const uint32_t ObjectConstants::max_bezier_points      = 100;
 } // namespace mg1
 

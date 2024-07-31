@@ -38,8 +38,10 @@ namespace mg1
       int control_line = obj.display_control_line();
       uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(int), &control_line);
 
-      glm::vec3 color = obj.get_info()->selected() ? ObjectConstants::selected_color : ObjectConstants::default_color;
-      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(glm::vec3), &color);
+      SplineColorUbo ubo{};
+      ubo.m_spline_color =
+          obj.get_info()->selected() ? ObjectConstants::selected_color : ObjectConstants::default_color;
+      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(SplineColorUbo), &ubo);
     }
   }
 

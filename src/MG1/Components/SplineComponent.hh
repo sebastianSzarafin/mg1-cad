@@ -4,12 +4,19 @@
 #include "Espert.hh"
 #include "MG1/Common/ObjectInfo.hh"
 #include "MG1/Interfaces/Interfaces.hh"
+#include "MG1/Utils/Utils.hh"
 #include "PointComponent.hh"
 
 using namespace esp;
 
 namespace mg1
 {
+  struct SplineColorUbo
+  {
+    alignas(16) const glm::vec3 control_line_color = ObjectConstants::bernstein_point_color;
+    alignas(16) glm::vec3 m_spline_color;
+  };
+
   class SplineComponent : public IComponent, public IEventable
   {
    protected:

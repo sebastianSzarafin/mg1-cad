@@ -1,7 +1,6 @@
 #ifndef ESPERT_SANDBOX_C2SPLINECOMPONENT_HH
 #define ESPERT_SANDBOX_C2SPLINECOMPONENT_HH
 
-#include "MG1/Utils/Utils.hh"
 #include "SplineComponent.hh"
 
 namespace mg1

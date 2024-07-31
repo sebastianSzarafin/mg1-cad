@@ -31,7 +31,7 @@ namespace mg1
       uniform_meta_data->establish_descriptor_set();
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_VTX_STAGE, sizeof(glm::mat4));
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_GEOM_STAGE, sizeof(int));
-      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(glm::vec3));
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(SplineColorUbo));
 
       m_spline_shader = ShaderSystem::acquire("Shaders/MG1/ObjectLayer/Spline/shader");
       m_spline_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
@@ -52,7 +52,7 @@ namespace mg1
       uniform_meta_data->establish_descriptor_set();
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_ALL_STAGES, sizeof(glm::mat4));
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_GEOM_STAGE, sizeof(C2SplineUbo));
-      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(glm::vec3));
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(SplineColorUbo));
 
       m_c2_spline_shader = ShaderSystem::acquire("Shaders/MG1/ObjectLayer/C2Spline/shader");
       m_c2_spline_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });

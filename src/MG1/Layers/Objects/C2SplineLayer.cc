@@ -39,8 +39,10 @@ namespace mg1
       auto ubo = obj.get_ubo();
       uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(C2SplineUbo), &ubo);
 
-      glm::vec3 color = obj.get_info()->selected() ? ObjectConstants::selected_color : ObjectConstants::default_color;
-      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(glm::vec3), &color);
+      SplineColorUbo color_ubo{};
+      color_ubo.m_spline_color =
+          obj.get_info()->selected() ? ObjectConstants::selected_color : ObjectConstants::default_color;
+      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(SplineColorUbo), &color_ubo);
     }
   }
 
