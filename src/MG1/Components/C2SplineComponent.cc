@@ -48,6 +48,12 @@ namespace mg1
     return { vertices, get_spline_indices(vertices.size()) };
   }
 
+  void C2SplineComponent::remove()
+  {
+    clear_bernstein_control_points();
+    ObjectFactory::remove_object(*this);
+  }
+
   void C2SplineComponent::handle_spline_base()
   {
     bool bernstein_empty = m_bernstein_control_points.empty();

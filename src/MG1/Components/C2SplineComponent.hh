@@ -25,6 +25,7 @@ namespace mg1
 
     std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct() override;
 
+    void remove();
     void handle_spline_base();
     void push_back(PointComponent& point) override;
     void set_dirty_flag() override;

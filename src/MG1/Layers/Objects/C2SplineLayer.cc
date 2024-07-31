@@ -10,7 +10,7 @@ namespace mg1
   {
     for (auto&& [entity, obj, model] : m_scene->get_view<C2SplineComponent, ModelComponent>())
     {
-      if (obj.get_info()->removed()) { ObjectFactory::remove_object(obj); }
+      if (obj.get_info()->removed()) { obj.remove(); }
       else
       {
         if (obj.get_info()->m_dirty)
