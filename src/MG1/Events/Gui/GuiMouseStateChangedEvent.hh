@@ -2,7 +2,7 @@
 #define ESPERT_SANDBOX_GUIMOUSESTATECHANGEDEVENT_HH
 
 #include "GuiEvent.hh"
-#include "MG1/Utils.hh"
+#include "MG1/Utils/Utils.hh"
 
 namespace mg1
 {

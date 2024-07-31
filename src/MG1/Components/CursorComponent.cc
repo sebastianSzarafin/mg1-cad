@@ -1,6 +1,6 @@
 #include "CursorComponent.hh"
 #include "MG1/Events/Object/ObjectEvents.hh"
-#include "MG1/Math.hh"
+#include "MG1/Utils/Utils.hh"
 
 #define SCENE_PLANE \
   Plane { { 0, 1, 0 }, 0 }

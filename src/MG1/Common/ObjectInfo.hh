@@ -4,7 +4,7 @@
 #include "Espert.hh"
 #include "MG1/GuiFields/GuiCheckbox.hh"
 #include "MG1/GuiFields/GuiRadioButtons.hh"
-#include "MG1/Utils.hh"
+#include "MG1/Utils/Utils.hh"
 
 namespace mg1
 {
@@ -188,12 +188,6 @@ namespace mg1
       ImGui::Text("Spline base: ");
       m_spline_base_radio_buttons->render();
     }
-  };
-
-  enum class CursorType
-  {
-    Object = 0,
-    Mouse  = 1
   };
 
   struct CursorInfo : public ObjectInfo

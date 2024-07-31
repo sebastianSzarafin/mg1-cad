@@ -1,45 +1,10 @@
-#ifndef ESPERT_SANDBOX_UTILS_HH
-#define ESPERT_SANDBOX_UTILS_HH
+#ifndef ESPERT_SANDBOX_LABELS_HH
+#define ESPERT_SANDBOX_LABELS_HH
 
 #include "Espert.hh"
 
 namespace mg1
 {
-  enum MouseState
-  {
-    GuiNotCaptured,
-    GuiCaptured
-  };
-
-  enum CameraType
-  {
-    Fps,
-    Orbit
-  };
-
-  enum RotationAxis
-  {
-    RotationNone,
-    RotationOX,
-    RotationOY,
-    RotationOZ
-  };
-
-  enum ScaleAxis
-  {
-    ScaleNone,
-    Scale,
-    ScaleOX,
-    ScaleOY,
-    ScaleOZ
-  };
-
-  enum SplineBase
-  {
-    Bernstein = 0,
-    BSpline   = 1
-  };
-
   struct GuiLabel
   {
     static const std::string rotation_axis;
@@ -107,17 +72,6 @@ namespace mg1
   inline const std::string ObjectLabel::mouse_cursor                     = "Mouse cursor";
   inline const std::string ObjectLabel::object_cursor                    = "Object cursor";
   inline const std::string ObjectLabel::object_mass_centre_changed_event = "Object mass centre changed event";
-
-  struct ObjectConstants
-  {
-    static const glm::vec3 default_color;
-    static const glm::vec3 selected_color;
-    static const glm::vec3 bernstein_point_color;
-  };
-
-  inline const glm::vec3 ObjectConstants::default_color         = { 1, 1, 1 };
-  inline const glm::vec3 ObjectConstants::selected_color        = { 1, 1, 0 };
-  inline const glm::vec3 ObjectConstants::bernstein_point_color = { 0, 0, 1 };
 } // namespace mg1
 
-#endif // ESPERT_SANDBOX_UTILS_HH
+#endif // ESPERT_SANDBOX_LABELS_HH

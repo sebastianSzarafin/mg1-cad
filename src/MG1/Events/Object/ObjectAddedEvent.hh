@@ -2,7 +2,7 @@
 #define ESPERT_SANDBOX_OBJECTADDEDEVENT_HH
 
 #include "MG1/Common/ObjectInfo.hh"
-#include "MG1/Utils.hh"
+#include "MG1/Utils/Utils.hh"
 #include "ObjectEvent.hh"
 
 using namespace esp;

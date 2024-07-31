@@ -7,7 +7,7 @@
 #include "MG1/Events/Gui/GuiEvents.hh"
 #include "MG1/Events/Object/ObjectEvents.hh"
 #include "MG1/Interfaces/Interfaces.hh"
-#include "MG1/Utils.hh"
+#include "MG1/Utils/Utils.hh"
 
 using namespace esp;
 

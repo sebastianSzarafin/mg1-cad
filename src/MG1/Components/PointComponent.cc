@@ -1,6 +1,6 @@
 #include "PointComponent.hh"
 #include "MG1/Events/Object/ObjectEvents.hh"
-#include "MG1/Math.hh"
+#include "MG1/Utils/Utils.hh"
 
 static void generate_point(float r, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 

@@ -1,6 +1,7 @@
 #ifndef ESPERT_SANDBOX_C2SPLINECOMPONENT_HH
 #define ESPERT_SANDBOX_C2SPLINECOMPONENT_HH
 
+#include "MG1/Utils/Utils.hh"
 #include "SplineComponent.hh"
 
 namespace mg1
@@ -9,7 +10,7 @@ namespace mg1
   {
     uint32_t m_display_control_line;
     SplineBase m_spline_base;
-    alignas(16) std::array<glm::vec4, 100> m_bezier_points; // TODO:
+    alignas(16) std::array<glm::vec4, ObjectConstants::max_bezier_points> m_bezier_points;
   };
 
   class C2SplineComponent : public SplineComponent

@@ -2,7 +2,7 @@
 #define ESPERT_SANDBOX_CURSORPOSCHANGEDEVENT_HH
 
 #include "MG1/Components/CursorComponent.hh"
-#include "MG1/Utils.hh"
+#include "MG1/Utils/Utils.hh"
 #include "ObjectEvent.hh"
 
 using namespace esp;
