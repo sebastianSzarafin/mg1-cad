@@ -13,7 +13,7 @@ namespace mg1
    public:
     enum class ObjectState
     {
-      None     = 0,
+      Default  = 0,
       Selected = 1,
       Removed  = 2
     };
@@ -28,15 +28,15 @@ namespace mg1
     uint32_t m_id;
     std::string m_name;
 
-    ObjectInfo(uint32_t id, const std::string& name) : m_id{ id }, m_name{ name }, m_state{ ObjectState::None } {}
+    ObjectInfo(uint32_t id, const std::string& name) : m_id{ id }, m_name{ name }, m_state{ ObjectState::Default } {}
 
     virtual inline void select()
     {
-      if (m_state == ObjectState::None) { m_state = ObjectState::Selected; }
+      if (m_state == ObjectState::Default) { m_state = ObjectState::Selected; }
     }
     virtual inline void unselect()
     {
-      if (m_state == ObjectState::Selected) { m_state = ObjectState::None; }
+      if (m_state == ObjectState::Selected) { m_state = ObjectState::Default; }
     }
     virtual inline void remove() { m_state = ObjectState::Removed; }
     virtual inline void set_visibility(bool visibility) { m_visible = visibility; }
@@ -94,12 +94,12 @@ namespace mg1
 
     inline void select() override
     {
-      if (m_state == ObjectState::None) { m_state = ObjectState::Selected; }
+      if (m_state == ObjectState::Default) { m_state = ObjectState::Selected; }
       m_selected_index = ++PointInfo::s_selected_index;
     }
     inline void unselect() override
     {
-      if (m_state == ObjectState::Selected) { m_state = ObjectState::None; }
+      if (m_state == ObjectState::Selected) { m_state = ObjectState::Default; }
       PointInfo::s_selected_index--;
       m_selected_index = -1;
     }
@@ -137,7 +137,7 @@ namespace mg1
 
     inline void select() override
     {
-      if (m_state == ObjectState::None) { m_state = ObjectState::Selected; }
+      if (m_state == ObjectState::Default) { m_state = ObjectState::Selected; }
       for (auto point : m_control_points)
       {
         point->select();
@@ -145,7 +145,7 @@ namespace mg1
     }
     inline void unselect() override
     {
-      if (m_state == ObjectState::Selected) { m_state = ObjectState::None; }
+      if (m_state == ObjectState::Selected) { m_state = ObjectState::Default; }
       for (auto point : m_control_points)
       {
         point->unselect();
