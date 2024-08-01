@@ -1,3 +1,12 @@
+# MG1-CAD
+
+This repo contains project of a CAD application carried out as part of my coursework. 
+
+For communication with the GPU I used [Espert](https://github.com/engineer-boys/espert-core) - project developed 
+in context of my engineering thesis.
+
+TBD
+
 # Sandbox
 
 ## Build
