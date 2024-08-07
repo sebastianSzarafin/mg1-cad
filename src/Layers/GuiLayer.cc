@@ -37,9 +37,10 @@ namespace mg1
     if (!EspGui::m_use_gui) return;
 
     EspGui::new_frame();
-    ImGui::GetStyle().WindowMinSize = MIN_SIZE;
-    ImGui::SetNextWindowPos(INIT_OFFSET, ImGuiCond_Appearing);
-    EspGui::begin();
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(.15f * 1920, 1080), ImGuiCond_Always);
+    ImGui::GetStyle().WindowBorderSize = 0.f;
+    EspGui::begin(EspGuiWindowFlags_NoTitleBar | EspGuiWindowFlags_NoResize | EspGuiWindowFlags_NoMove);
 
     update_mouse_state();
 

@@ -16,9 +16,6 @@ namespace mg1
   class GuiLayer : public Layer
   {
    private:
-    static constexpr ImVec2 MIN_SIZE{ 220, 1 };
-    static constexpr ImVec2 INIT_OFFSET{ 10, 10 };
-
     MouseState m_mouse_state{ GuiNotCaptured };
     CameraType m_camera_type{ Orbit };
     glm::vec3 m_mouse_cursor_pos{ 0, 0, 0 };

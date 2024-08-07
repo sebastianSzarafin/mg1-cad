@@ -14,10 +14,10 @@ namespace mg1
     glm::vec2 m_tex_coord;
   };
 
-  static std::vector<QuadVertex> quad{ { { -1, -1 }, { 0, 1 } },
+  static std::vector<QuadVertex> quad{ { { -.7f, -1 }, { 0, 1 } },
                                        { { 1, -1 }, { 1, 1 } },
                                        { { 1, 1 }, { 1, 0 } },
-                                       { { -1, 1 }, { 0, 0 } } };
+                                       { { -.7f, 1 }, { 0, 0 } } };
 
   static std::vector<uint32_t> quad_idx{ 0, 1, 2, 2, 3, 0 };
 
