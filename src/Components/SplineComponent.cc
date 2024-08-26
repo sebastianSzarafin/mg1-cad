@@ -47,7 +47,7 @@ namespace mg1
   {
     for (auto& point : m_control_points)
     {
-      if (glm::length2(get_control_point(point).get_delta_position()) > 0.f)
+      if (get_control_point(point).moved())
       {
         m_info->m_dirty = true;
         return;

@@ -32,6 +32,7 @@ namespace mg1
     inline PointInfo* get_info() { return m_info.get(); }
     inline bool clicked() const { return m_clicked; }
     inline bool bernstein_point() const { return m_bernstein_point; }
+    inline bool moved() const { return glm::length2(m_delta_position) > 0.f; }
 
     inline glm::vec3 get_position() const { return m_node->get_translation(); }
     inline glm::vec3 get_delta_position() const { return m_delta_position; }

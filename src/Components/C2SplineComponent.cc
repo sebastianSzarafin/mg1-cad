@@ -28,7 +28,7 @@ namespace mg1
       for (int i = 0; i < m_bernstein_control_points.size(); i++)
       {
         auto& bernstein_point = get_control_point(m_bernstein_control_points[i]);
-        if (glm::length2(bernstein_point.get_delta_position()) > 0.f) { update_control_points_positions(i); }
+        if (bernstein_point.moved()) { update_control_points_positions(i); }
       }
     }
 
@@ -81,7 +81,7 @@ namespace mg1
       for (auto& id : m_bernstein_control_points)
       {
         auto& bernstein_point = get_control_point(id);
-        if (glm::length2(bernstein_point.get_delta_position()) > 0.f)
+        if (bernstein_point.moved())
         {
           m_info->m_dirty = true;
           return;
