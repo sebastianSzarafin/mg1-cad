@@ -14,6 +14,7 @@ namespace mg1
       m_children.emplace_back(new PointLayer(m_scene));
       m_children.emplace_back(new SplineLayer(m_scene));
       m_children.emplace_back(new C2SplineLayer(m_scene));
+      m_children.emplace_back(new C2InterpolationSplineLayer(m_scene));
     }
   }
 

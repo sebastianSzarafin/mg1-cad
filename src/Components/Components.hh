@@ -1,6 +1,7 @@
 #ifndef ESPERT_SANDBOX_COMPONENTS_HH
 #define ESPERT_SANDBOX_COMPONENTS_HH
 
+#include "C2InterpolationSplineComponent.hh"
 #include "C2SplineComponent.hh"
 #include "CursorComponent.hh"
 #include "GridComponent.hh"

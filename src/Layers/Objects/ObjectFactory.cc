@@ -196,4 +196,31 @@ namespace mg1
 
     return spline;
   }
+
+  C2InterpolationSplineComponent& ObjectFactory::create_c2_interpolation_spline()
+  {
+    std::vector<PointComponent> control_points{};
+    for (auto&& [entity, point] : s_instance->m_scene->get_view<PointComponent>())
+    {
+      if (point.get_info()->selected()) { control_points.push_back(point); }
+    }
+
+    auto entity = s_instance->m_scene->create_entity();
+
+    entity->add_component<C2InterpolationSplineComponent>(entity->get_id(), s_instance->m_scene, control_points);
+    auto& spline = entity->get_component<C2InterpolationSplineComponent>();
+
+    auto [vertices, indices] = spline.reconstruct();
+    auto model               = std::make_shared<Model>(vertices,
+                                         indices,
+                                         std::vector<std::shared_ptr<EspTexture>>{},
+                                         SplineInit::S_MODEL_PARAMS);
+    entity->add_component<ModelComponent>(model, s_instance->m_spline_shader);
+
+    spline.get_node()->attach_entity(entity);
+
+    s_instance->m_scene->get_root().add_child(spline.get_node());
+
+    return spline;
+  }
 } // namespace mg1

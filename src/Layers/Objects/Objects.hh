@@ -1,6 +1,7 @@
 #ifndef ESPERT_SANDBOX_OBJECTS_HH
 #define ESPERT_SANDBOX_OBJECTS_HH
 
+#include "C2InterpolationSplineLayer.hh"
 #include "C2SplineLayer.hh"
 #include "ObjectFactory.hh"
 #include "ObjectSelector.hh"

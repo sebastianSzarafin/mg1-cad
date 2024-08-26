@@ -32,6 +32,7 @@ namespace mg1
     static PointComponent& create_bernstein_point(glm::vec3 position = { 0, 0, 0 });
     static SplineComponent& create_spline();
     static C2SplineComponent& create_c2_spline();
+    static C2InterpolationSplineComponent& create_c2_interpolation_spline();
 
     // ---------------------------------------- TEMPLATE FUNCTIONS ----------------------------------------
     template<typename ObjComponent> static void remove_object(ObjComponent obj)
