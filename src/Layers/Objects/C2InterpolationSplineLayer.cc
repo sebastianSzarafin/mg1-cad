@@ -35,8 +35,8 @@ namespace mg1
       glm::mat4 mvp         = camera->get_projection() * camera->get_view() * obj.get_node()->get_model_mat();
       uniform_manager.update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
 
-      int control_line = obj.display_control_line();
-      uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(int), &control_line);
+      auto ubo = obj.get_ubo();
+      uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(C2SplineUbo), &ubo);
 
       SplineColorUbo color_ubo{};
       color_ubo.m_spline_color =

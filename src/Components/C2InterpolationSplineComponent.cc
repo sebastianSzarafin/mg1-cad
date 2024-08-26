@@ -43,6 +43,18 @@ namespace mg1
     return indices;
   }
 
+  C2InterpolationSplineUbo C2InterpolationSplineComponent::get_ubo()
+  {
+    C2InterpolationSplineUbo ubo{};
+    ubo.m_display_control_line = display_control_line();
+    for (auto i = 0; i < m_control_points.size(); i++)
+    {
+      ubo.m_bezier_points[i] = { get_control_point(m_control_points[i]).get_position(), 1.f };
+    }
+
+    return ubo;
+  }
+
   void C2InterpolationSplineComponent::handle_event(ObjectRemovedEvent& event) { SplineComponent::handle_event(event); }
 
   void C2InterpolationSplineComponent::handle_event(GuiCheckboxChangedEvent& event)

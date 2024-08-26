@@ -215,7 +215,7 @@ namespace mg1
                                          indices,
                                          std::vector<std::shared_ptr<EspTexture>>{},
                                          SplineInit::S_MODEL_PARAMS);
-    entity->add_component<ModelComponent>(model, s_instance->m_spline_shader);
+    entity->add_component<ModelComponent>(model, s_instance->m_c2_spline_shader);
 
     spline.get_node()->attach_entity(entity);
 
