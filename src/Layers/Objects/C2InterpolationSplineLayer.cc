@@ -45,7 +45,25 @@ namespace mg1
     }
   }
 
-  void C2InterpolationSplineLayer::post_update(float dt) {}
+  void C2InterpolationSplineLayer::post_update(float dt)
+  {
+    static bool first_loop = true;
+    if (first_loop)
+    {
+      // initial scene
+      for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
+      {
+        auto pos = point.get_position();
+        if (pos.z >= 2) { point.get_info()->select(); }
+      }
+      ObjectFactory::create_c2_interpolation_spline();
+      for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
+      {
+        point.get_info()->unselect();
+      }
+      first_loop = false;
+    }
+  }
 
   void C2InterpolationSplineLayer::handle_event(Event& event, float dt)
   {

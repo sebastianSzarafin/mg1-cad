@@ -41,8 +41,8 @@ namespace mg1
     if (first_loop)
     {
       // initial scene
-      ObjectFactory::create_torus({ 2, 0, -5 });
-      ObjectFactory::create_torus({ -2, 0, -5 });
+      ObjectFactory::create_torus({ 2, 0, -6 });
+      ObjectFactory::create_torus({ -2, 0, -6 });
       first_loop = false;
     }
   }

@@ -54,7 +54,8 @@ namespace mg1
       // initial scene
       for (auto&& [entity, point] : m_scene->get_view<PointComponent>())
       {
-        point.get_info()->select();
+        auto pos = point.get_position();
+        if (pos.z >= -1 && pos.z <= 1) { point.get_info()->select(); }
       }
       ObjectFactory::create_c2_spline();
       for (auto&& [entity, point] : m_scene->get_view<PointComponent>())

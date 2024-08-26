@@ -40,16 +40,33 @@ namespace mg1
   void PointLayer::post_update(float dt)
   {
     static bool first_loop = true;
-    if (first_loop)
+    if (first_loop) // initial scene
     {
-      // initial scene
-      ObjectFactory::create_point({ 1.5f, 1, -1 });
-      ObjectFactory::create_point({ .5f, 1, 1 });
-      ObjectFactory::create_point({ -.5f, 1, -1 });
-      ObjectFactory::create_point({ -1.5f, 1, 1 });
-      ObjectFactory::create_point({ -2.5f, 1, 0 });
-      ObjectFactory::create_point({ -3.5f, 1, 0 });
-      ObjectFactory::create_point({ -4.5f, 1, 0 });
+      // spline
+      ObjectFactory::create_point({ 3, 1, -4 });
+      ObjectFactory::create_point({ 2, 1, -2 });
+      ObjectFactory::create_point({ 1, 1, -4 });
+      ObjectFactory::create_point({ 0, 1, -2 });
+      ObjectFactory::create_point({ -1, 1, -3 });
+      ObjectFactory::create_point({ -2, 1, -3 });
+      ObjectFactory::create_point({ -3, 1, -3 });
+      // c2 spline
+      ObjectFactory::create_point({ 3, 1, -1 });
+      ObjectFactory::create_point({ 2, 1, 1 });
+      ObjectFactory::create_point({ 1, 1, -1 });
+      ObjectFactory::create_point({ 0, 1, 1 });
+      ObjectFactory::create_point({ -1, 1, 0 });
+      ObjectFactory::create_point({ -2, 1, 0 });
+      ObjectFactory::create_point({ -3, 1, 0 });
+      // c2 interpolation spline
+      ObjectFactory::create_point({ 3, 1, 2 });
+      ObjectFactory::create_point({ 2, 1, 4 });
+      ObjectFactory::create_point({ 1, 1, 2 });
+      ObjectFactory::create_point({ 0, 1, 4 });
+      ObjectFactory::create_point({ -1, 1, 3 });
+      ObjectFactory::create_point({ -2, 1, 3 });
+      ObjectFactory::create_point({ -3, 1, 3 });
+
       first_loop = false;
     }
   }
