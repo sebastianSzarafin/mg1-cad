@@ -38,7 +38,10 @@ namespace mg1
     glm::vec3 ray_mouse =
         cast_ray(EspInput::get_mouse_x_cs(), EspInput::get_mouse_y_cs(), camera->get_view(), camera->get_projection());
 
-    if (intersect_vector_sphere(camera->get_position(), ray_mouse, { { m_node->get_translation() }, m_info->m_r * 4 }))
+    auto camera_pos = camera->get_position();
+    auto node_pos   = m_node->get_translation();
+    auto eps        = .75f * std::log2(glm::length2(node_pos - camera_pos));
+    if (intersect_vector_sphere(camera_pos, ray_mouse, { { node_pos }, m_info->m_r * eps }))
     {
       m_info->selected() ? m_info->unselect() : m_info->select();
       m_clicked = true;
