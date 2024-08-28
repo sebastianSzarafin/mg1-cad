@@ -166,7 +166,10 @@ namespace mg1
 
     inline void render() override
     {
-      if (selected_count() > 1 && m_value[0]->is_selected()) { m_value[0]->unselect(); }
+      auto selected = selected_count();
+      if (selected > 1 && m_value[0]->is_selected()) { m_value[0]->unselect(); }
+      else if (selected == 0) { m_value[0]->select(); }
+
       GuiSelectableListBox::render();
     }
 
