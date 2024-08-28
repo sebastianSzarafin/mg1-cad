@@ -5,6 +5,7 @@
 #include "GuiCameraTypeChangedEvent.hh"
 #include "GuiCheckboxChangedEvent.hh"
 #include "GuiEvent.hh"
+#include "GuiFloatSliderChangedEvent.hh"
 #include "GuiInputFloatChangedEvent.hh"
 #include "GuiInputIntChangedEvent.hh"
 #include "GuiMouseStateChangedEvent.hh"

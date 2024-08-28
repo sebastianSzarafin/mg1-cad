@@ -10,8 +10,7 @@ namespace mg1
     {
       auto uniform_meta_data = EspUniformMetaData::create();
       uniform_meta_data->establish_descriptor_set();
-      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_VTX_STAGE, sizeof(glm::vec3)); // cursor pos
-      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_VTX_STAGE, sizeof(glm::mat4)); // vp
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_VTX_STAGE, sizeof(glm::mat4));
 
       m_shader = ShaderSystem::acquire("Shaders/CursorLayer/shader");
       m_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
@@ -29,9 +28,6 @@ namespace mg1
   {
     if (!m_update) return;
 
-    auto camera  = Scene::get_current_camera();
-    glm::mat4 vp = camera->get_projection() * camera->get_view();
-
     for (auto&& [entity, cursor, model] : m_scene->get_view<CursorComponent, ModelComponent>())
     {
       if (!cursor.get_info()->selected())
@@ -46,11 +42,6 @@ namespace mg1
                                    cursor.get_info()->m_position,
                                    cursor.get_delta_position() };
       post_event(event);
-
-      auto& uniform_manager = model.get_uniform_manager();
-      glm::vec3 cursor_pos  = cursor.get_position();
-      uniform_manager.update_buffer_uniform(0, 0, 0, sizeof(glm::vec3), &cursor_pos);
-      uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(glm::mat4), &vp);
     }
   }
 

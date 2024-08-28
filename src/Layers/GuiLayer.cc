@@ -4,8 +4,11 @@ namespace mg1
 {
   GuiLayer::GuiLayer()
   {
-    m_grid_checkbox = std::make_unique<GuiCheckbox>(GuiLabel::grid_checkbox, true);
-    m_actions_combo = std::make_unique<GuiSelectableCombo>(
+    m_grid_checkbox               = std::make_unique<GuiCheckbox>(GuiLabel::grid_checkbox, true);
+    m_anaglyph_mode_checkbox      = std::make_unique<GuiCheckbox>(GuiLabel::anaglyph_mode, false);
+    m_eye_distance_float_slider   = std::make_unique<GuiFloatSlider>(GuiLabel::m_eye_distance_float_slider, .01f, 0, 2);
+    m_plane_distance_float_slider = std::make_unique<GuiFloatSlider>(GuiLabel::m_plane_distance_float_slider, 1, 0, 2);
+    m_actions_combo               = std::make_unique<GuiSelectableCombo>(
         GuiLabel::actions,
         GuiSelectables{ std::make_shared<GuiSelectable>(GuiLabel::action_none, true),
                         std::make_shared<GuiSelectable>(GuiLabel::action_rot_ox, false),
@@ -41,7 +44,7 @@ namespace mg1
 
     EspGui::new_frame();
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(.15f * 1920, 1080), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(WIDTH, HEIGHT), ImGuiCond_Always);
     ImGui::GetStyle().WindowBorderSize = 0.f;
     EspGui::begin(EspGuiWindowFlags_NoTitleBar | EspGuiWindowFlags_NoResize | EspGuiWindowFlags_NoMove);
 
@@ -64,6 +67,16 @@ namespace mg1
     ImGui::Text("Cursor pos: (%.2f,%.2f,%.2f)", m_mouse_cursor_pos.x, m_mouse_cursor_pos.y, m_mouse_cursor_pos.z);
     ImGui::Spacing();
     m_grid_checkbox->render();
+
+    ImGui::SeparatorText("Stereoscopic visualisation:");
+    m_anaglyph_mode_checkbox->render();
+    if (m_anaglyph_mode_checkbox->get_value())
+    {
+      ImGui::PushItemWidth(WIDTH / 2);
+      m_eye_distance_float_slider->render();
+      m_plane_distance_float_slider->render();
+      ImGui::PopItemWidth();
+    }
 
     ImGui::SeparatorText("Actions:");
     ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);

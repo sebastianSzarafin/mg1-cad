@@ -27,10 +27,13 @@ namespace mg1
     static const std::string remove_object_button;
     static const std::string rename_object_button;
     static const std::string grid_checkbox;
+    static const std::string anaglyph_mode;
     static const std::string action_set_cursor_pos;
     static const std::string gui_camera_type_changed_event;
     static const std::string control_line_checkbox;
     static const std::string m_spline_base_radio_buttons;
+    static const std::string m_eye_distance_float_slider;
+    static const std::string m_plane_distance_float_slider;
   };
 
   inline const std::string GuiLabel::rotation_axis                         = "Rotation axis";
@@ -53,10 +56,13 @@ namespace mg1
   inline const std::string GuiLabel::remove_object_button                  = "Remove";
   inline const std::string GuiLabel::rename_object_button                  = "Rename";
   inline const std::string GuiLabel::grid_checkbox                         = "Grid";
+  inline const std::string GuiLabel::anaglyph_mode                         = "Anaglyph mode";
   inline const std::string GuiLabel::action_set_cursor_pos                 = "Set cursor position";
   inline const std::string GuiLabel::gui_camera_type_changed_event         = "Camera type changed event";
   inline const std::string GuiLabel::control_line_checkbox                 = "Control line";
   inline const std::string GuiLabel::m_spline_base_radio_buttons           = "Spline base";
+  inline const std::string GuiLabel::m_eye_distance_float_slider           = "Eye distance";
+  inline const std::string GuiLabel::m_plane_distance_float_slider         = "Plane distance";
 
   struct ObjectLabel
   {

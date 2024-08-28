@@ -22,13 +22,9 @@ namespace mg1
 
   void TorusLayer::update(float dt)
   {
-    auto camera = Scene::get_current_camera();
-
     for (auto&& [entity, obj, model] : m_scene->get_view<TorusComponent, ModelComponent>())
     {
       auto& uniform_manager = model.get_uniform_manager();
-      glm::mat4 mvp         = camera->get_projection() * camera->get_view() * obj.get_node()->get_model_mat();
-      uniform_manager.update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
 
       glm::vec3 color = obj.get_info()->selected() ? ObjectConstants::selected_color : ObjectConstants::default_color;
       uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(glm::vec3), &color);

@@ -3,6 +3,7 @@
 
 #include "GuiCheckbox.hh"
 #include "GuiField.hh"
+#include "GuiFloatSlider.hh"
 #include "GuiInputFloat.hh"
 #include "GuiInputInt.hh"
 #include "GuiRadioButtons.hh"

@@ -27,13 +27,9 @@ namespace mg1
 
   void SplineLayer::update(float dt)
   {
-    auto camera = Scene::get_current_camera();
-
     for (auto&& [entity, obj, model] : m_scene->get_view<SplineComponent, ModelComponent>())
     {
       auto& uniform_manager = model.get_uniform_manager();
-      glm::mat4 mvp         = camera->get_projection() * camera->get_view() * obj.get_node()->get_model_mat();
-      uniform_manager.update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
 
       int control_line = obj.display_control_line();
       uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(int), &control_line);

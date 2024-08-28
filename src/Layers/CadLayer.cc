@@ -15,6 +15,7 @@ namespace mg1
       m_scene_render.m_block = EspBlock::build(EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM,
                                                EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT,
                                                { 0.1f, 0.1f, 0.2f });
+
       m_scene_render.m_depth_block =
           EspDepthBlock::build(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT,
                                EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT,
@@ -25,28 +26,68 @@ namespace mg1
       m_scene_render.m_plan->build();
     }
 
+    // create anaglyph scene render plan [OFF-SCREEN]
+    {
+      m_anaglyph_mode_render.m_block = EspBlock::build(EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM,
+                                                       EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT,
+                                                       { 0.1f, 0.1f, 0.2f });
+
+      m_anaglyph_mode_render.m_depth_block =
+          EspDepthBlock::build(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT,
+                               EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT,
+                               EspImageUsageFlag::ESP_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
+      m_anaglyph_mode_render.m_plan = EspRenderPlan::create();
+      m_anaglyph_mode_render.m_plan->add_block(std::shared_ptr{ m_anaglyph_mode_render.m_block });
+      m_anaglyph_mode_render.m_plan->add_depth_block(std::shared_ptr{ m_anaglyph_mode_render.m_depth_block });
+      m_anaglyph_mode_render.m_plan->build();
+    }
+
     // create final render plan [ON-SCREEN]
     {
       m_final_render.m_plan = EspRenderPlan::create_final();
       m_final_render.m_plan->build();
 
-      auto uniform_meta_data = EspUniformMetaData::create();
-      uniform_meta_data->establish_descriptor_set();
-      uniform_meta_data->add_texture_uniform(EspUniformShaderStage::ESP_FRAG_STAGE);
+      std::vector<EspVertexLayout> vertex_layouts = { VTX_LAYOUT(
+          sizeof(QuadVertex),
+          0,
+          ESP_VERTEX_INPUT_RATE_VERTEX,
+          ATTR(0, EspAttrFormat::ESP_FORMAT_R32G32_SFLOAT, offsetof(QuadVertex, m_pos)),
+          ATTR(1, EspAttrFormat::ESP_FORMAT_R32G32_SFLOAT, offsetof(QuadVertex, m_tex_coord))) };
 
-      m_final_render.m_shader = ShaderSystem::acquire("Shaders/CadLayer/shader");
-      m_final_render.m_shader->set_vertex_layouts(
-          { VTX_LAYOUT(sizeof(QuadVertex),
-                       0,
-                       ESP_VERTEX_INPUT_RATE_VERTEX,
-                       ATTR(0, EspAttrFormat::ESP_FORMAT_R32G32_SFLOAT, offsetof(QuadVertex, m_pos)),
-                       ATTR(1, EspAttrFormat::ESP_FORMAT_R32G32_SFLOAT, offsetof(QuadVertex, m_tex_coord))) });
-      m_final_render.m_shader->set_worker_layout(std::move(uniform_meta_data));
-      m_final_render.m_shader->build_worker();
+      // default shader
+      {
+        auto uniform_meta_data = EspUniformMetaData::create();
+        uniform_meta_data->establish_descriptor_set();
+        uniform_meta_data->add_texture_uniform(EspUniformShaderStage::ESP_FRAG_STAGE);
 
-      m_final_render.m_uniform_manager = m_final_render.m_shader->create_uniform_manager();
-      m_final_render.m_uniform_manager->load_block(0, 0, m_scene_render.m_block.get());
-      m_final_render.m_uniform_manager->build();
+        m_final_render.m_shader = ShaderSystem::acquire("Shaders/CadLayer/shader");
+        m_final_render.m_shader->set_vertex_layouts(vertex_layouts);
+        m_final_render.m_shader->set_worker_layout(std::move(uniform_meta_data));
+        m_final_render.m_shader->build_worker();
+
+        m_final_render.m_uniform_manager = m_final_render.m_shader->create_uniform_manager();
+        m_final_render.m_uniform_manager->load_block(0, 0, m_scene_render.m_block.get());
+        m_final_render.m_uniform_manager->build();
+      }
+
+      // anaglyph shader
+      {
+        auto uniform_meta_data = EspUniformMetaData::create();
+        uniform_meta_data->establish_descriptor_set();
+        uniform_meta_data->add_texture_uniform(EspUniformShaderStage::ESP_FRAG_STAGE);
+        uniform_meta_data->add_texture_uniform(EspUniformShaderStage::ESP_FRAG_STAGE);
+
+        m_final_render.m_anaglyph_mode.m_shader = ShaderSystem::acquire("Shaders/CadLayer/AnaglyphMode/shader");
+        m_final_render.m_anaglyph_mode.m_shader->set_vertex_layouts(vertex_layouts);
+        m_final_render.m_anaglyph_mode.m_shader->set_worker_layout(std::move(uniform_meta_data));
+        m_final_render.m_anaglyph_mode.m_shader->build_worker();
+
+        m_final_render.m_anaglyph_mode.m_uniform_manager =
+            m_final_render.m_anaglyph_mode.m_shader->create_uniform_manager();
+        m_final_render.m_anaglyph_mode.m_uniform_manager->load_block(0, 0, m_scene_render.m_block.get());
+        m_final_render.m_anaglyph_mode.m_uniform_manager->load_block(0, 1, m_anaglyph_mode_render.m_block.get());
+        m_final_render.m_anaglyph_mode.m_uniform_manager->build();
+      }
 
       m_final_render.m_vertex_buffer = EspVertexBuffer::create(quad.data(), sizeof(QuadVertex), quad.size());
       m_final_render.m_index_buffer  = EspIndexBuffer::create(quad_idx.data(), quad_idx.size());
@@ -94,21 +135,54 @@ namespace mg1
 
     handle_keyboard_input(dt);
 
+    auto camera = Scene::get_current_camera();
+    if (m_anaglyph_mode.m_on)
+    {
+      camera->set_anaglyph_perspective(m_anaglyph_mode.m_eye_dist, m_anaglyph_mode.m_plane_dist, true);
+    }
+    else { camera->set_perspective(EspWorkOrchestrator::get_swap_chain_extent_aspect_ratio()); }
+
     // scene render plan [OFF-SCREEN]
     m_scene_render.m_plan->begin_plan();
     {
+      update_camera_on_scene(camera->get_projection(), camera->get_view());
       m_scene->draw();
     }
     m_scene_render.m_plan->end_plan();
     m_scene_render.m_depth_block->clear();
 
+    if (m_anaglyph_mode.m_on)
+    {
+      EspWorkOrchestrator::split_frame();
+
+      camera->set_anaglyph_perspective(m_anaglyph_mode.m_eye_dist, m_anaglyph_mode.m_plane_dist, false);
+
+      // anaglyph scene render plan [OFF-SCREEN]
+      m_anaglyph_mode_render.m_plan->begin_plan();
+      {
+        update_camera_on_scene(camera->get_projection(), camera->get_view());
+        m_scene->draw();
+      }
+      m_anaglyph_mode_render.m_plan->end_plan();
+      m_anaglyph_mode_render.m_depth_block->clear();
+    }
+
     // final render plan [ON-SCREEN]
     m_final_render.m_plan->begin_plan();
     {
-      m_final_render.m_shader->attach();
+      if (m_anaglyph_mode.m_on)
+      {
+        m_final_render.m_anaglyph_mode.m_shader->attach();
+        m_final_render.m_anaglyph_mode.m_uniform_manager->attach();
+      }
+      else
+      {
+        m_final_render.m_shader->attach();
+        m_final_render.m_uniform_manager->attach();
+      }
+
       m_final_render.m_vertex_buffer->attach();
       m_final_render.m_index_buffer->attach();
-      m_final_render.m_uniform_manager->attach();
 
       EspJob::draw_indexed(quad_idx.size());
       if (EspGui::m_use_gui) { EspGui::render(); }
@@ -141,6 +215,11 @@ namespace mg1
     Event::try_handler<GuiCameraTypeChangedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(CadLayer::gui_camera_type_changed_event_handler));
+    Event::try_handler<GuiCheckboxChangedEvent>(event,
+                                                ESP_BIND_EVENT_FOR_FUN(CadLayer::gui_checkbox_changed_event_handler));
+    Event::try_handler<GuiFloatSliderChangedEvent>(
+        event,
+        ESP_BIND_EVENT_FOR_FUN(CadLayer::gui_float_slider_changed_event_handler));
   }
 
   bool CadLayer::mouse_moved_event_handler(MouseMovedEvent& event, float dt)
@@ -196,6 +275,20 @@ namespace mg1
     return false;
   }
 
+  bool CadLayer::gui_checkbox_changed_event_handler(mg1::GuiCheckboxChangedEvent& event)
+  {
+    if (!(event == GuiLabel::anaglyph_mode)) { return false; }
+    m_anaglyph_mode.m_on = event.get_value();
+    return true;
+  }
+
+  bool CadLayer::gui_float_slider_changed_event_handler(GuiFloatSliderChangedEvent& event)
+  {
+    if (event == GuiLabel::m_eye_distance_float_slider) { m_anaglyph_mode.m_eye_dist = event.get_value(); }
+    if (event == GuiLabel::m_plane_distance_float_slider) { m_anaglyph_mode.m_plane_dist = event.get_value(); }
+    return true;
+  }
+
   void CadLayer::handle_keyboard_input(float dt)
   {
     if (fps_camera_selected())
@@ -207,5 +300,20 @@ namespace mg1
       if (EspInput::is_key_pressed(ESP_KEY_SPACE)) { m_fps_camera->move(FpsCamera::UP, dt); }
       if (EspInput::is_key_pressed(ESP_KEY_LEFT_SHIFT)) { m_fps_camera->move(FpsCamera::DOWN, dt); }
     }
+  }
+
+  void CadLayer::update_camera_on_scene(glm::mat4 projection, glm::mat4 view)
+  {
+    m_scene->get_root().act(
+        [&projection, &view](Node* node)
+        {
+          auto model = node->get_entity()->try_get_component<ModelComponent>();
+          if (model)
+          {
+            auto& uniform_manager = model->get_uniform_manager();
+            glm::mat4 mvp         = projection * view * node->get_model_mat();
+            uniform_manager.update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
+          }
+        });
   }
 } // namespace mg1

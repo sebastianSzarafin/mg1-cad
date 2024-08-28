@@ -28,17 +28,7 @@ namespace mg1
     create_coordinate_system_grid();
   }
 
-  void CoordinateSystemGridLayer::update(float dt)
-  {
-    auto camera  = Scene::get_current_camera();
-    glm::mat4 vp = camera->get_projection() * camera->get_view();
-
-    for (auto&& [entity, grid, model] : m_scene->get_view<GridComponent, ModelComponent>())
-    {
-      auto& uniform_manager = model.get_uniform_manager();
-      uniform_manager.update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &vp);
-    }
-  }
+  void CoordinateSystemGridLayer::update(float dt) {}
 
   void CoordinateSystemGridLayer::handle_event(esp::Event& event, float dt)
   {
