@@ -14,7 +14,7 @@ namespace mg1
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_VTX_STAGE, sizeof(glm::mat4));
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(glm::vec3));
 
-      m_object_shader = ShaderSystem::acquire("Shaders/ObjectLayer/shader");
+      m_object_shader = ShaderSystem::acquire("Shaders/Layers/Objects/shader");
       m_object_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
       m_object_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
       m_object_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT, EspCompareOp::ESP_COMPARE_OP_LESS);
@@ -33,7 +33,7 @@ namespace mg1
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_GEOM_STAGE, sizeof(int));
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(SplineColorUbo));
 
-      m_spline_shader = ShaderSystem::acquire("Shaders/ObjectLayer/Spline/shader");
+      m_spline_shader = ShaderSystem::acquire("Shaders/Layers/Objects/Spline/shader");
       m_spline_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
       m_spline_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
       m_spline_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT, EspCompareOp::ESP_COMPARE_OP_LESS);
@@ -54,7 +54,7 @@ namespace mg1
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_GEOM_STAGE, sizeof(C2SplineUbo));
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(SplineColorUbo));
 
-      m_c2_spline_shader = ShaderSystem::acquire("Shaders/ObjectLayer/C2Spline/shader");
+      m_c2_spline_shader = ShaderSystem::acquire("Shaders/Layers/Objects/C2Spline/shader");
       m_c2_spline_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
       m_c2_spline_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
       m_c2_spline_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT,

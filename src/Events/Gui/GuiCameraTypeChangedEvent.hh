@@ -2,7 +2,8 @@
 #define ESPERT_SANDBOX_GUICAMERATYPECHANGEDEVENT_HH
 
 #include "GuiEvent.hh"
-#include "Utils/Utils.hh"
+#include "Utils/Enums.hh"
+#include "Utils/Labels.hh"
 
 namespace mg1
 {

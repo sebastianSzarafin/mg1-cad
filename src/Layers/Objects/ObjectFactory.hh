@@ -1,7 +1,7 @@
 #ifndef ESPERT_SANDBOX_OBJECTFACTORY_HH
 #define ESPERT_SANDBOX_OBJECTFACTORY_HH
 
-#include "Components/Components.hh"
+#include "Components.hh"
 #include "Espert.hh"
 #include "ObjectSelector.hh"
 

@@ -1,10 +1,8 @@
 #include <memory>
 
 #include "CadLayer.hh"
-#include "CoordinateSystemGridLayer.hh"
-#include "CursorLayer.hh"
-#include "GuiLayer.hh"
-#include "ObjectLayer.hh"
+#include "Layers/Gui/GuiLayer.hh"
+#include "Layers/Objects/ObjectLayer.hh"
 
 namespace mg1
 {
@@ -60,7 +58,7 @@ namespace mg1
         uniform_meta_data->establish_descriptor_set();
         uniform_meta_data->add_texture_uniform(EspUniformShaderStage::ESP_FRAG_STAGE);
 
-        m_final_render.m_shader = ShaderSystem::acquire("Shaders/CadLayer/shader");
+        m_final_render.m_shader = ShaderSystem::acquire("Shaders/Layers/CadLayer/shader");
         m_final_render.m_shader->set_vertex_layouts(vertex_layouts);
         m_final_render.m_shader->set_worker_layout(std::move(uniform_meta_data));
         m_final_render.m_shader->build_worker();
@@ -77,7 +75,7 @@ namespace mg1
         uniform_meta_data->add_texture_uniform(EspUniformShaderStage::ESP_FRAG_STAGE);
         uniform_meta_data->add_texture_uniform(EspUniformShaderStage::ESP_FRAG_STAGE);
 
-        m_final_render.m_anaglyph_mode.m_shader = ShaderSystem::acquire("Shaders/CadLayer/AnaglyphMode/shader");
+        m_final_render.m_anaglyph_mode.m_shader = ShaderSystem::acquire("Shaders/Layers/CadLayer/AnaglyphMode/shader");
         m_final_render.m_anaglyph_mode.m_shader->set_vertex_layouts(vertex_layouts);
         m_final_render.m_anaglyph_mode.m_shader->set_worker_layout(std::move(uniform_meta_data));
         m_final_render.m_anaglyph_mode.m_shader->build_worker();
@@ -112,9 +110,7 @@ namespace mg1
     // create children layers
     {
       m_children.emplace_back(new GuiLayer());
-      m_children.emplace_back(new CursorLayer(m_scene.get()));
       m_children.emplace_back(new ObjectLayer(m_scene.get()));
-      m_children.emplace_back(new CoordinateSystemGridLayer(m_scene.get()));
     }
   }
 
