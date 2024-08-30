@@ -69,8 +69,6 @@ namespace mg1
     static const ImVec2 scene_win_pos; // (left, top)
   };
 
-#define CLIP_SCALE(a, b) ((a) / b * 2.f - 1.f) // scale 'a' from [0,b] to [-1,1]
-
   inline const float WindowConstants::root_win_w              = 1920.f;
   inline const float WindowConstants::root_win_h              = 1080.f;
   inline const float WindowConstants::root_win_avail_w        = 1904.f;

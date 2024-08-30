@@ -1,4 +1,5 @@
 #include "GuiLayer.hh"
+#include "Utils/Math.hh"
 
 namespace mg1
 {
@@ -56,7 +57,7 @@ namespace mg1
     glm::vec3 pos = Scene::get_current_camera()->get_position();
     ImGui::Text("Camera pos: (%.2f,%.2f,%.2f)", pos.x, pos.y, pos.z);
     ImGui::Spacing();
-    ImGui::Text("Mouse pos: (%.2f,%.2f)", EspInput::get_mouse_x_cs(), EspInput::get_mouse_y_cs());
+    ImGui::Text("Mouse pos: (%.2f,%.2f)", Math::get_mouse_x_cs(), Math::get_mouse_y_cs());
     ImGui::Spacing();
     ImGui::Text("Cursor pos: (%.2f,%.2f,%.2f)", m_mouse_cursor_pos.x, m_mouse_cursor_pos.y, m_mouse_cursor_pos.z);
     ImGui::Spacing();
