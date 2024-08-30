@@ -1,14 +1,16 @@
-#include "Layers/CadLayer.hh"
-
 #include "ClientPoint.hh"
+#include "Layers/CadLayer.hh"
 
 class SandBoxApp : public esp::EspApplication
 {
  private:
  public:
   SandBoxApp() :
-      EspApplication(
-          { .m_title = "My window", .m_width = 1920, .m_height = 1080, .m_disable_cursor = false, .m_use_gui = true })
+      EspApplication({ .m_title          = "My window",
+                       .m_width          = (uint32_t)mg1::WindowConstants::root_win_w,
+                       .m_height         = (uint32_t)mg1::WindowConstants::root_win_h,
+                       .m_disable_cursor = false,
+                       .m_use_gui        = true })
   {
     push_layer(new mg1::CadLayer());
   }

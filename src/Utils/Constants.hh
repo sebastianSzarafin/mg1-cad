@@ -57,6 +57,28 @@ namespace mg1
   inline const glm::vec3 ObjectConstants::selected_color        = { 1, 1, 0 };
   inline const glm::vec3 ObjectConstants::bernstein_point_color = { 1, .41f, .7f };
   inline const uint32_t ObjectConstants::max_bezier_points      = 100;
+
+  struct WindowConstants
+  {
+    static const float root_win_w;
+    static const float root_win_h;
+    static const float root_win_avail_w;
+    static const ImVec2 gui_win_size;
+    static const float gui_scene_splitter_size;
+    static const ImVec2 scene_win_size;
+    static const ImVec2 scene_win_pos; // (left, top)
+  };
+
+#define CLIP_SCALE(a, b) ((a) / b * 2.f - 1.f) // scale 'a' from [0,b] to [-1,1]
+
+  inline const float WindowConstants::root_win_w              = 1920.f;
+  inline const float WindowConstants::root_win_h              = 1080.f;
+  inline const float WindowConstants::root_win_avail_w        = 1904.f;
+  inline const ImVec2 WindowConstants::gui_win_size           = { .2f * WindowConstants::root_win_avail_w, 0 };
+  inline const float WindowConstants::gui_scene_splitter_size = .01f * WindowConstants::root_win_avail_w;
+  inline const ImVec2 WindowConstants::scene_win_size         = { .79f * WindowConstants::root_win_avail_w,
+                                                                  .79f * WindowConstants::root_win_h };
+  inline const ImVec2 WindowConstants::scene_win_pos          = { 407, 27 };
 } // namespace mg1
 
 #endif // ESPERT_SANDBOX_CONSTANTS_HH

@@ -3,29 +3,12 @@
 
 #include "Espert.hh"
 #include "Events/Gui/GuiEvents.hh"
+#include "Utils/Constants.hh"
 
 using namespace esp;
 
 namespace mg1
 {
-  struct QuadVertex
-  {
-    glm::vec2 m_pos;
-    glm::vec2 m_tex_coord;
-  };
-
-  //  static std::vector<QuadVertex> quad{ { { -.5f, -.5f }, { 0, 1 } },
-  //                                       { { 1, -.5f }, { 1, 1 } },
-  //                                       { { 1, 1 }, { 1, 0 } },
-  //                                       { { -.5f, 1 }, { 0, 0 } } };
-
-  static std::vector<QuadVertex> quad{ { { -1, -1 }, { 0, 1 } },
-                                       { { 1, -1 }, { 1, 1 } },
-                                       { { 1, 1 }, { 1, 0 } },
-                                       { { -1, 1 }, { 0, 0 } } };
-
-  static std::vector<uint32_t> quad_idx{ 0, 1, 2, 2, 3, 0 };
-
   class CadLayer : public Layer
   {
    private:
@@ -59,7 +42,8 @@ namespace mg1
     std::shared_ptr<FpsCamera> m_fps_camera;
     std::shared_ptr<Scene> m_scene;
 
-    std::vector<std::unique_ptr<Layer>> m_children{};
+    std::unique_ptr<Layer> m_gui_layer;
+    std::unique_ptr<Layer> m_object_layer;
 
     bool m_none_object_selected{ true };
     bool m_mouse_captured{ true };

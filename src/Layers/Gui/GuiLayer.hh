@@ -15,9 +15,6 @@ namespace mg1
   class GuiLayer : public Layer
   {
    private:
-    static constexpr float WIDTH  = .15f * 1920;
-    static constexpr float HEIGHT = 1080;
-
     MouseState m_mouse_state{ GuiNotCaptured };
     CameraType m_camera_type{ Orbit };
     glm::vec3 m_mouse_cursor_pos{ 0, 0, 0 };

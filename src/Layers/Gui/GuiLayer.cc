@@ -42,12 +42,6 @@ namespace mg1
   {
     if (!EspGui::m_use_gui) return;
 
-    EspGui::new_frame();
-    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(WIDTH, HEIGHT), ImGuiCond_Always);
-    ImGui::GetStyle().WindowBorderSize = 0.f;
-    EspGui::begin(EspGuiWindowFlags_NoTitleBar | EspGuiWindowFlags_NoResize | EspGuiWindowFlags_NoMove);
-
     update_mouse_state();
 
     ImGui::Text("FPS: %.1f", 1.f / dt);
@@ -72,7 +66,7 @@ namespace mg1
     m_anaglyph_mode_checkbox->render();
     if (m_anaglyph_mode_checkbox->get_value())
     {
-      ImGui::PushItemWidth(WIDTH / 2);
+      ImGui::PushItemWidth(WindowConstants::gui_win_size.x / 2);
       m_eye_distance_float_slider->render();
       m_plane_distance_float_slider->render();
       ImGui::PopItemWidth();
@@ -89,14 +83,6 @@ namespace mg1
     m_create_spline_button->render();
     m_create_c2_spline_button->render();
     m_create_c2_interpolation_spline_button->render();
-
-    EspGui::end();
-
-    EspGui::begin();
-    ImGui::ShowDemoWindow();
-    EspGui::end();
-
-    EspGui::end_frame();
   }
 
   void GuiLayer::handle_event(esp::Event& event, float dt)
@@ -136,7 +122,7 @@ namespace mg1
       return;
     }
 
-    bool window_hovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
+    bool window_hovered = ImGui::IsWindowHovered() || ImGui::IsWindowHovered(ImGuiHoveredFlags_RootWindow);
     // if (!window_hovered) { ImGui::SetMouseCursor(ImGuiMouseCursor_None); }
     if (m_mouse_state != window_hovered)
     {

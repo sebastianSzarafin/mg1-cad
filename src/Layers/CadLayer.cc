@@ -1,8 +1,26 @@
-#include <memory>
-
 #include "CadLayer.hh"
 #include "Layers/Gui/GuiLayer.hh"
 #include "Layers/Objects/ObjectLayer.hh"
+
+struct QuadVertex
+{
+  glm::vec2 m_pos;
+  glm::vec2 m_tex_coord;
+};
+
+float scene_left   = mg1::WindowConstants::scene_win_pos.x;
+float scene_right  = scene_left + mg1::WindowConstants::scene_win_size.x;
+float scene_top    = mg1::WindowConstants::root_win_h - mg1::WindowConstants::scene_win_pos.y;
+float scene_bottom = scene_top - mg1::WindowConstants::scene_win_size.y;
+float quad_left    = CLIP_SCALE(scene_left, mg1::WindowConstants::root_win_w);
+float quad_right   = CLIP_SCALE(scene_right, mg1::WindowConstants::root_win_w);
+float quad_top     = CLIP_SCALE(scene_top, mg1::WindowConstants::root_win_h);
+float quad_bottom  = CLIP_SCALE(scene_bottom, mg1::WindowConstants::root_win_h);
+std::vector<QuadVertex> quad{ { { quad_left, quad_bottom }, { 0, 1 } },
+                              { { quad_right, quad_bottom }, { 1, 1 } },
+                              { { quad_right, quad_top }, { 1, 0 } },
+                              { { quad_left, quad_top }, { 0, 0 } } };
+std::vector<uint32_t> quad_idx{ 0, 1, 2, 2, 3, 0 };
 
 namespace mg1
 {
@@ -109,25 +127,54 @@ namespace mg1
 
     // create children layers
     {
-      m_children.emplace_back(new GuiLayer());
-      m_children.emplace_back(new ObjectLayer(m_scene.get()));
+      m_gui_layer    = std::unique_ptr<Layer>(new GuiLayer());
+      m_object_layer = std::unique_ptr<Layer>(new ObjectLayer(m_scene.get()));
     }
   }
 
   void CadLayer::pre_update(float dt)
   {
-    for (auto& child : m_children)
-    {
-      child->pre_update(dt);
-    }
+    m_gui_layer->pre_update(dt);
+    m_object_layer->pre_update(dt);
   }
 
   void CadLayer::update(float dt)
   {
-    for (auto& child : m_children)
+    if (EspGui::m_use_gui)
     {
-      child->update(dt);
+      EspGui::new_frame();
+      ImGui::SetNextWindowBgAlpha(0.f);
+      EspGui::begin(ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+                    ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+      ImGui::SetWindowPos(ImVec2(0, 0));
+      ImGui::SetWindowSize(ImGui::GetIO().DisplaySize);
+
+      // Top menu bar
+      if (ImGui::BeginMenuBar())
+      {
+        if (ImGui::BeginMenu("File")) { ImGui::EndMenu(); }
+        //      if (ImGui::BeginMenu("View"))
+        //      {
+        //        ImGui::MenuItem("Show Demo Window", nullptr, &show_demo_window);
+        //        ImGui::EndMenu();
+        //      }
+        ImGui::EndMenuBar();
+      }
+
+      ImGui::BeginChild("Gui", WindowConstants::gui_win_size, ImGuiChildFlags_Border, ImGuiWindowFlags_NoTitleBar);
+      m_gui_layer->update(dt);
+      ImGui::EndChild();
+
+      ImGui::SameLine(0.f, WindowConstants::gui_scene_splitter_size);
+
+      ImGui::BeginChild("Scene", WindowConstants::scene_win_size, ImGuiChildFlags_Border, ImGuiWindowFlags_NoTitleBar);
+      ImGui::EndChild();
+
+      EspGui::end();
+      EspGui::end_frame();
     }
+
+    m_object_layer->update(dt);
 
     handle_keyboard_input(dt);
 
@@ -188,18 +235,14 @@ namespace mg1
 
   void CadLayer::post_update(float dt)
   {
-    for (auto& child : m_children)
-    {
-      child->post_update(dt);
-    }
+    m_gui_layer->post_update(dt);
+    m_object_layer->post_update(dt);
   }
 
   void CadLayer::handle_event(esp::Event& event, float dt)
   {
-    for (auto& child : m_children)
-    {
-      child->handle_event(event, dt);
-    }
+    m_gui_layer->handle_event(event, dt);
+    m_object_layer->handle_event(event, dt);
 
     Event::try_handler<MouseMovedEvent>(event, ESP_BIND_EVENT_FOR_FUN(CadLayer::mouse_moved_event_handler, dt));
     Event::try_handler<GuiSelectableChangedEvent>(
