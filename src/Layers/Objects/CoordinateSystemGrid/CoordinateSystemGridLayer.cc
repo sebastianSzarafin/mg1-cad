@@ -1,9 +1,5 @@
 #include "CoordinateSystemGridLayer.hh"
-#include "GridComponent.hh"
 #include "Utils/Constants.hh"
-
-#define GRID_THRESHOLD 30
-#define GRID_SCALE     3
 
 namespace mg1
 {
@@ -18,6 +14,7 @@ namespace mg1
       m_shader = ShaderSystem::acquire("Shaders/Layers/Objects/CoordinateSystemGridLayer/shader");
       m_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
       m_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
+      m_shader->enable_alpha_blending();
       m_shader->set_rasterizer_settings({ .m_polygon_mode = ESP_POLYGON_MODE_LINE, .m_cull_mode = ESP_CULL_MODE_NONE });
       m_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT, EspCompareOp::ESP_COMPARE_OP_LESS);
       m_shader->set_vertex_layouts({ GridInit::S_MODEL_PARAMS.get_vertex_layouts() });
@@ -25,7 +22,8 @@ namespace mg1
       m_shader->build_worker();
     }
 
-    create_coordinate_system_grid();
+    create_grid({ 30, 3, { 1, 1, 1 }, 0 });
+    create_grid({ 400, .25f, { .25f, .25f, .25f }, -.001f });
   }
 
   void CoordinateSystemGridLayer::update(float dt) {}
@@ -46,23 +44,23 @@ namespace mg1
     return true;
   }
 
-  void CoordinateSystemGridLayer::create_coordinate_system_grid()
+  void CoordinateSystemGridLayer::create_grid(GridComponentParams params)
   {
     auto entity = m_scene->create_entity();
 
     entity->add_component<GridComponent>(entity->get_id());
-    auto& cursor = entity->get_component<GridComponent>();
+    auto& grid = entity->get_component<GridComponent>();
 
-    auto [vertices, indices] = GridComponent::construct();
+    auto [vertices, indices] = GridComponent::construct(params);
     auto model               = std::make_shared<Model>(vertices,
                                          indices,
                                          std::vector<std::shared_ptr<EspTexture>>{},
-                                         CursorInit::S_MODEL_PARAMS);
+                                         GridInit::S_MODEL_PARAMS);
     entity->add_component<ModelComponent>(model, m_shader);
 
-    cursor.get_node()->attach_entity(entity);
+    grid.get_node()->attach_entity(entity);
 
-    m_scene->get_root().add_child(cursor.get_node());
+    m_scene->get_root().add_child(grid.get_node());
   }
 
   void CoordinateSystemGridLayer::push_grid()

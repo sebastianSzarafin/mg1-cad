@@ -3,6 +3,7 @@
 
 #include "Espert.hh"
 #include "Events/Gui/GuiEvents.hh"
+#include "GridComponent.hh"
 
 using namespace esp;
 
@@ -24,7 +25,7 @@ namespace mg1
    private:
     bool gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event);
 
-    void create_coordinate_system_grid();
+    void create_grid(GridComponentParams params);
     void push_grid();
     void pop_grid();
   };

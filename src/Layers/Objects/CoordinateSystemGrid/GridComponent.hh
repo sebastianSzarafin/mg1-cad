@@ -8,12 +8,20 @@ using namespace esp;
 
 namespace mg1
 {
+  struct GridComponentParams
+  {
+    int m_threshold;
+    float m_scale;
+    glm::vec3 m_color;
+    float m_y;
+  };
+
   class GridComponent : public IComponent
   {
    public:
     GridComponent(uint32_t id);
 
-    static std::tuple<std::vector<Vertex>, std::vector<uint32_t>> construct();
+    static std::tuple<std::vector<Vertex>, std::vector<uint32_t>> construct(GridComponentParams params);
   };
 } // namespace mg1
 
