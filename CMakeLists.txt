@@ -36,6 +36,8 @@ file(GLOB_RECURSE GLSL_SOURCE_FILES
         "${PROJECT_SOURCE_DIR}/resources/Shaders/*.frag"
         "${PROJECT_SOURCE_DIR}/resources/Shaders/*.vert"
         "${PROJECT_SOURCE_DIR}/resources/Shaders/*.geom"
+        "${PROJECT_SOURCE_DIR}/resources/Shaders/*.tesc"
+        "${PROJECT_SOURCE_DIR}/resources/Shaders/*.tese"
         )
 
 set(GLSLANG ${CMAKE_CURRENT_BINARY_DIR}/espert-core/bin/glslang)

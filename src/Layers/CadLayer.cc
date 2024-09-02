@@ -22,6 +22,16 @@ std::vector<QuadVertex> quad{ { { quad_left, quad_bottom }, { 0, 1 } },
                               { { quad_left, quad_top }, { 0, 0 } } };
 std::vector<uint32_t> quad_idx{ 0, 1, 2, 2, 3, 0 };
 
+struct ExampleVertex
+{
+  glm::vec3 position;
+};
+
+std::shared_ptr<EspShader> shader;
+std::unique_ptr<EspUniformManager> uniform_manager;
+std::vector<ExampleVertex> vertices{ { { -1, 2, 0 } }, { { 1, 2, 0 } }, { { 1, 4, 0 } }, { { -1, 4, 0 } } };
+std::unique_ptr<EspVertexBuffer> vertex_buffer;
+
 namespace mg1
 {
   CadLayer::CadLayer()
@@ -130,6 +140,28 @@ namespace mg1
       m_gui_layer    = std::unique_ptr<Layer>(new GuiLayer());
       m_object_layer = std::unique_ptr<Layer>(new ObjectLayer(m_scene.get()));
     }
+
+    // create tesselation test
+    {
+      auto uniform_meta_data = EspUniformMetaData::create();
+      uniform_meta_data->establish_descriptor_set();
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_ALL_STAGES, sizeof(glm::mat4));
+
+      shader = ShaderSystem::acquire("Shaders/TesselationTest/shader");
+      shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
+      shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
+      shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT, EspCompareOp::ESP_COMPARE_OP_LESS);
+      shader->set_vertex_layouts({ PointInit::S_MODEL_PARAMS.get_vertex_layouts() });
+      shader->set_worker_layout(std::move(uniform_meta_data));
+      shader->set_rasterizer_settings({ .m_polygon_mode = ESP_POLYGON_MODE_LINE, .m_cull_mode = ESP_CULL_MODE_NONE });
+      shader->set_input_assembly_settings({ .m_primitive_topology = ESP_PRIMITIVE_TOPOLOGY_PATCH_LIST });
+      shader->build_worker();
+
+      uniform_manager = shader->create_uniform_manager();
+      uniform_manager->build();
+
+      vertex_buffer = EspVertexBuffer::create(vertices.data(), sizeof(ExampleVertex), vertices.size());
+    }
   }
 
   void CadLayer::pre_update(float dt)
@@ -190,6 +222,13 @@ namespace mg1
     {
       update_camera_on_scene(camera->get_projection(), camera->get_view());
       m_scene->draw();
+
+      shader->attach();
+      vertex_buffer->attach();
+      auto vp = camera->get_projection() * camera->get_view();
+      uniform_manager->update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &vp);
+      uniform_manager->attach();
+      EspJob::draw(vertices.size());
     }
     m_scene_render.m_plan->end_plan();
     m_scene_render.m_depth_block->clear();
