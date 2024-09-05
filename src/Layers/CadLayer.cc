@@ -385,11 +385,18 @@ namespace mg1
     m_scene->get_root().act(
         [&projection, &view](Node* node)
         {
-          auto model = node->get_entity()->try_get_component<ModelComponent>();
+          auto entity = node->get_entity();
+          auto model  = entity->try_get_component<ModelComponent>();
           if (model)
           {
             auto& uniform_manager = model->get_uniform_manager();
-            glm::mat4 mvp         = projection * view * node->get_model_mat();
+            glm::mat4 mvp         = projection * view;
+            if (entity->has_component<CursorComponent>())
+            {
+              auto cursor = entity->get_component<CursorComponent>();
+              mvp         = glm::translate(mvp, cursor.get_position());
+            }
+            else { mvp *= node->get_model_mat(); }
             uniform_manager.update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
           }
         });
