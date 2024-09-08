@@ -15,7 +15,7 @@ namespace mg1
     static ObjectFactory* s_instance;
 
     std::shared_ptr<EspShader> m_object_shader;
-    std::shared_ptr<EspShader> m_spline_shader;
+    std::shared_ptr<EspShader> m_c0_spline_shader;
     std::shared_ptr<EspShader> m_c2_spline_shader;
 
     Scene* m_scene;
@@ -30,7 +30,7 @@ namespace mg1
     static TorusComponent& create_torus(glm::vec3 position = { 0, 0, 0 });
     static PointComponent& create_point(glm::vec3 position = { 0, 0, 0 });
     static PointComponent& create_bernstein_point(glm::vec3 position = { 0, 0, 0 });
-    static SplineComponent& create_spline();
+    static C0SplineComponent& create_c0_spline();
     static C2SplineComponent& create_c2_spline();
     static C2InterpolationSplineComponent& create_c2_interpolation_spline();
 

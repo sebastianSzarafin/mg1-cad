@@ -1,5 +1,5 @@
-#ifndef ESPERT_SANDBOX_SPLINELAYER_HH
-#define ESPERT_SANDBOX_SPLINELAYER_HH
+#ifndef ESPERT_SANDBOX_C0SPLINELAYER_HH
+#define ESPERT_SANDBOX_C0SPLINELAYER_HH
 
 #include "Espert.hh"
 #include "Events/Gui/GuiEvents.hh"
@@ -9,13 +9,13 @@ using namespace esp;
 
 namespace mg1
 {
-  class SplineLayer : public Layer
+  class C0SplineLayer : public Layer
   {
    private:
     Scene* m_scene;
 
    public:
-    SplineLayer(Scene* scene);
+    C0SplineLayer(Scene* scene);
 
     virtual void pre_update(float dt) override;
     virtual void update(float dt) override;
@@ -30,4 +30,4 @@ namespace mg1
   };
 } // namespace mg1
 
-#endif // ESPERT_SANDBOX_SPLINELAYER_HH
+#endif // ESPERT_SANDBOX_C0SPLINELAYER_HH

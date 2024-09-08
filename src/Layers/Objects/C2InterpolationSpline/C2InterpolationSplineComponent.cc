@@ -6,13 +6,13 @@ namespace mg1
   C2InterpolationSplineComponent::C2InterpolationSplineComponent(uint32_t id,
                                                                  Scene* scene,
                                                                  std::vector<PointComponent> control_points) :
-      SplineComponent(id, scene)
+      C0SplineComponent(id, scene)
   {
     sort_control_points(control_points);
 
-    m_info = std::make_shared<SplineInfo>(m_id,
-                                          "C2 interpolation spline " + std::to_string(m_id),
-                                          create_point_infos(control_points));
+    m_info = std::make_shared<C0SplineInfo>(m_id,
+                                            "C2 interpolation spline " + std::to_string(m_id),
+                                            create_point_infos(control_points));
 
     m_control_points = create_control_points(control_points);
 
@@ -55,11 +55,14 @@ namespace mg1
     return ubo;
   }
 
-  void C2InterpolationSplineComponent::handle_event(ObjectRemovedEvent& event) { SplineComponent::handle_event(event); }
+  void C2InterpolationSplineComponent::handle_event(ObjectRemovedEvent& event)
+  {
+    C0SplineComponent::handle_event(event);
+  }
 
   void C2InterpolationSplineComponent::handle_event(GuiCheckboxChangedEvent& event)
   {
-    SplineComponent::handle_event(event);
+    C0SplineComponent::handle_event(event);
   }
 
   std::vector<Vertex> C2InterpolationSplineComponent::create_bernstein_vertices()

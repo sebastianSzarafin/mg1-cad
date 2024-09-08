@@ -118,7 +118,7 @@ namespace mg1
 
   inline int PointInfo::s_selected_index = -1;
 
-  struct SplineInfo : public ObjectInfo
+  struct C0SplineInfo : public ObjectInfo
   {
    private:
     std::shared_ptr<GuiCheckbox> m_control_line_checkbox;
@@ -128,7 +128,7 @@ namespace mg1
 
     bool m_dirty{ false };
 
-    SplineInfo(uint32_t id, const std::string& name, std::vector<PointInfo*> control_points) :
+    C0SplineInfo(uint32_t id, const std::string& name, std::vector<PointInfo*> control_points) :
         ObjectInfo(id, name), m_control_points{ control_points }
     {
       m_control_line_checkbox = std::make_shared<GuiCheckbox>(GuiLabel::control_line_checkbox, false);
@@ -167,14 +167,14 @@ namespace mg1
     }
   };
 
-  struct C2SplineInfo : public SplineInfo
+  struct C2SplineInfo : public C0SplineInfo
   {
    private:
     std::shared_ptr<GuiRadioButtons> m_spline_base_radio_buttons;
 
    public:
     C2SplineInfo(uint32_t id, const std::string& name, std::vector<PointInfo*> control_points) :
-        SplineInfo(id, name, control_points)
+        C0SplineInfo(id, name, control_points)
     {
       m_spline_base_radio_buttons =
           std::make_shared<GuiRadioButtons>(GuiLabel::m_spline_base_radio_buttons,
@@ -184,7 +184,7 @@ namespace mg1
 
     inline void render() override
     {
-      SplineInfo::render();
+      C0SplineInfo::render();
 
       ImGui::Text("Spline base: ");
       m_spline_base_radio_buttons->render();

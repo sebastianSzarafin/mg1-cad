@@ -1,5 +1,5 @@
-#ifndef ESPERT_SANDBOX_SPLINECOMPONENT_HH
-#define ESPERT_SANDBOX_SPLINECOMPONENT_HH
+#ifndef ESPERT_SANDBOX_C0SPLINECOMPONENT_HH
+#define ESPERT_SANDBOX_C0SPLINECOMPONENT_HH
 
 #include "Espert.hh"
 #include "Interfaces/Interfaces.hh"
@@ -16,19 +16,19 @@ namespace mg1
     alignas(16) glm::vec3 m_spline_color;
   };
 
-  class SplineComponent : public IComponent, public IEventable
+  class C0SplineComponent : public IComponent, public IEventable
   {
    protected:
-    std::shared_ptr<SplineInfo> m_info;
+    std::shared_ptr<C0SplineInfo> m_info;
 
     std::vector<uint32_t> m_control_points{};
 
     bool m_display_control_line{ false };
 
    public:
-    SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points);
-    SplineComponent(uint32_t id, Scene* scene);
-    ~SplineComponent() = default;
+    C0SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points);
+    C0SplineComponent(uint32_t id, Scene* scene);
+    ~C0SplineComponent() = default;
 
     virtual std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
     virtual std::vector<uint32_t> get_spline_indices(uint32_t vertex_count);
@@ -36,7 +36,7 @@ namespace mg1
     virtual void push_back(PointComponent& point);
     virtual void set_dirty_flag();
 
-    inline SplineInfo* get_info() { return m_info.get(); }
+    inline C0SplineInfo* get_info() { return m_info.get(); }
     inline bool display_control_line() const { return m_display_control_line; }
 
     virtual void handle_event(ObjectRemovedEvent& event);
@@ -51,4 +51,4 @@ namespace mg1
   };
 } // namespace mg1
 
-#endif // ESPERT_SANDBOX_SPLINECOMPONENT_HH
+#endif // ESPERT_SANDBOX_C0SPLINECOMPONENT_HH

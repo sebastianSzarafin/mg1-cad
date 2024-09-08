@@ -30,8 +30,8 @@ namespace mg1
     m_create_torus_button->set_max_width();
     m_create_point_button = std::make_unique<GuiToggleButton>(GuiLabel::create_point_button);
     m_create_point_button->set_max_width();
-    m_create_spline_button = std::make_unique<GuiButton>(GuiLabel::create_spline_button);
-    m_create_spline_button->set_max_width();
+    m_create_c0_spline_button = std::make_unique<GuiButton>(GuiLabel::create_c0_spline_button);
+    m_create_c0_spline_button->set_max_width();
     m_create_c2_spline_button = std::make_unique<GuiButton>(GuiLabel::create_c2_spline_button);
     m_create_c2_spline_button->set_max_width();
     m_create_c2_interpolation_spline_button =
@@ -81,7 +81,7 @@ namespace mg1
     m_objects_list_box->render();
     m_create_torus_button->render();
     m_create_point_button->render();
-    m_create_spline_button->render();
+    m_create_c0_spline_button->render();
     m_create_c2_spline_button->render();
     m_create_c2_interpolation_spline_button->render();
   }

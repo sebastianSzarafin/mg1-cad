@@ -38,7 +38,7 @@ namespace mg1
     static bool first_loop = true;
     if (first_loop) // initial scene
     {
-      // spline
+      // c0 spline
       ObjectFactory::create_point({ 3, 1, -4 });
       ObjectFactory::create_point({ 2, 1, -2 });
       ObjectFactory::create_point({ 1, 1, -4 });

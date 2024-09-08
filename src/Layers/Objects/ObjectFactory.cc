@@ -25,7 +25,7 @@ namespace mg1
       m_object_shader->build_worker();
     }
 
-    // create spline shader
+    // create c0 spline shader
     {
       auto uniform_meta_data = EspUniformMetaData::create();
       uniform_meta_data->establish_descriptor_set();
@@ -33,17 +33,18 @@ namespace mg1
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_GEOM_STAGE, sizeof(int));
       uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(SplineColorUbo));
 
-      m_spline_shader = ShaderSystem::acquire("Shaders/Layers/Objects/Spline/shader");
-      m_spline_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
-      m_spline_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
-      m_spline_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT, EspCompareOp::ESP_COMPARE_OP_LESS);
-      m_spline_shader->set_vertex_layouts({ SplineInit::S_MODEL_PARAMS.get_vertex_layouts() });
-      m_spline_shader->set_worker_layout(std::move(uniform_meta_data));
-      m_spline_shader->set_rasterizer_settings(
+      m_c0_spline_shader = ShaderSystem::acquire("Shaders/Layers/Objects/C0Spline/shader");
+      m_c0_spline_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
+      m_c0_spline_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
+      m_c0_spline_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT,
+                                            EspCompareOp::ESP_COMPARE_OP_LESS);
+      m_c0_spline_shader->set_vertex_layouts({ SplineInit::S_MODEL_PARAMS.get_vertex_layouts() });
+      m_c0_spline_shader->set_worker_layout(std::move(uniform_meta_data));
+      m_c0_spline_shader->set_rasterizer_settings(
           { .m_polygon_mode = ESP_POLYGON_MODE_POINT, .m_cull_mode = ESP_CULL_MODE_NONE });
-      m_spline_shader->set_input_assembly_settings(
+      m_c0_spline_shader->set_input_assembly_settings(
           { .m_primitive_topology = ESP_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY });
-      m_spline_shader->build_worker();
+      m_c0_spline_shader->build_worker();
     }
 
     // create c2 spline shader
@@ -143,7 +144,7 @@ namespace mg1
     return point;
   }
 
-  SplineComponent& ObjectFactory::create_spline()
+  C0SplineComponent& ObjectFactory::create_c0_spline()
   {
     std::vector<PointComponent> control_points{};
     for (auto&& [entity, point] : s_instance->m_scene->get_view<PointComponent>())
@@ -153,15 +154,15 @@ namespace mg1
 
     auto entity = s_instance->m_scene->create_entity();
 
-    entity->add_component<SplineComponent>(entity->get_id(), s_instance->m_scene, control_points);
-    auto& spline = entity->get_component<SplineComponent>();
+    entity->add_component<C0SplineComponent>(entity->get_id(), s_instance->m_scene, control_points);
+    auto& spline = entity->get_component<C0SplineComponent>();
 
     auto [vertices, indices] = spline.reconstruct();
     auto model               = std::make_shared<Model>(vertices,
                                          indices,
                                          std::vector<std::shared_ptr<EspTexture>>{},
                                          SplineInit::S_MODEL_PARAMS);
-    entity->add_component<ModelComponent>(model, s_instance->m_spline_shader);
+    entity->add_component<ModelComponent>(model, s_instance->m_c0_spline_shader);
 
     spline.get_node()->attach_entity(entity);
 

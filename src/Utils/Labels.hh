@@ -21,7 +21,7 @@ namespace mg1
     static const std::string action_scale_oz;
     static const std::string create_torus_button;
     static const std::string create_point_button;
-    static const std::string create_spline_button;
+    static const std::string create_c0_spline_button;
     static const std::string create_c2_spline_button;
     static const std::string create_c2_interpolation_spline_button;
     static const std::string remove_object_button;
@@ -50,7 +50,7 @@ namespace mg1
   inline const std::string GuiLabel::action_scale_oz                       = "Scale OZ";
   inline const std::string GuiLabel::create_torus_button                   = "Create torus";
   inline const std::string GuiLabel::create_point_button                   = "Create point";
-  inline const std::string GuiLabel::create_spline_button                  = "Create spline";
+  inline const std::string GuiLabel::create_c0_spline_button               = "Create C0 spline";
   inline const std::string GuiLabel::create_c2_spline_button               = "Create C2 spline";
   inline const std::string GuiLabel::create_c2_interpolation_spline_button = "Create C2 interpolation spline";
   inline const std::string GuiLabel::remove_object_button                  = "Remove";

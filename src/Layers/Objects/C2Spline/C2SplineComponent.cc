@@ -4,7 +4,7 @@
 namespace mg1
 {
   C2SplineComponent::C2SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points) :
-      SplineComponent(id, scene)
+      C0SplineComponent(id, scene)
   {
     sort_control_points(control_points);
 
@@ -64,14 +64,14 @@ namespace mg1
 
   void C2SplineComponent::push_back(mg1::PointComponent& point)
   {
-    SplineComponent::push_back(point);
+    C0SplineComponent::push_back(point);
 
     recreate_bernstein_control_points();
   }
 
   void C2SplineComponent::set_dirty_flag()
   {
-    SplineComponent::set_dirty_flag();
+    C0SplineComponent::set_dirty_flag();
 
     if (!m_info->m_dirty)
     {
@@ -104,7 +104,7 @@ namespace mg1
   {
     auto prev_size = m_control_points.size();
 
-    SplineComponent::handle_event(event);
+    C0SplineComponent::handle_event(event);
 
     if (prev_size != m_control_points.size()) // control point removed
     {
@@ -112,7 +112,7 @@ namespace mg1
     }
   }
 
-  void C2SplineComponent::handle_event(GuiCheckboxChangedEvent& event) { SplineComponent::handle_event(event); }
+  void C2SplineComponent::handle_event(GuiCheckboxChangedEvent& event) { C0SplineComponent::handle_event(event); }
 
   void C2SplineComponent::handle_event(GuiInputIntChangedEvent& event)
   {

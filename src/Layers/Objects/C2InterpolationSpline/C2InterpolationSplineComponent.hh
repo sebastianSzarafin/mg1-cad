@@ -1,7 +1,7 @@
 #ifndef ESPERT_SANDBOX_C2INTERPOLATIONSPLINECOMPONENT_HH
 #define ESPERT_SANDBOX_C2INTERPOLATIONSPLINECOMPONENT_HH
 
-#include "Layers/Objects/Spline/SplineComponent.hh"
+#include "Layers/Objects/C0Spline/C0SplineComponent.hh"
 
 namespace mg1
 {
@@ -12,7 +12,7 @@ namespace mg1
     alignas(16) std::array<glm::vec4, ObjectConstants::max_bezier_points> m_bezier_points;
   };
 
-  class C2InterpolationSplineComponent : public SplineComponent
+  class C2InterpolationSplineComponent : public C0SplineComponent
   {
    private:
     std::vector<float> m_control_points_diff{};
