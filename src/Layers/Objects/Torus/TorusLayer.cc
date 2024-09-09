@@ -1,6 +1,7 @@
 #include "TorusLayer.hh"
-#include "Layers/Objects/Components.hh"
+#include "Layers/Objects/Cursor/CursorComponent.hh"
 #include "Layers/Objects/ObjectFactory.hh"
+#include "Layers/Objects/Torus/TorusComponent.hh"
 
 namespace mg1
 {

@@ -1,4 +1,7 @@
 #include "ObjectSelector.hh"
+#include "Cursor/CursorComponent.hh"
+#include "Point/PointComponent.hh"
+#include "Torus/TorusComponent.hh"
 
 namespace mg1
 {

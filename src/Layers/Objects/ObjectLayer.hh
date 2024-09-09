@@ -4,7 +4,6 @@
 #include "Espert.hh"
 #include "Events/Gui/GuiEvents.hh"
 #include "Events/Objects/ObjectEvents.hh"
-#include "Layers/Objects/Components.hh"
 #include "Layers/Objects/Layers.hh"
 #include "ObjectFactory.hh"
 #include "ObjectSelector.hh"

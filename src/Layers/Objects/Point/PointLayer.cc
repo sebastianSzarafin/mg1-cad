@@ -1,6 +1,7 @@
 #include "PointLayer.hh"
-#include "Layers/Objects/Components.hh"
+#include "Layers/Objects/Cursor/CursorComponent.hh"
 #include "Layers/Objects/ObjectFactory.hh"
+#include "Layers/Objects/Point/PointComponent.hh"
 
 namespace mg1
 {

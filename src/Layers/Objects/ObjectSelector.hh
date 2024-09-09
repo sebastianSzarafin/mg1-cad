@@ -1,8 +1,8 @@
 #ifndef ESPERT_SANDBOX_OBJECTSELECTOR_HH
 #define ESPERT_SANDBOX_OBJECTSELECTOR_HH
 
-#include "Components.hh"
 #include "Espert.hh"
+#include "Interfaces/Interfaces.hh"
 
 using namespace esp;
 
