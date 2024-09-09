@@ -20,6 +20,7 @@ namespace mg1
     virtual ~GuiField() {}
 
     inline std::string get_label() { return m_label; }
+    inline T get_value() { return m_value; }
 
     virtual void render() = 0;
     virtual void create_and_post_event() {}

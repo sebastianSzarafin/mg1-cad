@@ -1,4 +1,5 @@
 #include "C2InterpolationSplineComponent.hh"
+#include "Layers/Objects/ObjectFactory.hh"
 
 namespace mg1
 {
@@ -49,7 +50,7 @@ namespace mg1
     ubo.m_display_control_line = display_control_line();
     for (auto i = 0; i < m_control_points.size(); i++)
     {
-      ubo.m_bezier_points[i] = { get_control_point(m_control_points[i]).get_position(), 1.f };
+      ubo.m_bezier_points[i] = { ObjectFactory::get_control_point(m_control_points[i]).get_position(), 1.f };
     }
 
     return ubo;
@@ -77,8 +78,8 @@ namespace mg1
     {
       vertices.reserve(4);
 
-      auto& cp0 = get_control_point(m_control_points[0]);
-      auto& cp1 = get_control_point(m_control_points[1]);
+      auto& cp0 = ObjectFactory::get_control_point(m_control_points[0]);
+      auto& cp1 = ObjectFactory::get_control_point(m_control_points[1]);
 
       vertices.emplace_back(cp0.get_position());
       vertices.emplace_back(cp0.get_position());
@@ -94,8 +95,8 @@ namespace mg1
 
     for (int i = 0; i < n; i++)
     {
-      auto& cp_i  = get_control_point(m_control_points[i]);
-      auto& cp_ii = get_control_point(m_control_points[i + 1]);
+      auto& cp_i  = ObjectFactory::get_control_point(m_control_points[i]);
+      auto& cp_ii = ObjectFactory::get_control_point(m_control_points[i + 1]);
 
       auto dist                = glm::length(cp_ii.get_position() - cp_i.get_position());
       m_control_points_diff[i] = std::abs(dist) > eps ? dist : eps;
@@ -110,13 +111,13 @@ namespace mg1
 
     for (auto i = 0; i < n; i++)
     {
-      auto& p_i = get_control_point(m_control_points[i]);
+      auto& p_i = ObjectFactory::get_control_point(m_control_points[i]);
 
       m_control_points_pow[i * 4 + 0] = p_i.get_position();
       m_control_points_pow[i * 4 + 2] = c_params[i];
     }
 
-    m_control_points_pow[n * 4] = get_control_point(m_control_points[n]).get_position();
+    m_control_points_pow[n * 4] = ObjectFactory::get_control_point(m_control_points[n]).get_position();
 
     for (auto i = 1; i < n; i++)
     {
@@ -251,9 +252,9 @@ namespace mg1
 
   glm::vec3 C2InterpolationSplineComponent::equation_result(uint32_t point_idx)
   {
-    auto& p0 = get_control_point(m_control_points[point_idx]);
-    auto& p1 = get_control_point(m_control_points[point_idx + 1]);
-    auto& p2 = get_control_point(m_control_points[point_idx + 2]);
+    auto& p0 = ObjectFactory::get_control_point(m_control_points[point_idx]);
+    auto& p1 = ObjectFactory::get_control_point(m_control_points[point_idx + 1]);
+    auto& p2 = ObjectFactory::get_control_point(m_control_points[point_idx + 2]);
 
     return 3.f / (m_control_points_diff[point_idx] + m_control_points_diff[point_idx + 1]) *
         ((p2.get_position() - p1.get_position()) / m_control_points_diff[point_idx + 1] -

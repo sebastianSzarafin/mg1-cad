@@ -30,6 +30,7 @@ namespace mg1
     std::unique_ptr<GuiButton> m_create_c0_spline_button;
     std::unique_ptr<GuiButton> m_create_c2_spline_button;
     std::unique_ptr<GuiButton> m_create_c2_interpolation_spline_button;
+    std::unique_ptr<GuiSurfacePopupModal> m_create_surface_popup_modal;
 
    public:
     GuiLayer();

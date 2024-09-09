@@ -2,10 +2,12 @@
 #define ESPERT_SANDBOX_GUIFIELDS_HH
 
 #include "GuiCheckbox.hh"
+#include "GuiDragFloat.hh"
 #include "GuiField.hh"
 #include "GuiFloatSlider.hh"
 #include "GuiInputFloat.hh"
 #include "GuiInputInt.hh"
+#include "GuiPopupModal.hh"
 #include "GuiRadioButtons.hh"
 #include "GuiSelectableCombo.hh"
 #include "GuiSelectableListBox.hh"

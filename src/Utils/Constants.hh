@@ -45,6 +45,13 @@ namespace mg1
 
   inline const esp::ModelParams SplineInit::S_MODEL_PARAMS = { .m_position = true };
 
+  struct SurfaceInit
+  {
+    static const esp::ModelParams S_MODEL_PARAMS;
+  };
+
+  inline const esp::ModelParams SurfaceInit::S_MODEL_PARAMS = { .m_position = true };
+
   struct ObjectConstants
   {
     static const glm::vec3 default_color;

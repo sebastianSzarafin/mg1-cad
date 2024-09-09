@@ -37,6 +37,7 @@ namespace mg1
     m_create_c2_interpolation_spline_button =
         std::make_unique<GuiButton>(GuiLabel::create_c2_interpolation_spline_button);
     m_create_c2_interpolation_spline_button->set_max_width();
+    m_create_surface_popup_modal = std::make_unique<GuiSurfacePopupModal>(ImGuiWindowFlags_AlwaysAutoResize);
   }
 
   void GuiLayer::update(float dt)
@@ -84,6 +85,12 @@ namespace mg1
     m_create_c0_spline_button->render();
     m_create_c2_spline_button->render();
     m_create_c2_interpolation_spline_button->render();
+    if (ImGui::Button(GuiLabel::m_create_c0_surface_button.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+    {
+      m_create_surface_popup_modal->set_continuity(SurfaceContinuity::C0);
+      m_create_surface_popup_modal->open();
+    }
+    m_create_surface_popup_modal->render();
   }
 
   void GuiLayer::handle_event(esp::Event& event, float dt)
@@ -123,7 +130,8 @@ namespace mg1
       return;
     }
 
-    bool window_hovered = ImGui::IsWindowHovered() || ImGui::IsWindowHovered(ImGuiHoveredFlags_RootWindow);
+    bool window_hovered =
+        ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows) || ImGui::IsWindowHovered(ImGuiHoveredFlags_RootWindow);
     // if (!window_hovered) { ImGui::SetMouseCursor(ImGuiMouseCursor_None); }
     if (m_mouse_state != window_hovered)
     {

@@ -23,8 +23,6 @@ namespace mg1
       GuiCheckboxChangedEvent e{ m_label, m_value };
       post_event(e);
     }
-
-    inline bool get_value() { return m_value; }
   };
 } // namespace mg1
 

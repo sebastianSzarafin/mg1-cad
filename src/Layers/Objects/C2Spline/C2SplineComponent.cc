@@ -24,7 +24,7 @@ namespace mg1
     {
       for (int i = 0; i < m_bernstein_control_points.size(); i++)
       {
-        auto& bernstein_point = get_control_point(m_bernstein_control_points[i]);
+        auto& bernstein_point = ObjectFactory::get_control_point(m_bernstein_control_points[i]);
         if (bernstein_point.moved()) { update_control_points_positions(i); }
       }
     }
@@ -35,7 +35,7 @@ namespace mg1
     {
       for (int i = 0; i < m_bernstein_control_points.size(); ++i)
       {
-        auto& bernstein_point = get_control_point(m_bernstein_control_points[i]);
+        auto& bernstein_point = ObjectFactory::get_control_point(m_bernstein_control_points[i]);
         bernstein_point.get_node()->set_translation(vertices[i + 2].m_position);
       }
     }
@@ -77,7 +77,7 @@ namespace mg1
     {
       for (auto& id : m_bernstein_control_points)
       {
-        auto& bernstein_point = get_control_point(id);
+        auto& bernstein_point = ObjectFactory::get_control_point(id);
         if (bernstein_point.moved())
         {
           m_info->m_dirty = true;
@@ -94,7 +94,7 @@ namespace mg1
     ubo.m_spline_base          = m_spline_base;
     for (auto i = 0; i < m_control_points.size(); i++)
     {
-      ubo.m_bezier_points[i] = { get_control_point(m_control_points[i]).get_position(), 1.f };
+      ubo.m_bezier_points[i] = { ObjectFactory::get_control_point(m_control_points[i]).get_position(), 1.f };
     }
 
     return ubo;
@@ -121,14 +121,14 @@ namespace mg1
 
   void C2SplineComponent::update_control_points_positions(int bernstein_point_idx)
   {
-    auto& bernstein_point = get_control_point(m_bernstein_control_points[bernstein_point_idx]);
+    auto& bernstein_point = ObjectFactory::get_control_point(m_bernstein_control_points[bernstein_point_idx]);
     bernstein_point_idx += 2;
     auto pos_diff         = bernstein_point.get_delta_position();
     auto bezier_point_idx = (bernstein_point_idx + 4) / 3;
 
-    auto& p0 = get_control_point(m_control_points[bezier_point_idx]);
-    auto& p1 = get_control_point(m_control_points[bezier_point_idx - 1]);
-    auto& p2 = get_control_point(m_control_points[bezier_point_idx + 1]);
+    auto& p0 = ObjectFactory::get_control_point(m_control_points[bezier_point_idx]);
+    auto& p1 = ObjectFactory::get_control_point(m_control_points[bezier_point_idx - 1]);
+    auto& p2 = ObjectFactory::get_control_point(m_control_points[bezier_point_idx + 1]);
 
     auto p0_pos = p0.get_position(); // closest
     auto p1_pos = p1.get_position(); // one before
@@ -162,7 +162,7 @@ namespace mg1
     {
       for (auto& point : m_control_points)
       {
-        vertices.emplace_back(get_control_point(point).get_position());
+        vertices.emplace_back(ObjectFactory::get_control_point(point).get_position());
       }
 
       return vertices;
@@ -170,9 +170,9 @@ namespace mg1
 
     vertices.reserve((m_control_points.size() - 4) * 3 + 4);
 
-    auto& cp0 = get_control_point(m_control_points[0]);
-    auto& cp1 = get_control_point(m_control_points[1]);
-    auto& cp2 = get_control_point(m_control_points[2]);
+    auto& cp0 = ObjectFactory::get_control_point(m_control_points[0]);
+    auto& cp1 = ObjectFactory::get_control_point(m_control_points[1]);
+    auto& cp2 = ObjectFactory::get_control_point(m_control_points[2]);
 
     glm::vec3 e = cp0.get_position();
     glm::vec3 f = cp1.get_position();
@@ -184,8 +184,8 @@ namespace mg1
 
     for (auto i = 2; i < m_control_points.size() - 2; i++)
     {
-      auto& cp_i  = get_control_point(m_control_points[i]);
-      auto& cp_ii = get_control_point(m_control_points[i + 1]);
+      auto& cp_i  = ObjectFactory::get_control_point(m_control_points[i]);
+      auto& cp_ii = ObjectFactory::get_control_point(m_control_points[i + 1]);
 
       f = 2.f / 3.f * cp_i.get_position() + 1.f / 3.f * cp_ii.get_position();
       e = (f + g) / 2.f;
@@ -196,8 +196,8 @@ namespace mg1
       if (i < m_control_points.size() - 3) { vertices.emplace_back(g); }
     }
 
-    g = get_control_point(m_control_points[m_control_points.size() - 2]).get_position();
-    e = get_control_point(m_control_points[m_control_points.size() - 1]).get_position();
+    g = ObjectFactory::get_control_point(m_control_points[m_control_points.size() - 2]).get_position();
+    e = ObjectFactory::get_control_point(m_control_points[m_control_points.size() - 1]).get_position();
 
     vertices.emplace_back(g);
     vertices.emplace_back(e);
@@ -209,7 +209,7 @@ namespace mg1
   {
     for (auto& id : m_bernstein_control_points)
     {
-      auto& bernstein_point = get_control_point(id);
+      auto& bernstein_point = ObjectFactory::get_control_point(id);
       ObjectFactory::remove_object(bernstein_point);
     }
     m_bernstein_control_points.clear();

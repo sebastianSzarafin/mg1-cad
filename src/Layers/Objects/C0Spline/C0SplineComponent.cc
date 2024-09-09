@@ -1,4 +1,5 @@
 #include "C0SplineComponent.hh"
+#include "Layers/Objects/ObjectFactory.hh"
 
 namespace mg1
 {
@@ -27,7 +28,7 @@ namespace mg1
     auto idx = 0;
     for (auto& point : m_control_points)
     {
-      vertices[idx++] = { get_control_point(point).get_position() };
+      vertices[idx++] = { ObjectFactory::get_control_point(point).get_position() };
     }
 
     m_info->m_dirty = false;
@@ -60,7 +61,7 @@ namespace mg1
   {
     for (auto& point : m_control_points)
     {
-      if (get_control_point(point).moved())
+      if (ObjectFactory::get_control_point(point).moved())
       {
         m_info->m_dirty = true;
         return;
@@ -126,10 +127,5 @@ namespace mg1
                    [](PointComponent& pc) { return pc.get_info(); });
 
     return std::move(infos);
-  }
-
-  PointComponent& C0SplineComponent::get_control_point(uint32_t id)
-  {
-    return m_scene->get_component<PointComponent>(id);
   }
 } // namespace mg1

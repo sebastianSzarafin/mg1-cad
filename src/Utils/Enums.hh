@@ -40,6 +40,18 @@ namespace mg1
     BSpline   = 1
   };
 
+  enum SurfaceType
+  {
+    Flat     = 0,
+    Cylinder = 1
+  };
+
+  enum SurfaceContinuity
+  {
+    C0 = 0,
+    C2 = 1
+  };
+
   enum class CursorType
   {
     Object = 0,

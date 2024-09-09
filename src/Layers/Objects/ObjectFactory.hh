@@ -17,6 +17,7 @@ namespace mg1
     std::shared_ptr<EspShader> m_object_shader;
     std::shared_ptr<EspShader> m_c0_spline_shader;
     std::shared_ptr<EspShader> m_c2_spline_shader;
+    std::shared_ptr<EspShader> m_surface_shader;
 
     Scene* m_scene;
     ObjectSelector* m_object_selector;
@@ -33,6 +34,9 @@ namespace mg1
     static C0SplineComponent& create_c0_spline();
     static C2SplineComponent& create_c2_spline();
     static C2InterpolationSplineComponent& create_c2_interpolation_spline();
+    static C0BezierSurfaceComponent& create_c0_bezier_surface(CreateSurfaceData data);
+
+    static PointComponent& get_control_point(uint32_t id);
 
     // ---------------------------------------- TEMPLATE FUNCTIONS ----------------------------------------
     template<typename ObjComponent> static void remove_object(ObjComponent obj)

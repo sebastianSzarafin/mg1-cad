@@ -8,5 +8,6 @@
 #include "Cursor/CursorLayer.hh"
 #include "Point/PointLayer.hh"
 #include "Torus/TorusLayer.hh"
+#include "C0BezierSurface/C0BezierSurfaceLayer.hh"
 
 #endif // ESPERT_SANDBOX_LAYERS_HH

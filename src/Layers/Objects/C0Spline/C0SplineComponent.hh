@@ -46,8 +46,6 @@ namespace mg1
     static void sort_control_points(std::vector<PointComponent>& control_points);
     static std::vector<uint32_t> create_control_points(std::vector<PointComponent>& control_points);
     static std::vector<PointInfo*> create_point_infos(std::vector<PointComponent>& control_points);
-
-    PointComponent& get_control_point(uint32_t id);
   };
 } // namespace mg1
 

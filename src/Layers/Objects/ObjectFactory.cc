@@ -68,6 +68,28 @@ namespace mg1
           { .m_primitive_topology = ESP_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY });
       m_c2_spline_shader->build_worker();
     }
+
+    // create bezier surface shader
+    {
+      auto uniform_meta_data = EspUniformMetaData::create();
+      uniform_meta_data->establish_descriptor_set();
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_ALL_STAGES, sizeof(glm::mat4));
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_FRAG_STAGE, sizeof(glm::vec3));
+      uniform_meta_data->establish_descriptor_set();
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_ALL_STAGES, sizeof(int) * 2);
+
+      m_surface_shader = ShaderSystem::acquire("Shaders/Layers/Objects/BezierSurface/shader");
+      m_surface_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
+      m_surface_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
+      m_surface_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT,
+                                          EspCompareOp::ESP_COMPARE_OP_LESS);
+      m_surface_shader->set_vertex_layouts({ SurfaceInit::S_MODEL_PARAMS.get_vertex_layouts() });
+      m_surface_shader->set_worker_layout(std::move(uniform_meta_data));
+      m_surface_shader->set_rasterizer_settings(
+          { .m_polygon_mode = ESP_POLYGON_MODE_LINE, .m_cull_mode = ESP_CULL_MODE_NONE });
+      m_surface_shader->set_input_assembly_settings({ .m_primitive_topology = ESP_PRIMITIVE_TOPOLOGY_PATCH_LIST });
+      m_surface_shader->build_worker();
+    }
   }
 
   std::unique_ptr<ObjectFactory> ObjectFactory::create(Scene* scene, ObjectSelector* object_selector)
@@ -223,5 +245,31 @@ namespace mg1
     s_instance->m_scene->get_root().add_child(spline.get_node());
 
     return spline;
+  }
+
+  C0BezierSurfaceComponent& ObjectFactory::create_c0_bezier_surface(CreateSurfaceData data)
+  {
+    auto entity = s_instance->m_scene->create_entity();
+
+    entity->add_component<C0BezierSurfaceComponent>(entity->get_id(), s_instance->m_scene, data);
+    auto& surface = entity->get_component<C0BezierSurfaceComponent>();
+
+    auto [vertices, indices] = surface.reconstruct();
+    auto model               = std::make_shared<Model>(vertices,
+                                         indices,
+                                         std::vector<std::shared_ptr<EspTexture>>{},
+                                         SurfaceInit::S_MODEL_PARAMS);
+    entity->add_component<ModelComponent>(model, s_instance->m_surface_shader, 0, 1, 2);
+
+    surface.get_node()->attach_entity(entity);
+
+    s_instance->m_scene->get_root().add_child(surface.get_node());
+
+    return surface;
+  }
+
+  PointComponent& ObjectFactory::get_control_point(uint32_t id)
+  {
+    return s_instance->m_scene->get_component<PointComponent>(id);
   }
 } // namespace mg1

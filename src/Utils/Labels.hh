@@ -24,6 +24,9 @@ namespace mg1
     static const std::string create_c0_spline_button;
     static const std::string create_c2_spline_button;
     static const std::string create_c2_interpolation_spline_button;
+    static const std::string m_create_c0_surface_button;
+    static const std::string m_surface_popup_modal_create_button;
+    static const std::string m_create_surface_popup_modal;
     static const std::string remove_object_button;
     static const std::string rename_object_button;
     static const std::string grid_checkbox;
@@ -53,6 +56,9 @@ namespace mg1
   inline const std::string GuiLabel::create_c0_spline_button               = "Create C0 spline";
   inline const std::string GuiLabel::create_c2_spline_button               = "Create C2 spline";
   inline const std::string GuiLabel::create_c2_interpolation_spline_button = "Create C2 interpolation spline";
+  inline const std::string GuiLabel::m_create_c0_surface_button            = "Create C0 surface";
+  inline const std::string GuiLabel::m_surface_popup_modal_create_button   = "Surface popup modal create button";
+  inline const std::string GuiLabel::m_create_surface_popup_modal          = "Bezier surface creator";
   inline const std::string GuiLabel::remove_object_button                  = "Remove";
   inline const std::string GuiLabel::rename_object_button                  = "Rename";
   inline const std::string GuiLabel::grid_checkbox                         = "Grid";
