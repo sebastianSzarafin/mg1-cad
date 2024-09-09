@@ -34,7 +34,7 @@ namespace mg1
     static C0SplineComponent& create_c0_spline();
     static C2SplineComponent& create_c2_spline();
     static C2InterpolationSplineComponent& create_c2_interpolation_spline();
-    static C0BezierSurfaceComponent& create_c0_bezier_surface(CreateSurfaceData data);
+    static C0BezierSurfaceComponent& create_c0_bezier_surface(CreateSurfaceData data, glm::vec3 position = { 0, 0, 0 });
 
     static PointComponent& get_control_point(uint32_t id);
 

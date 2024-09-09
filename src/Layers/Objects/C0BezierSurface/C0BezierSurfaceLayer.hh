@@ -14,6 +14,8 @@ namespace mg1
    private:
     Scene* m_scene;
 
+    bool m_set_cursor_pos_action_selected{ false };
+
    public:
     C0BezierSurfaceLayer(Scene* scene);
 
@@ -25,6 +27,9 @@ namespace mg1
    private:
     bool gui_button_clicked_event_handler(GuiSurfacePopupModalCreateButtonClickedEvent& event);
     bool gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event);
+    bool gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event);
+
+    glm::vec3 get_cursor_pos();
   };
 } // namespace mg1
 

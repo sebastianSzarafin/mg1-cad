@@ -34,6 +34,7 @@ namespace mg1
     virtual std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
     virtual void set_dirty_flag();
 
+    void translate(glm::vec3 position);
     void remove();
 
     inline C0BezierSurfaceInfo* get_info() { return m_info.get(); }

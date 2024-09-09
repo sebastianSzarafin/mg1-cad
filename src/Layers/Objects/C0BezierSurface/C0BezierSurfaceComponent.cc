@@ -39,6 +39,14 @@ namespace mg1
     }
   }
 
+  void C0BezierSurfaceComponent::translate(glm::vec3 position)
+  {
+    for (auto& id : m_control_points)
+    {
+      ObjectFactory::get_control_point(id).get_node()->translate(position);
+    }
+  }
+
   void C0BezierSurfaceComponent::remove()
   {
     for (auto& id : m_control_points)

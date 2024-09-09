@@ -52,17 +52,39 @@ namespace mg1
     Event::try_handler<GuiCheckboxChangedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::gui_checkbox_changed_event_handler));
+    Event::try_handler<GuiSelectableChangedEvent>(
+        event,
+        ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::gui_selectable_changed_event_handler));
   }
 
   bool C0BezierSurfaceLayer::gui_button_clicked_event_handler(GuiSurfacePopupModalCreateButtonClickedEvent& event)
   {
     if (event == GuiLabel::m_surface_popup_modal_create_button)
     {
-      ObjectFactory::create_c0_bezier_surface(event.get_data());
+      glm::vec3 position{ 0, 0, 0 };
+      if (m_set_cursor_pos_action_selected) { position = get_cursor_pos(); }
+      ObjectFactory::create_c0_bezier_surface(event.get_data(), position);
     }
 
     return false;
   }
 
   bool C0BezierSurfaceLayer::gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event) { return false; }
+
+  bool C0BezierSurfaceLayer::gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event)
+  {
+    if (event == GuiLabel::action_set_cursor_pos) { m_set_cursor_pos_action_selected = event.get_value(); }
+
+    return false;
+  }
+
+  glm::vec3 C0BezierSurfaceLayer::get_cursor_pos()
+  {
+    for (auto&& [entity, cursor] : m_scene->get_view<CursorComponent>())
+    {
+      if (cursor.is_type(CursorType::Mouse)) { return cursor.get_position(); }
+    }
+
+    return { 0, 0, 0 };
+  }
 } // namespace mg1

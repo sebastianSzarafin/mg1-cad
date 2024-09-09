@@ -247,12 +247,13 @@ namespace mg1
     return spline;
   }
 
-  C0BezierSurfaceComponent& ObjectFactory::create_c0_bezier_surface(CreateSurfaceData data)
+  C0BezierSurfaceComponent& ObjectFactory::create_c0_bezier_surface(CreateSurfaceData data, glm::vec3 position)
   {
     auto entity = s_instance->m_scene->create_entity();
 
     entity->add_component<C0BezierSurfaceComponent>(entity->get_id(), s_instance->m_scene, data);
     auto& surface = entity->get_component<C0BezierSurfaceComponent>();
+    surface.translate(position);
 
     auto [vertices, indices] = surface.reconstruct();
     auto model               = std::make_shared<Model>(vertices,
