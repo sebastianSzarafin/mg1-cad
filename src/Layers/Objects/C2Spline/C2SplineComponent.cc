@@ -114,6 +114,10 @@ namespace mg1
 
   void C2SplineComponent::handle_event(GuiCheckboxChangedEvent& event) { C0SplineComponent::handle_event(event); }
 
+  void C2SplineComponent::handle_event(CursorRotChangedEvent& event) { C0SplineComponent::handle_event(event); }
+
+  void C2SplineComponent::handle_event(CursorScaleChangedEvent& event) { C0SplineComponent::handle_event(event); }
+
   void C2SplineComponent::handle_event(GuiInputIntChangedEvent& event)
   {
     if (m_info->selected()) { m_spline_base = (SplineBase)event.get_value(); }

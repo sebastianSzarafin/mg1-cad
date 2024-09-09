@@ -33,7 +33,11 @@ namespace mg1
     inline bool bernstein_point() const { return m_bernstein_point; }
     inline bool moved() const { return glm::length2(m_delta_position) > 0.f; }
 
-    inline glm::vec3 get_position() const { return m_node->get_translation(); }
+    inline glm::vec3 get_position() const
+    {
+      auto model = m_node->get_model_mat();
+      return { model[3][0], model[3][1], model[3][2] };
+    }
     inline glm::vec3 get_delta_position() const { return m_delta_position; }
 
     void handle_event(MouseButtonPressedEvent& event);

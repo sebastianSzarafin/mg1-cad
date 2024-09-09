@@ -72,27 +72,38 @@ namespace mg1
   {
     if (EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_RIGHT))
     {
+      bool rotated = false;
+
       switch (rotation_axis)
       {
       case RotationOX:
       {
         m_node->rotate(dt * event.get_dy(), { 1, 0, 0 });
+        rotated = true;
         break;
       }
       case RotationOY:
       {
         m_node->rotate(dt * event.get_dx(), { 0, 1, 0 });
+        rotated = true;
         break;
       }
       case RotationOZ:
       {
         m_node->rotate(dt * (event.get_dx() + event.get_dy()) / 2, { 0, 0, 1 });
+        rotated = true;
         break;
       }
       default:
       {
         break;
       }
+      }
+
+      if (rotated)
+      {
+        CursorRotChangedEvent rot_event{ m_info->m_type, m_node->get_rotation() };
+        post_event(rot_event);
       }
     }
   }
@@ -102,32 +113,44 @@ namespace mg1
     float offset_y     = event.get_offset_y();
     float scale_factor = offset_y > 0 ? 1.05f : .95f;
 
+    bool scaled = false;
+
     switch (scale_axis)
     {
     case Scale:
     {
       m_node->scale(scale_factor);
+      scaled = true;
       break;
     }
     case ScaleOX:
     {
       m_node->scale_ox(scale_factor);
+      scaled = true;
       break;
     }
     case ScaleOY:
     {
       m_node->scale_oy(scale_factor);
+      scaled = true;
       break;
     }
     case ScaleOZ:
     {
       m_node->scale_oz(scale_factor);
+      scaled = true;
       break;
     }
     default:
     {
       break;
     }
+    }
+
+    if (scaled)
+    {
+      CursorScaleChangedEvent scale_event{ m_info->m_type, m_node->get_scale() };
+      post_event(scale_event);
     }
   }
 } // namespace mg1

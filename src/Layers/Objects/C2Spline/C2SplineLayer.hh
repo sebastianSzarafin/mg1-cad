@@ -28,6 +28,8 @@ namespace mg1
     bool object_removed_event_handler(ObjectRemovedEvent& event);
     bool gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event);
     bool gui_input_int_field_changed_event_handler(GuiInputIntChangedEvent& event);
+    bool cursor_rot_changed_event_handler(CursorRotChangedEvent& event);
+    bool cursor_scale_changed_event_handler(CursorScaleChangedEvent& event);
   };
 } // namespace mg1
 

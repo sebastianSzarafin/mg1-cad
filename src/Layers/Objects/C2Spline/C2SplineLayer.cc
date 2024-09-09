@@ -76,6 +76,11 @@ namespace mg1
     Event::try_handler<GuiInputIntChangedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(C2SplineLayer::gui_input_int_field_changed_event_handler));
+    Event::try_handler<CursorRotChangedEvent>(event,
+                                              ESP_BIND_EVENT_FOR_FUN(C2SplineLayer::cursor_rot_changed_event_handler));
+    Event::try_handler<CursorScaleChangedEvent>(
+        event,
+        ESP_BIND_EVENT_FOR_FUN(C2SplineLayer::cursor_scale_changed_event_handler));
   }
 
   bool C2SplineLayer::gui_button_clicked_event_handler(GuiButtonClickedEvent& event)
@@ -136,6 +141,30 @@ namespace mg1
   bool C2SplineLayer::gui_input_int_field_changed_event_handler(GuiInputIntChangedEvent& event)
   {
     if (!(event == GuiLabel::m_spline_base_radio_buttons)) { return false; }
+
+    for (auto&& [entity, obj] : m_scene->get_view<C2SplineComponent>())
+    {
+      obj.handle_event(event);
+    }
+
+    return false;
+  }
+
+  bool C2SplineLayer::cursor_rot_changed_event_handler(CursorRotChangedEvent& event)
+  {
+    if (!(event == ObjectLabel::cursor_rot_changed_event) || event.is_type(CursorType::Mouse)) { return false; }
+
+    for (auto&& [entity, obj] : m_scene->get_view<C2SplineComponent>())
+    {
+      obj.handle_event(event);
+    }
+
+    return false;
+  }
+
+  bool C2SplineLayer::cursor_scale_changed_event_handler(CursorScaleChangedEvent& event)
+  {
+    if (!(event == ObjectLabel::cursor_scale_changed_event) || event.is_type(CursorType::Mouse)) { return false; }
 
     for (auto&& [entity, obj] : m_scene->get_view<C2SplineComponent>())
     {

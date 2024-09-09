@@ -56,6 +56,12 @@ namespace mg1
     Event::try_handler<GuiSelectableChangedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::gui_selectable_changed_event_handler));
+    Event::try_handler<CursorRotChangedEvent>(
+        event,
+        ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::cursor_rot_changed_event_handler));
+    Event::try_handler<CursorScaleChangedEvent>(
+        event,
+        ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::cursor_scale_changed_event_handler));
   }
 
   bool C0BezierSurfaceLayer::gui_button_clicked_event_handler(GuiSurfacePopupModalCreateButtonClickedEvent& event)
@@ -75,6 +81,30 @@ namespace mg1
   bool C0BezierSurfaceLayer::gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event)
   {
     if (event == GuiLabel::action_set_cursor_pos) { m_set_cursor_pos_action_selected = event.get_value(); }
+
+    return false;
+  }
+
+  bool C0BezierSurfaceLayer::cursor_rot_changed_event_handler(CursorRotChangedEvent& event)
+  {
+    if (!(event == ObjectLabel::cursor_rot_changed_event) || event.is_type(CursorType::Mouse)) { return false; }
+
+    for (auto&& [entity, obj] : m_scene->get_view<C0BezierSurfaceComponent>())
+    {
+      obj.handle_event(event);
+    }
+
+    return false;
+  }
+
+  bool C0BezierSurfaceLayer::cursor_scale_changed_event_handler(CursorScaleChangedEvent& event)
+  {
+    if (!(event == ObjectLabel::cursor_scale_changed_event) || event.is_type(CursorType::Mouse)) { return false; }
+
+    for (auto&& [entity, obj] : m_scene->get_view<C0BezierSurfaceComponent>())
+    {
+      obj.handle_event(event);
+    }
 
     return false;
   }

@@ -28,6 +28,8 @@ namespace mg1
     bool gui_button_clicked_event_handler(GuiSurfacePopupModalCreateButtonClickedEvent& event);
     bool gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event);
     bool gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event);
+    bool cursor_rot_changed_event_handler(CursorRotChangedEvent& event);
+    bool cursor_scale_changed_event_handler(CursorScaleChangedEvent& event);
 
     glm::vec3 get_cursor_pos();
   };

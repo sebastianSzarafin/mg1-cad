@@ -66,6 +66,16 @@ namespace mg1
     C0SplineComponent::handle_event(event);
   }
 
+  void C2InterpolationSplineComponent::handle_event(CursorRotChangedEvent& event)
+  {
+    C0SplineComponent::handle_event(event);
+  }
+
+  void C2InterpolationSplineComponent::handle_event(CursorScaleChangedEvent& event)
+  {
+    C0SplineComponent::handle_event(event);
+  }
+
   std::vector<Vertex> C2InterpolationSplineComponent::create_bernstein_vertices()
   {
     auto cp_count = m_control_points.size();

@@ -45,6 +45,10 @@ namespace mg1
     inline bool wrap_u() { return m_type == SurfaceType::Cylinder; }
     inline std::tuple<int, int> get_tesselation_level() { return { m_info->m_tess_u, m_info->m_tess_v }; }
 
+    virtual void handle_event(GuiCheckboxChangedEvent& event);
+    virtual void handle_event(CursorRotChangedEvent& event);
+    virtual void handle_event(CursorScaleChangedEvent& event);
+
    protected:
     std::vector<uint32_t> create_control_points(CreateSurfaceData data);
 

@@ -34,6 +34,8 @@ namespace mg1
 
     void handle_event(ObjectRemovedEvent& event) override;
     void handle_event(GuiCheckboxChangedEvent& event) override;
+    void handle_event(CursorRotChangedEvent& event) override;
+    void handle_event(CursorScaleChangedEvent& event) override;
     void handle_event(GuiInputIntChangedEvent& event);
 
    private:

@@ -41,6 +41,8 @@ namespace mg1
 
     virtual void handle_event(ObjectRemovedEvent& event);
     virtual void handle_event(GuiCheckboxChangedEvent& event);
+    virtual void handle_event(CursorRotChangedEvent& event);
+    virtual void handle_event(CursorScaleChangedEvent& event);
 
    protected:
     static void sort_control_points(std::vector<PointComponent>& control_points);

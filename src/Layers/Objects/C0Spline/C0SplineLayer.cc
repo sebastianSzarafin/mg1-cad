@@ -72,6 +72,11 @@ namespace mg1
     Event::try_handler<GuiCheckboxChangedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(C0SplineLayer::gui_checkbox_changed_event_handler));
+    Event::try_handler<CursorRotChangedEvent>(event,
+                                              ESP_BIND_EVENT_FOR_FUN(C0SplineLayer::cursor_rot_changed_event_handler));
+    Event::try_handler<CursorScaleChangedEvent>(
+        event,
+        ESP_BIND_EVENT_FOR_FUN(C0SplineLayer::cursor_scale_changed_event_handler));
   }
 
   bool C0SplineLayer::gui_button_clicked_event_handler(GuiButtonClickedEvent& event)
@@ -120,6 +125,30 @@ namespace mg1
   bool C0SplineLayer::gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event)
   {
     if (!(event == GuiLabel::control_line_checkbox)) { return false; }
+
+    for (auto&& [entity, obj] : m_scene->get_view<C0SplineComponent>())
+    {
+      obj.handle_event(event);
+    }
+
+    return false;
+  }
+
+  bool C0SplineLayer::cursor_rot_changed_event_handler(CursorRotChangedEvent& event)
+  {
+    if (!(event == ObjectLabel::cursor_rot_changed_event) || event.is_type(CursorType::Mouse)) { return false; }
+
+    for (auto&& [entity, obj] : m_scene->get_view<C0SplineComponent>())
+    {
+      obj.handle_event(event);
+    }
+
+    return false;
+  }
+
+  bool C0SplineLayer::cursor_scale_changed_event_handler(CursorScaleChangedEvent& event)
+  {
+    if (!(event == ObjectLabel::cursor_scale_changed_event) || event.is_type(CursorType::Mouse)) { return false; }
 
     for (auto&& [entity, obj] : m_scene->get_view<C0SplineComponent>())
     {

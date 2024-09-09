@@ -59,6 +59,21 @@ namespace mg1
     ObjectFactory::remove_object(*this);
   }
 
+  void C0BezierSurfaceComponent::handle_event(GuiCheckboxChangedEvent& event)
+  {
+    if (m_info->selected()) { m_display_control_line = event.get_value(); }
+  }
+
+  void C0BezierSurfaceComponent::handle_event(CursorRotChangedEvent& event)
+  {
+    if (m_info->selected()) { m_info->m_dirty = true; }
+  }
+
+  void C0BezierSurfaceComponent::handle_event(CursorScaleChangedEvent& event)
+  {
+    if (m_info->selected()) { m_info->m_dirty = true; }
+  }
+
   std::vector<uint32_t> C0BezierSurfaceComponent::create_control_points(CreateSurfaceData data)
   {
     std::vector<uint32_t> control_points{};

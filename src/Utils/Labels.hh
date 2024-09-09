@@ -75,6 +75,8 @@ namespace mg1
     static const std::string object_created_event;
     static const std::string object_removed_event;
     static const std::string cursor_pos_changed_event;
+    static const std::string cursor_rot_changed_event;
+    static const std::string cursor_scale_changed_event;
     static const std::string mouse_cursor;
     static const std::string object_cursor;
     static const std::string object_mass_centre_changed_event;
@@ -83,6 +85,8 @@ namespace mg1
   inline const std::string ObjectLabel::object_created_event             = "Object created event";
   inline const std::string ObjectLabel::object_removed_event             = "Object removed event";
   inline const std::string ObjectLabel::cursor_pos_changed_event         = "Cursor pos changed event";
+  inline const std::string ObjectLabel::cursor_rot_changed_event         = "Cursor rot changed event";
+  inline const std::string ObjectLabel::cursor_scale_changed_event       = "Cursor scale changed event";
   inline const std::string ObjectLabel::mouse_cursor                     = "Mouse cursor";
   inline const std::string ObjectLabel::object_cursor                    = "Object cursor";
   inline const std::string ObjectLabel::object_mass_centre_changed_event = "Object mass centre changed event";

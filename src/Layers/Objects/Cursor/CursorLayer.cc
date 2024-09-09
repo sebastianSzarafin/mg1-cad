@@ -129,7 +129,7 @@ namespace mg1
     {
       if (cursor.is_type(CursorType::Object))
       {
-        if (event.create())
+        if (event.create_or_update())
         {
           cursor.get_node()->set_translation(event.get_position(), action::ESP_RELATIVE);
           return false;
@@ -142,7 +142,7 @@ namespace mg1
       }
     }
 
-    if (event.create()) { create_cursor(CursorType::Object, event.get_position()); }
+    if (event.create_or_update()) { create_cursor(CursorType::Object, event.get_position()); }
 
     return false;
   }

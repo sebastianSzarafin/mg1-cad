@@ -97,6 +97,16 @@ namespace mg1
     if (m_info->selected()) { m_display_control_line = event.get_value(); }
   }
 
+  void C0SplineComponent::handle_event(CursorRotChangedEvent& event)
+  {
+    if (m_info->selected()) { m_info->m_dirty = true; }
+  }
+
+  void C0SplineComponent::handle_event(CursorScaleChangedEvent& event)
+  {
+    if (m_info->selected()) { m_info->m_dirty = true; }
+  }
+
   void C0SplineComponent::sort_control_points(std::vector<PointComponent>& control_points)
   {
     std::sort(control_points.begin(),
