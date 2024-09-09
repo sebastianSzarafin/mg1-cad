@@ -21,6 +21,8 @@ namespace mg1
     {
     }
 
+    inline void set_min_value(int value) { m_min_value = value; }
+
     inline void render() override
     {
       ImGui::InputInt(m_label.c_str(), &m_value, m_step, m_step_fast);

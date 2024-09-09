@@ -73,6 +73,8 @@ namespace mg1
       else { m_radius_drag->render(); }
       m_height_drag->render();
       ImGui::Spacing();
+      if (m_surface_type == SurfaceType::Flat) { m_segments_u_input_int->set_min_value(1); }
+      else { m_segments_u_input_int->set_min_value(2); }
       m_segments_u_input_int->render();
       m_segments_v_input_int->render();
       ImGui::Spacing();
