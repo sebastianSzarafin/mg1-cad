@@ -181,15 +181,17 @@ namespace mg1
       ImGui::SetWindowPos(ImVec2(0, 0));
       ImGui::SetWindowSize(ImGui::GetIO().DisplaySize);
 
+      static bool show_demo_window = false;
+
       // Top menu bar
       if (ImGui::BeginMenuBar())
       {
         if (ImGui::BeginMenu("File")) { ImGui::EndMenu(); }
-        //      if (ImGui::BeginMenu("View"))
-        //      {
-        //        ImGui::MenuItem("Show Demo Window", nullptr, &show_demo_window);
-        //        ImGui::EndMenu();
-        //      }
+        if (ImGui::BeginMenu("View"))
+        {
+          ImGui::MenuItem("Show Demo Window", nullptr, &show_demo_window);
+          ImGui::EndMenu();
+        }
         ImGui::EndMenuBar();
       }
 
@@ -200,6 +202,7 @@ namespace mg1
       ImGui::SameLine(0.f, WindowConstants::gui_scene_splitter_size);
 
       ImGui::BeginChild("Scene", WindowConstants::scene_win_size, ImGuiChildFlags_Border, ImGuiWindowFlags_NoTitleBar);
+      if (show_demo_window) { ImGui::ShowDemoWindow(); }
       ImGui::EndChild();
 
       EspGui::end();
