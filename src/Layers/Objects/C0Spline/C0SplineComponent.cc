@@ -92,6 +92,11 @@ namespace mg1
     }
   }
 
+  void C0SplineComponent::handle_event(GuiCheckboxChangedEvent& event)
+  {
+    if (m_info->selected()) { m_info->m_dirty = true; }
+  }
+
   void C0SplineComponent::handle_event(CursorRotChangedEvent& event)
   {
     if (m_info->selected()) { m_info->m_dirty = true; }

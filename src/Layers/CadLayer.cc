@@ -353,7 +353,7 @@ namespace mg1
           auto model  = entity->try_get_component<ModelComponent>();
           if (model)
           {
-            auto& uniform_manager = model->get_uniform_manager();
+            auto uniform_managers = model->get_uniform_managers();
             glm::mat4 mvp         = projection * view;
             if (entity->has_component<CursorComponent>())
             {
@@ -361,7 +361,10 @@ namespace mg1
               mvp         = glm::translate(mvp, cursor.get_position());
             }
             else { mvp *= node->get_model_mat(); }
-            uniform_manager.update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
+            for (auto& uniform_manager : uniform_managers)
+            {
+              uniform_manager->update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
+            }
           }
         });
   }

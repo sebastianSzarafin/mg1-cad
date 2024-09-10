@@ -15,9 +15,9 @@ namespace mg1
     static ObjectFactory* s_instance;
 
     std::shared_ptr<EspShader> m_object_shader;
-    std::shared_ptr<EspShader> m_c0_spline_shader;
-    std::shared_ptr<EspShader> m_c2_spline_shader;
+    std::shared_ptr<EspShader> m_spline_shader;
     std::shared_ptr<EspShader> m_surface_shader;
+    std::shared_ptr<EspShader> m_control_line_shader;
 
     Scene* m_scene;
     ObjectSelector* m_object_selector;

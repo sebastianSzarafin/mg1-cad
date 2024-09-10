@@ -10,12 +10,6 @@ using namespace esp;
 
 namespace mg1
 {
-  struct SplineColorUbo
-  {
-    alignas(16) const glm::vec3 control_line_color = ObjectConstants::bernstein_point_color;
-    alignas(16) glm::vec3 m_spline_color;
-  };
-
   class C0SplineComponent : public IComponent, public IEventable
   {
    protected:
@@ -38,6 +32,7 @@ namespace mg1
     inline bool display_control_line() const { return m_info->display_control_line(); }
 
     virtual void handle_event(ObjectRemovedEvent& event);
+    virtual void handle_event(GuiCheckboxChangedEvent& event);
     virtual void handle_event(CursorRotChangedEvent& event);
     virtual void handle_event(CursorScaleChangedEvent& event);
 

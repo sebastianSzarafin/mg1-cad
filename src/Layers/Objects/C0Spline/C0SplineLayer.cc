@@ -8,7 +8,7 @@ namespace mg1
 
   void C0SplineLayer::pre_update(float dt)
   {
-    for (auto&& [entity, obj, model] : m_scene->get_view<C0SplineComponent, ModelComponent>())
+    for (auto&& [entity, obj, cl, model] : m_scene->get_view<C0SplineComponent, ControlLineComponent, ModelComponent>())
     {
       if (obj.get_info()->removed()) { ObjectFactory::remove_object(obj); }
       else
@@ -16,8 +16,16 @@ namespace mg1
         if (obj.get_info()->m_dirty)
         {
           auto [vertices, indices] = obj.reconstruct();
-          model.get_model().set_vertex_buffer(vertices);
-          model.get_model().set_index_buffer(indices, 0);
+          model.get_model(0).set_vertex_buffer(vertices);
+          model.get_model(0).set_index_buffer(indices, 0);
+
+          if (obj.display_control_line())
+          {
+            cl.set_vertex_count(vertices.size());
+            auto cl_indices = cl.get_indices();
+            model.get_model(1).set_vertex_buffer(vertices);
+            model.get_model(1).set_index_buffer(cl_indices, 0);
+          }
         }
 
         obj.set_dirty_flag();
@@ -27,17 +35,22 @@ namespace mg1
 
   void C0SplineLayer::update(float dt)
   {
-    for (auto&& [entity, obj, model] : m_scene->get_view<C0SplineComponent, ModelComponent>())
+    for (auto&& [entity, obj, cl, model] : m_scene->get_view<C0SplineComponent, ControlLineComponent, ModelComponent>())
     {
-      auto& uniform_manager = model.get_uniform_manager();
+      auto& obj_uniform_manager = model.get_uniform_manager(0);
+      auto& cl_uniform_manager  = model.get_uniform_manager(1);
 
-      int control_line = obj.display_control_line();
-      uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(int), &control_line);
+      if (obj.display_control_line())
+      {
+        model.choose({ 0, 1 });
 
-      SplineColorUbo ubo{};
-      ubo.m_spline_color =
-          obj.get_info()->selected() ? ObjectConstants::selected_color : ObjectConstants::default_color;
-      uniform_manager.update_buffer_uniform(0, 2, 0, sizeof(SplineColorUbo), &ubo);
+        glm::vec3 color = ObjectConstants::bernstein_point_color;
+        cl_uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(glm::vec3), &color);
+      }
+      else { model.choose({ 0 }); }
+
+      glm::vec3 color = obj.get_info()->selected() ? ObjectConstants::selected_color : ObjectConstants::default_color;
+      obj_uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(glm::vec3), &color);
     }
   }
 
@@ -69,6 +82,9 @@ namespace mg1
         event,
         ESP_BIND_EVENT_FOR_FUN(C0SplineLayer::mouse_button_pressed_event_handler));
     Event::try_handler<ObjectRemovedEvent>(event, ESP_BIND_EVENT_FOR_FUN(C0SplineLayer::object_removed_event_handler));
+    Event::try_handler<GuiCheckboxChangedEvent>(
+        event,
+        ESP_BIND_EVENT_FOR_FUN(C0SplineLayer::gui_checkbox_changed_event_handler));
     Event::try_handler<CursorRotChangedEvent>(event,
                                               ESP_BIND_EVENT_FOR_FUN(C0SplineLayer::cursor_rot_changed_event_handler));
     Event::try_handler<CursorScaleChangedEvent>(
@@ -78,7 +94,7 @@ namespace mg1
 
   bool C0SplineLayer::gui_button_clicked_event_handler(GuiButtonClickedEvent& event)
   {
-    if (event == GuiLabel::create_c0_spline_button) { ObjectFactory::create_c0_spline(); }
+    if (event == GuiLabel::create_c0_spline_button) { auto& spline = ObjectFactory::create_c0_spline(); }
 
     return false;
   }
@@ -110,6 +126,18 @@ namespace mg1
   bool C0SplineLayer::object_removed_event_handler(ObjectRemovedEvent& event)
   {
     if (!(event == ObjectLabel::object_removed_event)) { return false; }
+
+    for (auto&& [entity, obj] : m_scene->get_view<C0SplineComponent>())
+    {
+      obj.handle_event(event);
+    }
+
+    return false;
+  }
+
+  bool C0SplineLayer::gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event)
+  {
+    if (!(event == GuiLabel::control_line_checkbox)) { return false; }
 
     for (auto&& [entity, obj] : m_scene->get_view<C0SplineComponent>())
     {

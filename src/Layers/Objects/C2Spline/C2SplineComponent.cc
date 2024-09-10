@@ -45,6 +45,11 @@ namespace mg1
     return { vertices, get_spline_indices(vertices.size()) };
   }
 
+  std::tuple<std::vector<Vertex>, std::vector<uint32_t>> C2SplineComponent::reconstruct_base()
+  {
+    return C0SplineComponent::reconstruct();
+  }
+
   void C2SplineComponent::remove()
   {
     clear_bernstein_control_points();
@@ -87,19 +92,6 @@ namespace mg1
     }
   }
 
-  C2SplineUbo C2SplineComponent::get_ubo()
-  {
-    C2SplineUbo ubo{};
-    ubo.m_display_control_line = display_control_line();
-    ubo.m_spline_base          = m_spline_base;
-    for (auto i = 0; i < m_control_points.size(); i++)
-    {
-      ubo.m_bezier_points[i] = { ObjectFactory::get_control_point(m_control_points[i]).get_position(), 1.f };
-    }
-
-    return ubo;
-  }
-
   void C2SplineComponent::handle_event(ObjectRemovedEvent& event)
   {
     auto prev_size = m_control_points.size();
@@ -112,13 +104,19 @@ namespace mg1
     }
   }
 
+  void C2SplineComponent::handle_event(GuiCheckboxChangedEvent& event) { C0SplineComponent::handle_event(event); }
+
   void C2SplineComponent::handle_event(CursorRotChangedEvent& event) { C0SplineComponent::handle_event(event); }
 
   void C2SplineComponent::handle_event(CursorScaleChangedEvent& event) { C0SplineComponent::handle_event(event); }
 
   void C2SplineComponent::handle_event(GuiInputIntChangedEvent& event)
   {
-    if (m_info->selected()) { m_spline_base = (SplineBase)event.get_value(); }
+    if (m_info->selected())
+    {
+      m_spline_base   = (SplineBase)event.get_value();
+      m_info->m_dirty = true;
+    }
   }
 
   void C2SplineComponent::update_control_points_positions(int bernstein_point_idx)

@@ -6,13 +6,6 @@
 
 namespace mg1
 {
-  struct C2SplineUbo
-  {
-    uint32_t m_display_control_line;
-    SplineBase m_spline_base;
-    alignas(16) std::array<glm::vec4, ObjectConstants::max_bezier_points> m_bezier_points;
-  };
-
   class C2SplineComponent : public C0SplineComponent
   {
    private:
@@ -25,15 +18,17 @@ namespace mg1
     ~C2SplineComponent() = default;
 
     std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct() override;
+    std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct_base();
 
     void remove();
     void handle_spline_base();
     void push_back(PointComponent& point) override;
     void set_dirty_flag() override;
 
-    C2SplineUbo get_ubo();
+    inline SplineBase get_spline_base() const { return m_spline_base; }
 
     void handle_event(ObjectRemovedEvent& event) override;
+    void handle_event(GuiCheckboxChangedEvent& event) override;
     void handle_event(CursorRotChangedEvent& event) override;
     void handle_event(CursorScaleChangedEvent& event) override;
     void handle_event(GuiInputIntChangedEvent& event);

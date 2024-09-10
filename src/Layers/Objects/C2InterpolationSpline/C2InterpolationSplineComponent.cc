@@ -30,6 +30,11 @@ namespace mg1
     return { vertices, get_spline_indices(vertices.size()) };
   }
 
+  std::tuple<std::vector<Vertex>, std::vector<uint32_t>> C2InterpolationSplineComponent::reconstruct_base()
+  {
+    return C0SplineComponent::reconstruct();
+  }
+
   std::vector<uint32_t> C2InterpolationSplineComponent::get_spline_indices(uint32_t vertex_count)
   {
     if (vertex_count <= 4) { return { 0, 1, 2, 3 }; }
@@ -44,19 +49,12 @@ namespace mg1
     return indices;
   }
 
-  C2InterpolationSplineUbo C2InterpolationSplineComponent::get_ubo()
+  void C2InterpolationSplineComponent::handle_event(ObjectRemovedEvent& event)
   {
-    C2InterpolationSplineUbo ubo{};
-    ubo.m_display_control_line = display_control_line();
-    for (auto i = 0; i < m_control_points.size(); i++)
-    {
-      ubo.m_bezier_points[i] = { ObjectFactory::get_control_point(m_control_points[i]).get_position(), 1.f };
-    }
-
-    return ubo;
+    C0SplineComponent::handle_event(event);
   }
 
-  void C2InterpolationSplineComponent::handle_event(ObjectRemovedEvent& event)
+  void C2InterpolationSplineComponent::handle_event(GuiCheckboxChangedEvent& event)
   {
     C0SplineComponent::handle_event(event);
   }
