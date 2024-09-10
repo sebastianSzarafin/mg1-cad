@@ -25,6 +25,8 @@ namespace mg1
       m_removeable = true;
     }
 
+    inline bool display_control_line() { return m_control_line_checkbox->get_value(); }
+
     inline void select() override
     {
       if (m_state == ObjectState::Default) { m_state = ObjectState::Selected; }

@@ -59,11 +59,6 @@ namespace mg1
     ObjectFactory::remove_object(*this);
   }
 
-  void C0BezierSurfaceComponent::handle_event(GuiCheckboxChangedEvent& event)
-  {
-    if (m_info->selected()) { m_display_control_line = event.get_value(); }
-  }
-
   void C0BezierSurfaceComponent::handle_event(CursorRotChangedEvent& event)
   {
     if (m_info->selected()) { m_info->m_dirty = true; }

@@ -112,8 +112,6 @@ namespace mg1
     }
   }
 
-  void C2SplineComponent::handle_event(GuiCheckboxChangedEvent& event) { C0SplineComponent::handle_event(event); }
-
   void C2SplineComponent::handle_event(CursorRotChangedEvent& event) { C0SplineComponent::handle_event(event); }
 
   void C2SplineComponent::handle_event(CursorScaleChangedEvent& event) { C0SplineComponent::handle_event(event); }

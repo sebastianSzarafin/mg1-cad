@@ -73,9 +73,6 @@ namespace mg1
     Event::try_handler<ObjectRemovedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(C2InterpolationSplineLayer::object_removed_event_handler));
-    Event::try_handler<GuiCheckboxChangedEvent>(
-        event,
-        ESP_BIND_EVENT_FOR_FUN(C2InterpolationSplineLayer::gui_checkbox_changed_event_handler));
     Event::try_handler<CursorRotChangedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(C2InterpolationSplineLayer::cursor_rot_changed_event_handler));
@@ -118,18 +115,6 @@ namespace mg1
   bool C2InterpolationSplineLayer::object_removed_event_handler(ObjectRemovedEvent& event)
   {
     if (!(event == ObjectLabel::object_removed_event)) { return false; }
-
-    for (auto&& [entity, obj] : m_scene->get_view<C2InterpolationSplineComponent>())
-    {
-      obj.handle_event(event);
-    }
-
-    return false;
-  }
-
-  bool C2InterpolationSplineLayer::gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event)
-  {
-    if (!(event == GuiLabel::control_line_checkbox)) { return false; }
 
     for (auto&& [entity, obj] : m_scene->get_view<C2InterpolationSplineComponent>())
     {

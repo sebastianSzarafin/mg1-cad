@@ -26,8 +26,6 @@ namespace mg1
     const int m_patches_u; // surface division (horizontal)
     const int m_patches_v; // surface division (vertical)
 
-    bool m_display_control_line{ false };
-
    public:
     C0BezierSurfaceComponent(int id, Scene* scene, CreateSurfaceData data);
     ~C0BezierSurfaceComponent() = default;
@@ -39,14 +37,13 @@ namespace mg1
     void remove();
 
     inline C0BezierSurfaceInfo* get_info() { return m_info.get(); }
-    inline bool display_control_line() const { return m_display_control_line; }
+    inline bool display_control_line() const { return m_info->display_control_line(); }
 
     inline int points_u() { return s_patch_size + s_patch_offset * (m_patches_u - 1) - (wrap_u() ? 1 : 0); }
     inline int points_v() { return s_patch_size + s_patch_offset * (m_patches_v - 1); }
     inline bool wrap_u() { return m_type == SurfaceType::Cylinder; }
     inline std::tuple<int, int> get_tesselation_level() { return { m_info->m_tess_u, m_info->m_tess_v }; }
 
-    virtual void handle_event(GuiCheckboxChangedEvent& event);
     virtual void handle_event(CursorRotChangedEvent& event);
     virtual void handle_event(CursorScaleChangedEvent& event);
 

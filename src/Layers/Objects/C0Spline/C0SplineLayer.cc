@@ -69,9 +69,6 @@ namespace mg1
         event,
         ESP_BIND_EVENT_FOR_FUN(C0SplineLayer::mouse_button_pressed_event_handler));
     Event::try_handler<ObjectRemovedEvent>(event, ESP_BIND_EVENT_FOR_FUN(C0SplineLayer::object_removed_event_handler));
-    Event::try_handler<GuiCheckboxChangedEvent>(
-        event,
-        ESP_BIND_EVENT_FOR_FUN(C0SplineLayer::gui_checkbox_changed_event_handler));
     Event::try_handler<CursorRotChangedEvent>(event,
                                               ESP_BIND_EVENT_FOR_FUN(C0SplineLayer::cursor_rot_changed_event_handler));
     Event::try_handler<CursorScaleChangedEvent>(
@@ -113,18 +110,6 @@ namespace mg1
   bool C0SplineLayer::object_removed_event_handler(ObjectRemovedEvent& event)
   {
     if (!(event == ObjectLabel::object_removed_event)) { return false; }
-
-    for (auto&& [entity, obj] : m_scene->get_view<C0SplineComponent>())
-    {
-      obj.handle_event(event);
-    }
-
-    return false;
-  }
-
-  bool C0SplineLayer::gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event)
-  {
-    if (!(event == GuiLabel::control_line_checkbox)) { return false; }
 
     for (auto&& [entity, obj] : m_scene->get_view<C0SplineComponent>())
     {

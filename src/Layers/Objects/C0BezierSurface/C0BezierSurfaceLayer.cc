@@ -50,9 +50,6 @@ namespace mg1
     Event::try_handler<GuiSurfacePopupModalCreateButtonClickedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::gui_button_clicked_event_handler));
-    Event::try_handler<GuiCheckboxChangedEvent>(
-        event,
-        ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::gui_checkbox_changed_event_handler));
     Event::try_handler<GuiSelectableChangedEvent>(
         event,
         ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::gui_selectable_changed_event_handler));
@@ -75,8 +72,6 @@ namespace mg1
 
     return false;
   }
-
-  bool C0BezierSurfaceLayer::gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event) { return false; }
 
   bool C0BezierSurfaceLayer::gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event)
   {

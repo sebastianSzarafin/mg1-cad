@@ -23,8 +23,6 @@ namespace mg1
 
     std::vector<uint32_t> m_control_points{};
 
-    bool m_display_control_line{ false };
-
    public:
     C0SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points);
     C0SplineComponent(uint32_t id, Scene* scene);
@@ -37,10 +35,9 @@ namespace mg1
     virtual void set_dirty_flag();
 
     inline C0SplineInfo* get_info() { return m_info.get(); }
-    inline bool display_control_line() const { return m_display_control_line; }
+    inline bool display_control_line() const { return m_info->display_control_line(); }
 
     virtual void handle_event(ObjectRemovedEvent& event);
-    virtual void handle_event(GuiCheckboxChangedEvent& event);
     virtual void handle_event(CursorRotChangedEvent& event);
     virtual void handle_event(CursorScaleChangedEvent& event);
 
