@@ -1,10 +1,10 @@
 #ifndef ESPERT_SANDBOX_C0SPLINECOMPONENT_HH
 #define ESPERT_SANDBOX_C0SPLINECOMPONENT_HH
 
+#include "C0SplineInfo.hh"
 #include "Espert.hh"
 #include "Interfaces/Interfaces.hh"
 #include "Layers/Objects/Point/PointComponent.hh"
-#include "Utils/ObjectInfo.hh"
 
 using namespace esp;
 

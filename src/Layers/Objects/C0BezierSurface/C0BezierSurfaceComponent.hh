@@ -1,6 +1,7 @@
 #ifndef ESPERT_SANDBOX_C0BEZIERSURFACECOMPONENT_HH
 #define ESPERT_SANDBOX_C0BEZIERSURFACECOMPONENT_HH
 
+#include "C0BezierSurfaceInfo.hh"
 #include "Espert.hh"
 #include "Interfaces/Interfaces.hh"
 #include "Layers/Objects/Point/PointComponent.hh"

@@ -5,8 +5,8 @@
 #include "Events/Gui/GuiEvents.hh"
 #include "Events/Objects/ObjectEvents.hh"
 #include "Interfaces/Interfaces.hh"
+#include "PointInfo.hh"
 #include "Utils/Constants.hh"
-#include "Utils/ObjectInfo.hh"
 
 using namespace esp;
 

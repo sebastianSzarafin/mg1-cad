@@ -1,8 +1,8 @@
 #ifndef ESPERT_SANDBOX_OBJECTREMOVEDEVENT_HH
 #define ESPERT_SANDBOX_OBJECTREMOVEDEVENT_HH
 
+#include "Layers/Objects/ObjectInfo.hh"
 #include "ObjectEvent.hh"
-#include "Utils/ObjectInfo.hh"
 
 using namespace esp;
 

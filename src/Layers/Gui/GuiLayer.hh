@@ -6,7 +6,6 @@
 #include "Events/Objects/ObjectEvents.hh"
 #include "Layers/Gui/GuiFields/GuiFields.hh"
 #include "Utils/Enums.hh"
-#include "Utils/ObjectInfo.hh"
 
 using namespace esp;
 

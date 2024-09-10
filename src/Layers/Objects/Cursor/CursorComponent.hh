@@ -1,9 +1,9 @@
 #ifndef ESPERT_SANDBOX_CURSORCOMPONENT_HH
 #define ESPERT_SANDBOX_CURSORCOMPONENT_HH
 
+#include "CursorInfo.hh"
 #include "Espert.hh"
 #include "Interfaces/Interfaces.hh"
-#include "Utils/ObjectInfo.hh"
 
 using namespace esp;
 

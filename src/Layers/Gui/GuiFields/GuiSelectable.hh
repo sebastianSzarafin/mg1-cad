@@ -3,7 +3,7 @@
 
 #include "GuiButton.hh"
 #include "GuiField.hh"
-#include "Utils/ObjectInfo.hh"
+#include "Layers/Objects/ObjectInfo.hh"
 
 namespace mg1
 {

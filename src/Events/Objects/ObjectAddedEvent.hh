@@ -1,8 +1,8 @@
 #ifndef ESPERT_SANDBOX_OBJECTADDEDEVENT_HH
 #define ESPERT_SANDBOX_OBJECTADDEDEVENT_HH
 
+#include "Layers/Objects/ObjectInfo.hh"
 #include "ObjectEvent.hh"
-#include "Utils/ObjectInfo.hh"
 
 using namespace esp;
 
