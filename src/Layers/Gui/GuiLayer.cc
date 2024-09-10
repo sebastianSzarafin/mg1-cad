@@ -46,7 +46,12 @@ namespace mg1
 
     update_mouse_state();
 
-    ImGui::Text("FPS: %.1f", 1.f / dt);
+    static int frames_count = 0;
+    static float fps_count  = 0;
+
+    frames_count++;
+    fps_count += 1.f / dt;
+    ImGui::Text("FPS: %.1f (avg: %.1f)", 1.f / dt, fps_count / frames_count);
     ImGui::Spacing();
     int type = (int)m_camera_type;
     ImGui::RadioButton("Orbit Camera", &type, (int)CameraType::Orbit);
