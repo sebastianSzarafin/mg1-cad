@@ -38,7 +38,9 @@ namespace mg1
       if (m_state == ObjectState::Selected) { m_state = ObjectState::Default; }
     }
     virtual inline void remove() { m_state = ObjectState::Removed; }
-    virtual inline void set_visibility(bool visibility) { m_visible = visibility; }
+    virtual inline void set_renameable(bool val) { m_renameable = val; }
+    virtual inline void set_removeable(bool val) { m_removeable = val; }
+    virtual inline void set_visibility(bool val) { m_visible = val; }
 
     inline bool selected() { return m_state == ObjectState::Selected; }
     inline bool removed() { return m_state == ObjectState::Removed; }

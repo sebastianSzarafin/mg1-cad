@@ -12,9 +12,7 @@ namespace mg1
 
    public:
     float m_r;
-
     bool m_dirty{ false };
-
     int m_selected_index{ -1 };
 
     PointInfo(uint32_t id, const std::string& name) : ObjectInfo(id, name) { m_renameable = m_removeable = true; }

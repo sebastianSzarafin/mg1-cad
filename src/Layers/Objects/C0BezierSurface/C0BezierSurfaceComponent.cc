@@ -94,7 +94,7 @@ namespace mg1
           auto x = u * data.m_width / (m_points_u - 1) - data.m_width / 2.f;
           auto z = v * data.m_height / (m_points_v - 1) - data.m_height / 2.f;
 
-          control_points.push_back(ObjectFactory::create_point({ x, 0, z }).get_id());
+          control_points.push_back(ObjectFactory::create_surface_point({ x, 0, z }).get_id());
         }
       }
     }

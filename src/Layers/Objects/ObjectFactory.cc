@@ -162,6 +162,29 @@ namespace mg1
     return point;
   }
 
+  PointComponent& ObjectFactory::create_surface_point(glm::vec3 position)
+  {
+    auto entity = s_instance->m_scene->create_entity();
+
+    entity->add_component<PointComponent>(entity->get_id(), false);
+    auto& point = entity->get_component<PointComponent>();
+    point.get_info()->set_removeable(false);
+
+    auto [vertices, indices] = point.reconstruct();
+    auto model               = std::make_shared<Model>(vertices,
+                                         indices,
+                                         std::vector<std::shared_ptr<EspTexture>>{},
+                                         PointInit::S_MODEL_PARAMS);
+    entity->add_component<ModelComponent>(model, s_instance->m_object_shader);
+
+    point.get_node()->attach_entity(entity);
+    point.get_node()->translate(position);
+
+    s_instance->m_scene->get_root().add_child(point.get_node());
+
+    return point;
+  }
+
   C0SplineComponent& ObjectFactory::create_c0_spline()
   {
     std::vector<PointComponent> control_points{};

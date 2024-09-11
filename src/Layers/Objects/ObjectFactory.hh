@@ -31,6 +31,7 @@ namespace mg1
     static TorusComponent& create_torus(glm::vec3 position = { 0, 0, 0 });
     static PointComponent& create_point(glm::vec3 position = { 0, 0, 0 });
     static PointComponent& create_bernstein_point(glm::vec3 position = { 0, 0, 0 });
+    static PointComponent& create_surface_point(glm::vec3 position = { 0, 0, 0 });
     static C0SplineComponent& create_c0_spline();
     static C2SplineComponent& create_c2_spline();
     static C2InterpolationSplineComponent& create_c2_interpolation_spline();
