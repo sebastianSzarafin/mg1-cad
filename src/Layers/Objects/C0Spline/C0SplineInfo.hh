@@ -22,7 +22,7 @@ namespace mg1
     {
       m_control_line_checkbox = std::make_shared<GuiCheckbox>(GuiLabel::control_line_checkbox, false);
 
-      m_removeable = true;
+      m_renameable = m_removeable = true;
     }
 
     inline bool display_control_line() { return m_control_line_checkbox->get_value(); }
