@@ -7,24 +7,24 @@
 
 namespace mg1
 {
-  class GuiSelectableCombo : public GuiField<GuiSelectables>
+  template<typename T> class GuiSelectableCombo : public GuiField<GuiSelectables<T>>
   {
    private:
     std::string m_preview_value;
     ImGuiComboFlags m_flags;
 
    public:
-    GuiSelectableCombo(const std::string& label, GuiSelectables value = {}, ImGuiComboFlags flags = 0) :
-        GuiField(label, value), m_flags{ flags }
+    GuiSelectableCombo(const std::string& label, GuiSelectables<T> value = {}, ImGuiComboFlags flags = 0) :
+        GuiField<GuiSelectables<T>>(label, value), m_flags{ flags }
     {
-      m_preview_value = !m_value.empty() ? m_value[0]->get_label() : "";
+      m_preview_value = !this->m_value.empty() ? this->m_value[0]->get_label() : "";
     }
 
     inline void render() override
     {
-      if (ImGui::BeginCombo(m_label.c_str(), m_preview_value.c_str(), m_flags))
+      if (ImGui::BeginCombo(this->m_label.c_str(), m_preview_value.c_str(), m_flags))
       {
-        for (auto& selectable : m_value)
+        for (auto& selectable : this->m_value)
         {
           bool selected_before_render = selectable->is_selected();
 
@@ -46,7 +46,7 @@ namespace mg1
    private:
     void clear()
     {
-      for (auto& selectable : m_value)
+      for (auto& selectable : this->m_value)
       {
         selectable->unselect();
       }

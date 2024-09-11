@@ -7,59 +7,61 @@
 
 namespace mg1
 {
-  class GuiSelectable;
-  using GuiSelectables = std::vector<std::shared_ptr<GuiSelectable>>;
+  template<typename T> class GuiSelectable;
+  template<typename T> using GuiSelectables = std::vector<std::shared_ptr<GuiSelectable<T>>>;
 
-  class GuiSelectable : public GuiField<bool>
+  template<typename T> class GuiSelectable : public GuiField<T>
   {
    protected:
+    bool m_selected;
     bool m_prev_selected;
     bool m_changed;
 
    public:
-    GuiSelectable(const std::string& label, bool value) : GuiField<bool>(label, value), m_prev_selected{ value } {}
+    GuiSelectable(const std::string& label, T value, bool selected) :
+        GuiField<T>(label, value), m_selected{ selected }, m_prev_selected{ selected }
+    {
+    }
 
     inline void render() override
     {
-      if ((m_changed = ImGui::Selectable(m_label.c_str(), m_value)))
+      if ((m_changed = ImGui::Selectable(this->m_label.c_str(), m_selected)))
       {
         if (!m_prev_selected) { select(); }
         else { unselect(); }
       }
 
-      m_prev_selected = m_value;
+      m_prev_selected = m_selected;
     }
 
-    inline bool is_selected() { return m_value; }
+    inline bool is_selected() { return m_selected; }
     inline bool changed() override { return m_changed; }
     virtual inline void select()
     {
-      m_value = true;
+      m_selected = true;
       create_and_post_event();
     }
     virtual inline void unselect()
     {
-      m_value = false;
+      m_selected = false;
       create_and_post_event();
     }
 
     virtual inline void create_and_post_event() override
     {
-      GuiSelectableChangedEvent event{ m_label, m_value };
-      post_event(event);
+      GuiSelectableChangedEvent event{ this->m_label, m_selected };
+      this->post_event(event);
     }
   };
 
-  class GuiObjectInfoSelectable : public GuiSelectable
+  class GuiObjectInfoSelectable : public GuiSelectable<ObjectInfo*>
   {
    private:
-    ObjectInfo* m_info;
-
     std::shared_ptr<GuiButton> m_rename_button;
     std::shared_ptr<GuiButton> m_remove_button;
 
    public:
-    GuiObjectInfoSelectable(ObjectInfo* info) : GuiSelectable(info->m_name, info->selected()), m_info{ info }
+    GuiObjectInfoSelectable(ObjectInfo* info) : GuiSelectable(info->m_name, info, info->selected())
     {
       m_rename_button = std::make_shared<GuiButton>(GuiLabel::rename_object_button);
       m_rename_button->set_max_width();
@@ -69,15 +71,15 @@ namespace mg1
 
     inline void render() override
     {
-      m_value = m_info->selected();
+      m_selected = this->m_value->selected();
 
-      if (!m_info->is_visible())
+      if (!this->m_value->is_visible())
       {
         m_changed = false;
         return;
       }
 
-      if ((m_changed = ImGui::Selectable(m_label.c_str(), m_value)))
+      if ((m_changed = ImGui::Selectable(m_label.c_str(), m_selected)))
       {
         if (!m_prev_selected) { select(); }
         else { unselect(); }
@@ -87,34 +89,34 @@ namespace mg1
       {
         m_changed = true;
         select();
-        m_info->render();
-        if (m_info->is_renameable())
+        this->m_value->render();
+        if (this->m_value->is_renameable())
         {
           m_rename_button->render();
-          if (m_rename_button->clicked() && !m_info->m_name.empty()) { m_label = m_info->m_name; }
+          if (m_rename_button->clicked() && !this->m_value->m_name.empty()) { m_label = this->m_value->m_name; }
         }
-        if (m_info->is_removeable())
+        if (this->m_value->is_removeable())
         {
           m_remove_button->render();
-          if (m_remove_button->clicked()) { m_info->remove(); }
+          if (m_remove_button->clicked()) { this->m_value->remove(); }
         }
 
         ImGui::EndPopup();
       }
 
-      m_prev_selected = m_value;
+      m_prev_selected = m_selected;
     }
 
     inline void select() override
     {
-      m_value = true;
-      m_info->select();
+      m_selected = true;
+      this->m_value->select();
       create_and_post_event();
     }
     inline void unselect() override
     {
-      m_value = false;
-      m_info->unselect();
+      m_selected = false;
+      this->m_value->unselect();
       create_and_post_event();
     }
   };

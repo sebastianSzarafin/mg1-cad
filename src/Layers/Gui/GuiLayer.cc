@@ -9,22 +9,23 @@ namespace mg1
     m_anaglyph_mode_checkbox      = std::make_unique<GuiCheckbox>(GuiLabel::anaglyph_mode, false);
     m_eye_distance_float_slider   = std::make_unique<GuiFloatSlider>(GuiLabel::m_eye_distance_float_slider, .01f, 0, 2);
     m_plane_distance_float_slider = std::make_unique<GuiFloatSlider>(GuiLabel::m_plane_distance_float_slider, 1, 0, 2);
-    m_actions_combo               = std::make_unique<GuiSelectableCombo>(
+    m_actions_combo               = std::make_unique<GuiSelectableCombo<bool>>(
         GuiLabel::actions,
-        GuiSelectables{ std::make_shared<GuiSelectable>(GuiLabel::action_none, true),
-                        std::make_shared<GuiSelectable>(GuiLabel::action_rot_ox, false),
-                        std::make_shared<GuiSelectable>(GuiLabel::action_rot_oy, false),
-                        std::make_shared<GuiSelectable>(GuiLabel::action_rot_oz, false),
-                        std::make_shared<GuiSelectable>(GuiLabel::action_scale, false),
-                        std::make_shared<GuiSelectable>(GuiLabel::action_scale_ox, false),
-                        std::make_shared<GuiSelectable>(GuiLabel::action_scale_oy, false),
-                        std::make_shared<GuiSelectable>(GuiLabel::action_scale_oz, false),
-                        std::make_shared<GuiSelectable>(GuiLabel::action_set_cursor_pos, false) },
+        GuiSelectables<bool>{ std::make_shared<GuiSelectable<bool>>(GuiLabel::action_none, true, true),
+                                            std::make_shared<GuiSelectable<bool>>(GuiLabel::action_rot_ox, false, false),
+                                            std::make_shared<GuiSelectable<bool>>(GuiLabel::action_rot_oy, false, false),
+                                            std::make_shared<GuiSelectable<bool>>(GuiLabel::action_rot_oz, false, false),
+                                            std::make_shared<GuiSelectable<bool>>(GuiLabel::action_scale, false, false),
+                                            std::make_shared<GuiSelectable<bool>>(GuiLabel::action_scale_ox, false, false),
+                                            std::make_shared<GuiSelectable<bool>>(GuiLabel::action_scale_oy, false, false),
+                                            std::make_shared<GuiSelectable<bool>>(GuiLabel::action_scale_oz, false, false),
+                                            std::make_shared<GuiSelectable<bool>>(GuiLabel::action_set_cursor_pos, false, false) },
         ImGuiComboFlags_HeightLargest);
-    m_objects_list_box = std::make_unique<GuiObjectInfoSelectableListBox>(
+    m_hide_points_checkbox = std::make_unique<GuiCheckbox>(GuiLabel::hide_points_checkbox, false);
+    m_objects_list_box     = std::make_unique<GuiObjectInfoSelectableListBox>(
         GuiLabel::objects,
-        GuiSelectables{
-            std::make_shared<GuiSelectable>(GuiLabel::object_none, true),
+        GuiSelectables<ObjectInfo*>{
+            std::make_shared<GuiSelectable<ObjectInfo*>>(GuiLabel::object_none, nullptr, true),
         });
     m_create_torus_button = std::make_unique<GuiToggleButton>(GuiLabel::create_torus_button);
     m_create_torus_button->set_max_width();
@@ -84,6 +85,9 @@ namespace mg1
     m_actions_combo->render();
 
     ImGui::SeparatorText("Objects:");
+    ImGui::Spacing();
+    m_hide_points_checkbox->render();
+    ImGui::Spacing();
     m_objects_list_box->render();
     m_create_torus_button->render();
     m_create_point_button->render();
@@ -104,6 +108,8 @@ namespace mg1
     Event::try_handler<ObjectRemovedEvent>(event, ESP_BIND_EVENT_FOR_FUN(GuiLayer::object_removed_event_handler));
     Event::try_handler<CursorPosChangedEvent>(event,
                                               ESP_BIND_EVENT_FOR_FUN(GuiLayer::cursor_pos_changed_event_handler));
+    Event::try_handler<GuiCheckboxChangedEvent>(event,
+                                                ESP_BIND_EVENT_FOR_FUN(GuiLayer::gui_checkbox_changed_event_handler));
   }
 
   bool GuiLayer::object_added_event_handler(ObjectAddedEvent& event)
@@ -124,6 +130,15 @@ namespace mg1
   {
     if (!(event == ObjectLabel::cursor_pos_changed_event && event.is_type(CursorType::Mouse))) { return false; }
     m_mouse_cursor_pos = event.get_position();
+
+    return true;
+  }
+
+  bool GuiLayer::gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event)
+  {
+    if (!(event == GuiLabel::hide_points_checkbox)) { return false; }
+
+    m_objects_list_box->handle_event(event);
 
     return true;
   }

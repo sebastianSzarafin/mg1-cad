@@ -22,7 +22,8 @@ namespace mg1
     std::unique_ptr<GuiCheckbox> m_anaglyph_mode_checkbox;
     std::unique_ptr<GuiFloatSlider> m_eye_distance_float_slider;
     std::unique_ptr<GuiFloatSlider> m_plane_distance_float_slider;
-    std::unique_ptr<GuiSelectableCombo> m_actions_combo;
+    std::unique_ptr<GuiSelectableCombo<bool>> m_actions_combo;
+    std::unique_ptr<GuiCheckbox> m_hide_points_checkbox;
     std::unique_ptr<GuiObjectInfoSelectableListBox> m_objects_list_box;
     std::unique_ptr<GuiToggleButton> m_create_torus_button;
     std::unique_ptr<GuiToggleButton> m_create_point_button;
@@ -45,6 +46,7 @@ namespace mg1
     bool object_added_event_handler(ObjectAddedEvent& event);
     bool object_removed_event_handler(ObjectRemovedEvent& event);
     bool cursor_pos_changed_event_handler(CursorPosChangedEvent& event);
+    bool gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event);
   };
 } // namespace mg1
 

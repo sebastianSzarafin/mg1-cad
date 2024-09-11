@@ -31,6 +31,7 @@ namespace mg1
     static const std::string rename_object_button;
     static const std::string grid_checkbox;
     static const std::string anaglyph_mode;
+    static const std::string hide_points_checkbox;
     static const std::string action_set_cursor_pos;
     static const std::string gui_camera_type_changed_event;
     static const std::string control_line_checkbox;
@@ -63,6 +64,7 @@ namespace mg1
   inline const std::string GuiLabel::rename_object_button                  = "Rename";
   inline const std::string GuiLabel::grid_checkbox                         = "Grid";
   inline const std::string GuiLabel::anaglyph_mode                         = "Anaglyph mode";
+  inline const std::string GuiLabel::hide_points_checkbox                  = "Hide points";
   inline const std::string GuiLabel::action_set_cursor_pos                 = "Set cursor position";
   inline const std::string GuiLabel::gui_camera_type_changed_event         = "Camera type changed event";
   inline const std::string GuiLabel::control_line_checkbox                 = "Control line";
