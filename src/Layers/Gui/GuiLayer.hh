@@ -32,6 +32,17 @@ namespace mg1
     std::unique_ptr<GuiButton> m_create_c2_interpolation_spline_button;
     std::unique_ptr<GuiSurfacePopupModal> m_create_surface_popup_modal;
 
+    struct
+    {
+      int m_frames_count         = 0;
+      float m_fps_sum            = 0;
+      float m_current_fps        = 60;
+      float m_current_time       = 0;
+      const float m_display_time = .25f;
+
+      inline float avg_fps() { return m_fps_sum / m_frames_count; }
+    } m_fps_manager;
+
    public:
     GuiLayer();
 
