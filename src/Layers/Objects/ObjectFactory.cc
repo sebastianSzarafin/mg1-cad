@@ -287,13 +287,24 @@ namespace mg1
     entity->add_component<C0BezierSurfaceComponent>(entity->get_id(), s_instance->m_scene, data);
     auto& surface = entity->get_component<C0BezierSurfaceComponent>();
     surface.translate(position);
-
     auto [vertices, indices] = surface.reconstruct();
-    auto model               = std::make_shared<Model>(vertices,
-                                         indices,
-                                         std::vector<std::shared_ptr<EspTexture>>{},
-                                         SurfaceInit::S_MODEL_PARAMS);
-    entity->add_component<ModelComponent>(model, s_instance->m_surface_shader, 0, 1);
+
+    auto surface_model = std::make_shared<Model>(vertices,
+                                                 indices,
+                                                 std::vector<std::shared_ptr<EspTexture>>{},
+                                                 SurfaceInit::S_MODEL_PARAMS);
+
+    entity->add_component<ControlLineComponent>(entity->get_id(), vertices.size());
+    auto control_line_indices = surface.get_control_line_indices();
+
+    auto control_line_model = std::make_shared<Model>(vertices,
+                                                      control_line_indices,
+                                                      std::vector<std::shared_ptr<EspTexture>>{},
+                                                      SplineInit::S_MODEL_PARAMS);
+
+    entity->add_component<ModelComponent>(
+        std::vector<ModelComponentParams>{ { surface_model, s_instance->m_surface_shader, 0, 1 },
+                                           { control_line_model, s_instance->m_control_line_shader } });
 
     surface.get_node()->attach_entity(entity);
 

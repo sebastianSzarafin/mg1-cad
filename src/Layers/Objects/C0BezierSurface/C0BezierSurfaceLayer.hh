@@ -27,6 +27,7 @@ namespace mg1
    private:
     bool gui_button_clicked_event_handler(GuiSurfacePopupModalCreateButtonClickedEvent& event);
     bool gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event);
+    bool gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event);
     bool cursor_rot_changed_event_handler(CursorRotChangedEvent& event);
     bool cursor_scale_changed_event_handler(CursorScaleChangedEvent& event);
 

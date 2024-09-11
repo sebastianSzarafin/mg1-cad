@@ -6,13 +6,19 @@ namespace mg1
   C0BezierSurfaceComponent::C0BezierSurfaceComponent(int id, esp::Scene* scene, mg1::CreateSurfaceData data) :
       IComponent(id, scene), m_type{ data.m_type }, m_patches_u{ data.m_segments_u }, m_patches_v{ data.m_segments_v }
   {
-    auto control_points = create_control_points(data);
+    m_wrap_u   = m_type == SurfaceType::Cylinder;
+    m_points_u = s_patch_size + s_patch_offset * (m_patches_u - 1) - (m_wrap_u ? 1 : 0);
+    m_points_v = s_patch_size + s_patch_offset * (m_patches_v - 1);
+
+    m_control_points = create_control_points(data);
+    m_vertex_count   = generate_patches().size();
 
     m_info = std::make_shared<C0BezierSurfaceInfo>(m_id,
                                                    "C0 bezier surface " + std::to_string(m_id),
-                                                   create_point_infos(control_points));
+                                                   create_point_infos(m_control_points));
 
-    m_control_points = control_points;
+    m_surface_indices      = generate_surface_indices();
+    m_control_line_indices = generate_control_line_indices();
 
     ObjectAddedEvent e{ m_info.get() };
     post_event(e);
@@ -24,7 +30,7 @@ namespace mg1
 
     m_info->m_dirty = false;
 
-    return { vertices, get_surface_indices(vertices.size()) };
+    return { vertices, get_surface_indices() };
   }
 
   void C0BezierSurfaceComponent::set_dirty_flag()
@@ -59,6 +65,11 @@ namespace mg1
     ObjectFactory::remove_object(*this);
   }
 
+  void C0BezierSurfaceComponent::handle_event(mg1::GuiCheckboxChangedEvent& event)
+  {
+    if (m_info->selected()) { m_info->m_dirty = true; }
+  }
+
   void C0BezierSurfaceComponent::handle_event(CursorRotChangedEvent& event)
   {
     if (m_info->selected()) { m_info->m_dirty = true; }
@@ -74,14 +85,14 @@ namespace mg1
     std::vector<uint32_t> control_points{};
 
     // create plane
-    if (!wrap_u())
+    if (!m_wrap_u)
     {
-      for (auto v = 0; v < points_v(); v++)
+      for (auto v = 0; v < m_points_v; v++)
       {
-        for (auto u = 0; u < points_u(); u++)
+        for (auto u = 0; u < m_points_u; u++)
         {
-          auto x = u * data.m_width / (points_u() - 1) - data.m_width / 2.f;
-          auto z = v * data.m_height / (points_v() - 1) - data.m_height / 2.f;
+          auto x = u * data.m_width / (m_points_u - 1) - data.m_width / 2.f;
+          auto z = v * data.m_height / (m_points_v - 1) - data.m_height / 2.f;
 
           control_points.push_back(ObjectFactory::create_point({ x, 0, z }).get_id());
         }
@@ -89,14 +100,14 @@ namespace mg1
     }
 
     // create cylinder
-    if (wrap_u())
+    if (m_wrap_u)
     {
       auto n = 2 * glm::pi<float>() / m_patches_u;
-      for (auto v = 0; v < points_v(); v++)
+      for (auto v = 0; v < m_points_v; v++)
       {
         for (auto u = 0; u < m_patches_u; u++)
         {
-          auto z = v * data.m_height / (points_v() - 1) - data.m_height / 2.f;
+          auto z = v * data.m_height / (m_points_v - 1) - data.m_height / 2.f;
 
           auto p1 = glm::vec3(glm::cos(u * n), glm::sin(u * n), 0);
           auto p4 = glm::vec3(glm::cos((u + 1) * n), glm::sin((u + 1) * n), 0);
@@ -128,18 +139,6 @@ namespace mg1
     return std::move(control_points);
   }
 
-  std::vector<uint32_t> C0BezierSurfaceComponent::get_surface_indices(uint32_t vertex_count)
-  {
-    std::vector<uint32_t> indices{};
-    indices.reserve(vertex_count);
-    for (auto i = 0; i < vertex_count; i++)
-    {
-      indices.push_back(i);
-    }
-
-    return indices;
-  }
-
   std::vector<PointInfo*> C0BezierSurfaceComponent::create_point_infos(std::vector<uint32_t>& control_points)
   {
     std::vector<PointInfo*> infos{};
@@ -155,12 +154,13 @@ namespace mg1
   std::vector<Vertex> C0BezierSurfaceComponent::generate_patches()
   {
     std::vector<Vertex> vertices{};
+    vertices.reserve(m_vertex_count);
 
     auto curr_u = 0, curr_v = 0;
 
-    while (curr_u * s_patch_offset + s_patch_size <= (points_u() + (wrap_u() ? (s_patch_size - s_patch_offset) : 0)))
+    while (curr_u * s_patch_offset + s_patch_size <= (m_points_u + (m_wrap_u ? (s_patch_size - s_patch_offset) : 0)))
     {
-      while (curr_v * s_patch_offset + s_patch_size <= points_v())
+      while (curr_v * s_patch_offset + s_patch_size <= m_points_v)
       {
         for (auto u = curr_u * s_patch_offset; u < curr_u * s_patch_offset + s_patch_size; u++)
         {
@@ -169,11 +169,11 @@ namespace mg1
             // auto curr_off_u = u - curr_u * s_patch_offset;
             // auto curr_off_v = v - curr_v * s_patch_offset;
 
-            auto u_wrap = u % points_u();
-            auto v_wrap = v % points_v();
+            auto u_wrap = u % m_points_u;
+            auto v_wrap = v % m_points_v;
 
             vertices.push_back(
-                { ObjectFactory::get_control_point(m_control_points[u_wrap + v_wrap * points_u()]).get_position() });
+                { ObjectFactory::get_control_point(m_control_points[u_wrap + v_wrap * m_points_u]).get_position() });
           }
         }
 
@@ -185,5 +185,48 @@ namespace mg1
     }
 
     return vertices;
+  }
+
+  std::vector<uint32_t> C0BezierSurfaceComponent::generate_surface_indices()
+  {
+    std::vector<uint32_t> indices{};
+    indices.reserve(m_vertex_count);
+    for (auto i = 0; i < m_vertex_count; i++)
+    {
+      indices.push_back(i);
+    }
+
+    return indices;
+  }
+
+  std::vector<uint32_t> C0BezierSurfaceComponent::generate_control_line_indices()
+  {
+    std::vector<uint32_t> control_line_indices{};
+    control_line_indices.reserve(m_vertex_count * 2);
+
+    // vertical lines
+    for (auto i = 0; i < m_vertex_count; i++)
+    {
+      auto next = i + 1;
+      if (next % s_patch_size != 0)
+      {
+        control_line_indices.push_back(i);
+        control_line_indices.push_back(next);
+      }
+    }
+
+    // horizontal lines
+    for (auto i = 0; i < m_vertex_count; i++)
+    {
+      auto next = i + s_patch_size;
+      if ((i - 12) % (s_patch_size * s_patch_size) != 0)
+      {
+        control_line_indices.push_back(i);
+        control_line_indices.push_back(next);
+      }
+      else { i += s_patch_size - 1; }
+    }
+
+    return control_line_indices;
   }
 } // namespace mg1
