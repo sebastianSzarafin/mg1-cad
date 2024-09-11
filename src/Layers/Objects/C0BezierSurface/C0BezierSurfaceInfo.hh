@@ -54,7 +54,9 @@ namespace mg1
       ImGui::InputText("Name", &m_name);
       ImGui::Spacing();
       ImGui::InputInt("Tesselation (u)", &m_tess_u);
+      m_tess_u = std::max(m_tess_u, 1);
       ImGui::InputInt("Tesselation (v)", &m_tess_v);
+      m_tess_v = std::max(m_tess_v, 1);
       if (ImGui::IsItemDeactivatedAfterEdit()) { m_dirty = true; }
       ImGui::Spacing();
       for (auto point : m_control_points)
