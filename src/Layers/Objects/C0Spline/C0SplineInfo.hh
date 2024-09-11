@@ -50,10 +50,12 @@ namespace mg1
       ImGui::Spacing();
       ImGui::InputText("Name", &m_name);
       ImGui::Spacing();
+      ImGui::BeginChild("Control points", ImVec2(0, 100), true);
       for (auto point : m_control_points)
       {
         ImGui::Text("%s", point->m_name.c_str());
       }
+      ImGui::EndChild();
       ImGui::Spacing();
       m_control_line_checkbox->render();
       ImGui::Spacing();

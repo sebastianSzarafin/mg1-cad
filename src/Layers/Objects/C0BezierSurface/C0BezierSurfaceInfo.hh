@@ -59,10 +59,12 @@ namespace mg1
       m_tess_v = std::max(m_tess_v, 1);
       if (ImGui::IsItemDeactivatedAfterEdit()) { m_dirty = true; }
       ImGui::Spacing();
+      ImGui::BeginChild("Control points", ImVec2(0, 200), true);
       for (auto point : m_control_points)
       {
         ImGui::Text("%s", point->m_name.c_str());
       }
+      ImGui::EndChild();
       ImGui::Spacing();
       m_control_line_checkbox->render();
       ImGui::Spacing();
