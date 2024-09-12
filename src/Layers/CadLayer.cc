@@ -140,6 +140,9 @@ namespace mg1
 
   void CadLayer::update(float dt)
   {
+    m_orbit_camera->on_new_frame();
+    m_fps_camera->on_new_frame();
+
     if (EspGui::m_use_gui)
     {
       EspGui::new_frame();
