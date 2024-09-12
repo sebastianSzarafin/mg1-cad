@@ -60,11 +60,9 @@ namespace mg1
 
   void CursorComponent::update_mouse()
   {
-    auto camera = Scene::get_current_camera();
-    glm::vec3 ray_mouse =
-        Math::cast_ray(Math::get_mouse_x_cs(), Math::get_mouse_y_cs(), camera->get_view(), camera->get_projection());
+    auto camera         = Scene::get_current_camera();
     m_previous_position = m_node->get_translation();
-    m_node->set_translation(Math::intersect_vector_plane(camera->get_position(), ray_mouse, scene_plane));
+    m_node->set_translation(Math::intersect_vector_plane(camera->get_position(), Math::s_mouse_ray, scene_plane));
     m_info->m_position = m_node->get_translation();
   }
 

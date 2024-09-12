@@ -33,15 +33,11 @@ namespace mg1
     auto button_code = event.get_button_code();
     if (button_code != GLFW_MOUSE_BUTTON_LEFT && button_code != GLFW_MOUSE_BUTTON_MIDDLE) { return; }
 
-    auto camera = Scene::get_current_camera();
-
-    glm::vec3 ray_mouse =
-        Math::cast_ray(Math::get_mouse_x_cs(), Math::get_mouse_y_cs(), camera->get_view(), camera->get_projection());
-
+    auto camera     = Scene::get_current_camera();
     auto camera_pos = camera->get_position();
     auto node_pos   = m_node->get_translation();
     auto eps        = .75f * std::log2(glm::length2(node_pos - camera_pos));
-    if (Math::intersect_vector_sphere(camera_pos, ray_mouse, { { node_pos }, m_info->m_r * eps }))
+    if (Math::intersect_vector_sphere(camera_pos, Math::s_mouse_ray, { { node_pos }, m_info->m_r * eps }))
     {
       m_info->selected() ? m_info->unselect() : m_info->select();
       m_clicked = true;

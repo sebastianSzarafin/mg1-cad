@@ -142,6 +142,7 @@ namespace mg1
   {
     m_orbit_camera->on_new_frame();
     m_fps_camera->on_new_frame();
+    Math::on_new_frame();
 
     if (EspGui::m_use_gui)
     {

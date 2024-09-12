@@ -28,6 +28,8 @@ namespace mg1
       float r;
     };
 
+    static glm::vec3 s_mouse_ray;
+
     static glm::vec3 cast_ray(float x, float y, glm::mat4 view, glm::mat4 projection)
     {
       glm::vec4 ray_clip  = glm::vec4(x, y, 1.f, 1.f);
@@ -78,7 +80,18 @@ namespace mg1
 
       return 1.f - mouse_y / window_height * 2.f;
     }
+
+    static void on_new_frame()
+    {
+      auto camera = Scene::get_current_camera();
+
+      s_mouse_ray =
+          Math::cast_ray(Math::get_mouse_x_cs(), Math::get_mouse_y_cs(), camera->get_view(), camera->get_projection());
+    }
   };
+
+  inline glm::vec3 Math::s_mouse_ray = glm::vec3();
+
 } // namespace mg1
 
 #endif // ESPERT_SANDBOX_MATH_HH
