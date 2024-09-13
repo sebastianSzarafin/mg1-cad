@@ -154,7 +154,6 @@ namespace mg1
   std::vector<Vertex> C0BezierSurfaceComponent::generate_patches()
   {
     std::vector<Vertex> vertices{};
-    vertices.reserve(m_vertex_count);
 
     auto curr_u = 0, curr_v = 0;
 
