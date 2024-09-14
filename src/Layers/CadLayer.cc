@@ -112,16 +112,16 @@ namespace mg1
 
     // create scene
     {
-      m_orbit_camera = std::make_shared<OrbitCamera>();
+      m_orbit_camera = std::make_shared<OrbitCameraController>();
       m_orbit_camera->set_sensitivity(1.f / 4.f);
       m_orbit_camera->set_perspective(EspWorkOrchestrator::get_swap_chain_extent_aspect_ratio());
-      m_fps_camera = std::make_shared<FpsCamera>();
+      m_fps_camera = std::make_shared<FpsCameraController>();
       m_fps_camera->set_sensitivity(2.f);
       m_fps_camera->set_move_speed(4.f);
       m_fps_camera->set_perspective(EspWorkOrchestrator::get_swap_chain_extent_aspect_ratio());
       m_scene = Scene::create();
-      m_scene->add_camera(m_orbit_camera);
-      m_scene->add_camera(m_fps_camera);
+      m_scene->add_camera(m_orbit_camera.get());
+      m_scene->add_camera(m_fps_camera.get());
 
       m_scene->set_current_camera(m_orbit_camera.get());
     }
@@ -141,8 +141,8 @@ namespace mg1
 
   void CadLayer::update(float dt)
   {
-    m_orbit_camera->on_new_frame();
-    m_fps_camera->on_new_frame();
+    m_orbit_camera->update(dt);
+    m_fps_camera->update(dt);
     Math::on_new_frame();
 
     if (EspGui::m_use_gui)
@@ -183,8 +183,6 @@ namespace mg1
     }
 
     m_object_layer->update(dt);
-
-    handle_keyboard_input(dt);
 
     auto camera = Scene::get_current_camera();
     if (m_anaglyph_mode.m_on)
@@ -273,16 +271,8 @@ namespace mg1
   {
     if (!m_none_object_selected || !m_none_action_selected || !m_mouse_captured) { return false; }
 
-    if (EspInput::is_mouse_button_pressed(ESP_MOUSE_BUTTON_LEFT))
-    {
-      if (orbit_camera_selected()) { m_orbit_camera->rotate(event.get_dx(), event.get_dy(), dt); }
-      if (fps_camera_selected()) { m_fps_camera->look_at(event.get_dx(), -event.get_dy(), dt); }
-    }
-    if (EspInput::is_mouse_button_pressed(ESP_MOUSE_BUTTON_RIGHT))
-    {
-      if (orbit_camera_selected()) { m_orbit_camera->zoom(event.get_dy(), dt); }
-      if (fps_camera_selected()) { m_fps_camera->zoom(event.get_dy(), dt); }
-    }
+    if (orbit_camera_selected()) { m_orbit_camera->handle_event(event, dt); }
+    if (fps_camera_selected()) { m_fps_camera->handle_event(event, dt); }
 
     return true;
   }
@@ -334,19 +324,6 @@ namespace mg1
     if (event == GuiLabel::m_eye_distance_float_slider) { m_anaglyph_mode.m_eye_dist = event.get_value(); }
     if (event == GuiLabel::m_plane_distance_float_slider) { m_anaglyph_mode.m_plane_dist = event.get_value(); }
     return true;
-  }
-
-  void CadLayer::handle_keyboard_input(float dt)
-  {
-    if (fps_camera_selected())
-    {
-      if (EspInput::is_key_pressed(ESP_KEY_W)) { m_fps_camera->move(FpsCamera::FORWARD, dt); }
-      if (EspInput::is_key_pressed(ESP_KEY_S)) { m_fps_camera->move(FpsCamera::BACKWARD, dt); }
-      if (EspInput::is_key_pressed(ESP_KEY_A)) { m_fps_camera->move(FpsCamera::LEFT, dt); }
-      if (EspInput::is_key_pressed(ESP_KEY_D)) { m_fps_camera->move(FpsCamera::RIGHT, dt); }
-      if (EspInput::is_key_pressed(ESP_KEY_SPACE)) { m_fps_camera->move(FpsCamera::UP, dt); }
-      if (EspInput::is_key_pressed(ESP_KEY_LEFT_SHIFT)) { m_fps_camera->move(FpsCamera::DOWN, dt); }
-    }
   }
 
   void CadLayer::update_camera_on_scene(glm::mat4 projection, glm::mat4 view)
