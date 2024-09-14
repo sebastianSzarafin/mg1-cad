@@ -79,6 +79,9 @@ namespace mg1
 
   class GuiObjectInfoSelectableListBox : public GuiSelectableListBox<ObjectInfo*>
   {
+   private:
+    bool m_hide_points{ false };
+
    public:
     GuiObjectInfoSelectableListBox(const std::string& label, GuiSelectables<ObjectInfo*> value = {}) :
         GuiSelectableListBox(label, value)
@@ -99,6 +102,10 @@ namespace mg1
       auto info = event.get_info();
       GuiObjectInfoSelectable selectable{ info };
       m_value.push_back(std::make_shared<GuiObjectInfoSelectable>(selectable));
+      if (m_hide_points && dynamic_cast<PointInfo*>(selectable.get_value()))
+      {
+        selectable.get_value()->set_visibility(false);
+      }
     }
 
     inline void handle_event(ObjectRemovedEvent& event)
@@ -112,6 +119,8 @@ namespace mg1
 
     inline void handle_event(GuiCheckboxChangedEvent& event)
     {
+      m_hide_points = event.get_value();
+
       for (auto& selectable : m_value)
       {
         if (dynamic_cast<PointInfo*>(selectable->get_value()))
