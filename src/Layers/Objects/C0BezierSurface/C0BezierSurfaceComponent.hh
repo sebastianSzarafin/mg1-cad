@@ -24,9 +24,9 @@ namespace mg1
     std::vector<uint32_t> m_surface_indices{};
     std::vector<uint32_t> m_control_line_indices{};
 
-    const SurfaceType m_type;
-    const int m_patches_u; // surface division (horizontal)
-    const int m_patches_v; // surface division (vertical)
+    SurfaceType m_type;
+    int m_patches_u; // surface division (horizontal)
+    int m_patches_v; // surface division (vertical)
     int m_points_u;
     int m_points_v;
     int m_vertex_count;
@@ -34,10 +34,11 @@ namespace mg1
 
    public:
     C0BezierSurfaceComponent(int id, Scene* scene, CreateSurfaceData data);
+    C0BezierSurfaceComponent(int id, Scene* scene);
     ~C0BezierSurfaceComponent() = default;
 
-    virtual std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
-    virtual void set_dirty_flag();
+    std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
+    void set_dirty_flag();
 
     void translate(glm::vec3 position);
     void remove();
@@ -53,14 +54,15 @@ namespace mg1
     virtual void handle_event(CursorScaleChangedEvent& event);
 
    protected:
-    std::vector<uint32_t> create_control_points(CreateSurfaceData data);
+    virtual std::vector<uint32_t> create_control_points(CreateSurfaceData data);
+    virtual inline const int patch_size() { return s_patch_size; }
+    virtual inline const int patch_offset() { return s_patch_offset; }
 
-    static std::vector<PointInfo*> create_point_infos(std::vector<uint32_t>& control_points);
-
-   private:
     std::vector<Vertex> generate_patches();
     std::vector<uint32_t> generate_surface_indices();
     std::vector<uint32_t> generate_control_line_indices();
+
+    static std::vector<PointInfo*> create_point_infos(std::vector<uint32_t>& control_points);
   };
 } // namespace mg1
 

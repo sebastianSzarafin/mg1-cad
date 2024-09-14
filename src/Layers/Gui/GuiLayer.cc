@@ -104,6 +104,11 @@ namespace mg1
       m_create_surface_popup_modal->set_continuity(SurfaceContinuity::C0);
       m_create_surface_popup_modal->open();
     }
+    if (ImGui::Button(GuiLabel::m_create_c2_surface_button.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+    {
+      m_create_surface_popup_modal->set_continuity(SurfaceContinuity::C2);
+      m_create_surface_popup_modal->open();
+    }
     m_create_surface_popup_modal->render();
   }
 

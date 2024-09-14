@@ -4,11 +4,14 @@
 namespace mg1
 {
   C0BezierSurfaceComponent::C0BezierSurfaceComponent(int id, esp::Scene* scene, mg1::CreateSurfaceData data) :
-      IComponent(id, scene), m_type{ data.m_type }, m_patches_u{ data.m_segments_u }, m_patches_v{ data.m_segments_v }
+      IComponent(id, scene)
   {
-    m_wrap_u   = m_type == SurfaceType::Cylinder;
-    m_points_u = s_patch_size + s_patch_offset * (m_patches_u - 1) - (m_wrap_u ? 1 : 0);
-    m_points_v = s_patch_size + s_patch_offset * (m_patches_v - 1);
+    m_type      = data.m_type;
+    m_patches_u = data.m_segments_u;
+    m_patches_v = data.m_segments_v;
+    m_wrap_u    = m_type == SurfaceType::Cylinder;
+    m_points_u  = s_patch_size + s_patch_offset * (m_patches_u - 1) - (m_wrap_u ? 1 : 0);
+    m_points_v  = s_patch_size + s_patch_offset * (m_patches_v - 1);
 
     m_control_points = create_control_points(data);
     m_vertex_count   = generate_patches().size();
@@ -23,6 +26,8 @@ namespace mg1
     ObjectAddedEvent e{ m_info.get() };
     post_event(e);
   }
+
+  C0BezierSurfaceComponent::C0BezierSurfaceComponent(int id, esp::Scene* scene) : IComponent(id, scene) {}
 
   std::tuple<std::vector<Vertex>, std::vector<uint32_t>> C0BezierSurfaceComponent::reconstruct()
   {
@@ -157,13 +162,13 @@ namespace mg1
 
     auto curr_u = 0, curr_v = 0;
 
-    while (curr_u * s_patch_offset + s_patch_size <= (m_points_u + (m_wrap_u ? (s_patch_size - s_patch_offset) : 0)))
+    while (curr_u * patch_offset() + patch_size() <= m_points_u + (m_wrap_u ? (patch_size() - patch_offset()) : 0))
     {
-      while (curr_v * s_patch_offset + s_patch_size <= m_points_v)
+      while (curr_v * patch_offset() + patch_size() <= m_points_v)
       {
-        for (auto u = curr_u * s_patch_offset; u < curr_u * s_patch_offset + s_patch_size; u++)
+        for (auto u = curr_u * patch_offset(); u < curr_u * patch_offset() + patch_size(); u++)
         {
-          for (auto v = curr_v * s_patch_offset; v < curr_v * s_patch_offset + s_patch_size; v++)
+          for (auto v = curr_v * patch_offset(); v < curr_v * patch_offset() + patch_size(); v++)
           {
             // auto curr_off_u = u - curr_u * s_patch_offset;
             // auto curr_off_v = v - curr_v * s_patch_offset;
@@ -207,7 +212,7 @@ namespace mg1
     for (auto i = 0; i < m_vertex_count; i++)
     {
       auto next = i + 1;
-      if (next % s_patch_size != 0)
+      if (next % patch_size() != 0)
       {
         control_line_indices.push_back(i);
         control_line_indices.push_back(next);
@@ -217,13 +222,13 @@ namespace mg1
     // horizontal lines
     for (auto i = 0; i < m_vertex_count; i++)
     {
-      auto next = i + s_patch_size;
-      if ((i - 12) % (s_patch_size * s_patch_size) != 0)
+      auto next = i + patch_size();
+      if ((i - 12) % (patch_size() * patch_size()) != 0)
       {
         control_line_indices.push_back(i);
         control_line_indices.push_back(next);
       }
-      else { i += s_patch_size - 1; }
+      else { i += patch_size() - 1; }
     }
 
     return control_line_indices;

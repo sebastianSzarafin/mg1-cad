@@ -16,7 +16,8 @@ namespace mg1
 
     std::shared_ptr<EspShader> m_object_shader;
     std::shared_ptr<EspShader> m_spline_shader;
-    std::shared_ptr<EspShader> m_surface_shader;
+    std::shared_ptr<EspShader> m_c0_surface_shader;
+    std::shared_ptr<EspShader> m_c2_surface_shader;
     std::shared_ptr<EspShader> m_control_line_shader;
 
     Scene* m_scene;
@@ -36,6 +37,7 @@ namespace mg1
     static C2SplineComponent& create_c2_spline();
     static C2InterpolationSplineComponent& create_c2_interpolation_spline();
     static C0BezierSurfaceComponent& create_c0_bezier_surface(CreateSurfaceData data, glm::vec3 position = { 0, 0, 0 });
+    static C2BezierSurfaceComponent& create_c2_bezier_surface(CreateSurfaceData data, glm::vec3 position = { 0, 0, 0 });
 
     static PointComponent& get_control_point(uint32_t id);
 

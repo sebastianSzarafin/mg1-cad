@@ -3,6 +3,7 @@
 
 #include "C0BezierSurface/C0BezierSurfaceComponent.hh"
 #include "C0Spline/C0SplineComponent.hh"
+#include "C2BezierSurface/C2BezierSurfaceComponent.hh"
 #include "C2InterpolationSpline/C2InterpolationSplineComponent.hh"
 #include "C2Spline/C2SplineComponent.hh"
 #include "ControlLine/ControlLineComponent.hh"

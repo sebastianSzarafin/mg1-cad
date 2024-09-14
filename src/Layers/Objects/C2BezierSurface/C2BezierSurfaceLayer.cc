@@ -1,16 +1,16 @@
-#include "C0BezierSurfaceLayer.hh"
-#include "Layers/Objects/C0BezierSurface/C0BezierSurfaceComponent.hh"
+#include "C2BezierSurfaceLayer.hh"
+#include "Layers/Objects/C2BezierSurface/C2BezierSurfaceComponent.hh"
 #include "Layers/Objects/Cursor/CursorComponent.hh"
 #include "Layers/Objects/ObjectFactory.hh"
 
 namespace mg1
 {
-  C0BezierSurfaceLayer::C0BezierSurfaceLayer(esp::Scene* scene) : m_scene{ scene } {}
+  C2BezierSurfaceLayer::C2BezierSurfaceLayer(Scene* scene) : m_scene{ scene } {}
 
-  void C0BezierSurfaceLayer::pre_update(float dt)
+  void C2BezierSurfaceLayer::pre_update(float dt)
   {
     for (auto&& [entity, obj, cl, model] :
-         m_scene->get_view<C0BezierSurfaceComponent, ControlLineComponent, ModelComponent>())
+         m_scene->get_view<C2BezierSurfaceComponent, ControlLineComponent, ModelComponent>())
     {
       if (obj.get_info()->removed()) { obj.remove(); }
       else
@@ -35,10 +35,10 @@ namespace mg1
     }
   }
 
-  void C0BezierSurfaceLayer::update(float dt)
+  void C2BezierSurfaceLayer::update(float dt)
   {
     for (auto&& [entity, obj, cl, model] :
-         m_scene->get_view<C0BezierSurfaceComponent, ControlLineComponent, ModelComponent>())
+         m_scene->get_view<C2BezierSurfaceComponent, ControlLineComponent, ModelComponent>())
     {
       auto& obj_uniform_manager = model.get_uniform_manager(0);
       auto& cl_uniform_manager  = model.get_uniform_manager(1);
@@ -63,52 +63,52 @@ namespace mg1
     }
   }
 
-  void C0BezierSurfaceLayer::post_update(float dt) {}
+  void C2BezierSurfaceLayer::post_update(float dt) {}
 
-  void C0BezierSurfaceLayer::handle_event(Event& event, float dt)
+  void C2BezierSurfaceLayer::handle_event(Event& event, float dt)
   {
     Event::try_handler<GuiSurfacePopupModalCreateButtonClickedEvent>(
         event,
-        ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::gui_button_clicked_event_handler));
+        ESP_BIND_EVENT_FOR_FUN(C2BezierSurfaceLayer::gui_button_clicked_event_handler));
     Event::try_handler<GuiSelectableChangedEvent>(
         event,
-        ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::gui_selectable_changed_event_handler));
+        ESP_BIND_EVENT_FOR_FUN(C2BezierSurfaceLayer::gui_selectable_changed_event_handler));
     Event::try_handler<GuiCheckboxChangedEvent>(
         event,
-        ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::gui_checkbox_changed_event_handler));
+        ESP_BIND_EVENT_FOR_FUN(C2BezierSurfaceLayer::gui_checkbox_changed_event_handler));
     Event::try_handler<CursorRotChangedEvent>(
         event,
-        ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::cursor_rot_changed_event_handler));
+        ESP_BIND_EVENT_FOR_FUN(C2BezierSurfaceLayer::cursor_rot_changed_event_handler));
     Event::try_handler<CursorScaleChangedEvent>(
         event,
-        ESP_BIND_EVENT_FOR_FUN(C0BezierSurfaceLayer::cursor_scale_changed_event_handler));
+        ESP_BIND_EVENT_FOR_FUN(C2BezierSurfaceLayer::cursor_scale_changed_event_handler));
   }
 
-  bool C0BezierSurfaceLayer::gui_button_clicked_event_handler(GuiSurfacePopupModalCreateButtonClickedEvent& event)
+  bool C2BezierSurfaceLayer::gui_button_clicked_event_handler(GuiSurfacePopupModalCreateButtonClickedEvent& event)
   {
     if (event == GuiLabel::m_surface_popup_modal_create_button &&
-        event.get_data().m_continuity == SurfaceContinuity::C0)
+        event.get_data().m_continuity == SurfaceContinuity::C2)
     {
       glm::vec3 position{ 0, 0, 0 };
       if (m_set_cursor_pos_action_selected) { position = get_cursor_pos(); }
-      ObjectFactory::create_c0_bezier_surface(event.get_data(), position);
+      ObjectFactory::create_c2_bezier_surface(event.get_data(), position);
     }
 
     return false;
   }
 
-  bool C0BezierSurfaceLayer::gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event)
+  bool C2BezierSurfaceLayer::gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event)
   {
     if (event == GuiLabel::action_set_cursor_pos) { m_set_cursor_pos_action_selected = event.get_value(); }
 
     return false;
   }
 
-  bool C0BezierSurfaceLayer::gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event)
+  bool C2BezierSurfaceLayer::gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event)
   {
     if (!(event == GuiLabel::control_line_checkbox)) { return false; }
 
-    for (auto&& [entity, obj] : m_scene->get_view<C0BezierSurfaceComponent>())
+    for (auto&& [entity, obj] : m_scene->get_view<C2BezierSurfaceComponent>())
     {
       obj.handle_event(event);
     }
@@ -116,11 +116,11 @@ namespace mg1
     return false;
   }
 
-  bool C0BezierSurfaceLayer::cursor_rot_changed_event_handler(CursorRotChangedEvent& event)
+  bool C2BezierSurfaceLayer::cursor_rot_changed_event_handler(CursorRotChangedEvent& event)
   {
     if (!(event == ObjectLabel::cursor_rot_changed_event) || event.is_type(CursorType::Mouse)) { return false; }
 
-    for (auto&& [entity, obj] : m_scene->get_view<C0BezierSurfaceComponent>())
+    for (auto&& [entity, obj] : m_scene->get_view<C2BezierSurfaceComponent>())
     {
       obj.handle_event(event);
     }
@@ -128,11 +128,11 @@ namespace mg1
     return false;
   }
 
-  bool C0BezierSurfaceLayer::cursor_scale_changed_event_handler(CursorScaleChangedEvent& event)
+  bool C2BezierSurfaceLayer::cursor_scale_changed_event_handler(CursorScaleChangedEvent& event)
   {
     if (!(event == ObjectLabel::cursor_scale_changed_event) || event.is_type(CursorType::Mouse)) { return false; }
 
-    for (auto&& [entity, obj] : m_scene->get_view<C0BezierSurfaceComponent>())
+    for (auto&& [entity, obj] : m_scene->get_view<C2BezierSurfaceComponent>())
     {
       obj.handle_event(event);
     }
@@ -140,7 +140,7 @@ namespace mg1
     return false;
   }
 
-  glm::vec3 C0BezierSurfaceLayer::get_cursor_pos()
+  glm::vec3 C2BezierSurfaceLayer::get_cursor_pos()
   {
     for (auto&& [entity, cursor] : m_scene->get_view<CursorComponent>())
     {
