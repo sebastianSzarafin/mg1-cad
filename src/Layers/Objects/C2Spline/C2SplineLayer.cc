@@ -1,5 +1,6 @@
 #include "C2SplineLayer.hh"
 #include "Layers/Objects/C2Spline/C2SplineComponent.hh"
+#include "Layers/Objects/ControlLine/ControlLineComponent.hh"
 #include "Layers/Objects/ObjectFactory.hh"
 
 namespace mg1

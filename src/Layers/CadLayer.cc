@@ -1,5 +1,6 @@
 #include "CadLayer.hh"
 #include "Layers/Gui/GuiLayer.hh"
+#include "Layers/Objects/Cursor/CursorComponent.hh"
 #include "Layers/Objects/ObjectLayer.hh"
 
 struct QuadVertex

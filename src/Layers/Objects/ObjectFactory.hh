@@ -1,14 +1,23 @@
 #ifndef ESPERT_SANDBOX_OBJECTFACTORY_HH
 #define ESPERT_SANDBOX_OBJECTFACTORY_HH
 
-#include "Components.hh"
 #include "Espert.hh"
+#include "Events/Objects/ObjectRemovedEvent.hh"
 #include "ObjectSelector.hh"
 
 using namespace esp;
 
 namespace mg1
 {
+  class TorusComponent;
+  class PointComponent;
+  class C0SplineComponent;
+  class C2SplineComponent;
+  class C2InterpolationSplineComponent;
+  class C0BezierSurfaceComponent;
+  class C2BezierSurfaceComponent;
+  struct CreateSurfaceData;
+
   class ObjectFactory : IEventable
   {
    private:

@@ -1,5 +1,6 @@
 #include "C2BezierSurfaceLayer.hh"
 #include "Layers/Objects/C2BezierSurface/C2BezierSurfaceComponent.hh"
+#include "Layers/Objects/ControlLine/ControlLineComponent.hh"
 #include "Layers/Objects/Cursor/CursorComponent.hh"
 #include "Layers/Objects/ObjectFactory.hh"
 

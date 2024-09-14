@@ -1,6 +1,6 @@
 #include "C2InterpolationSplineLayer.hh"
 #include "Layers/Objects/C2InterpolationSpline/C2InterpolationSplineComponent.hh"
-#include "Layers/Objects/C2Spline/C2SplineComponent.hh"
+#include "Layers/Objects/ControlLine/ControlLineComponent.hh"
 #include "Layers/Objects/ObjectFactory.hh"
 
 namespace mg1
