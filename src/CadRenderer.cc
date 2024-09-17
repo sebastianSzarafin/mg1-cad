@@ -83,10 +83,7 @@ static void prepare_camera_on_scene()
             mvp         = glm::translate(mvp, cursor.get_position());
           }
           else { mvp *= node->get_model_mat(); }
-          for (auto& draw : model->get_draw_data())
-          {
-            draw->m_uniform_manager->update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
-          }
+          model->update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
         }
       });
 }
