@@ -39,17 +39,17 @@ namespace mg1
 
   void GridLayer::push_grid()
   {
-    for (auto&& [entity, grid] : m_scene->get_view<GridComponent>())
+    for (auto&& [entity, _, model] : m_scene->get_view<GridComponent, ModelComponent>())
     {
-      m_scene->get_root().add_child(grid.get_node());
+      model.choose(0);
     }
   }
 
   void GridLayer::pop_grid()
   {
-    for (auto&& [entity, grid] : m_scene->get_view<GridComponent>())
+    for (auto&& [entity, _, model] : m_scene->get_view<GridComponent, ModelComponent>())
     {
-      m_scene->get_root().remove_child(grid.get_node());
+      model.skip(0);
     }
   }
 } // namespace mg1
