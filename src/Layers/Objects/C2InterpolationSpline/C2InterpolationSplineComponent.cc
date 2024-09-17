@@ -5,9 +5,8 @@ namespace mg1
 {
 
   C2InterpolationSplineComponent::C2InterpolationSplineComponent(uint32_t id,
-                                                                 Scene* scene,
                                                                  std::vector<PointComponent> control_points) :
-      C0SplineComponent(id, scene)
+      C0SplineComponent(id)
   {
     sort_control_points(control_points);
 

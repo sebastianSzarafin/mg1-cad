@@ -128,7 +128,7 @@ namespace mg1
     // create children layers
     {
       m_gui_layer    = std::unique_ptr<Layer>(new GuiLayer());
-      m_object_layer = std::unique_ptr<Layer>(new ObjectLayer(CadRenderer::get_scene()));
+      m_object_layer = std::unique_ptr<Layer>(new ObjectLayer(m_scene.get()));
     }
   }
 

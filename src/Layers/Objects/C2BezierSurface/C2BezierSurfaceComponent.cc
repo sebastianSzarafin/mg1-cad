@@ -4,8 +4,7 @@
 namespace mg1
 {
 
-  C2BezierSurfaceComponent::C2BezierSurfaceComponent(int id, Scene* scene, CreateSurfaceData data) :
-      C0BezierSurfaceComponent(id, scene)
+  C2BezierSurfaceComponent::C2BezierSurfaceComponent(int id, CreateSurfaceData data) : C0BezierSurfaceComponent(id)
   {
     m_type      = data.m_type;
     m_patches_u = data.m_segments_u;

@@ -3,8 +3,7 @@
 
 namespace mg1
 {
-  C0SplineComponent::C0SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points) :
-      IComponent(id, scene)
+  C0SplineComponent::C0SplineComponent(uint32_t id, std::vector<PointComponent> control_points) : IComponent(id)
   {
     sort_control_points(control_points);
 
@@ -17,7 +16,7 @@ namespace mg1
     post_event(e);
   }
 
-  C0SplineComponent::C0SplineComponent(uint32_t id, esp::Scene* scene) : IComponent(id, scene) {}
+  C0SplineComponent::C0SplineComponent(uint32_t id) : IComponent(id) {}
 
   std::tuple<std::vector<Vertex>, std::vector<uint32_t>> C0SplineComponent::reconstruct()
   {

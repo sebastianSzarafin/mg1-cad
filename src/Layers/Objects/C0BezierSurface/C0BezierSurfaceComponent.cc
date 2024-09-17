@@ -3,8 +3,7 @@
 
 namespace mg1
 {
-  C0BezierSurfaceComponent::C0BezierSurfaceComponent(int id, esp::Scene* scene, mg1::CreateSurfaceData data) :
-      IComponent(id, scene)
+  C0BezierSurfaceComponent::C0BezierSurfaceComponent(int id, mg1::CreateSurfaceData data) : IComponent(id)
   {
     m_type      = data.m_type;
     m_patches_u = data.m_segments_u;
@@ -27,7 +26,7 @@ namespace mg1
     post_event(e);
   }
 
-  C0BezierSurfaceComponent::C0BezierSurfaceComponent(int id, esp::Scene* scene) : IComponent(id, scene) {}
+  C0BezierSurfaceComponent::C0BezierSurfaceComponent(int id) : IComponent(id) {}
 
   std::tuple<std::vector<Vertex>, std::vector<uint32_t>> C0BezierSurfaceComponent::reconstruct()
   {

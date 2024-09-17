@@ -18,8 +18,8 @@ namespace mg1
     std::vector<uint32_t> m_control_points{};
 
    public:
-    C0SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points);
-    C0SplineComponent(uint32_t id, Scene* scene);
+    C0SplineComponent(uint32_t id, std::vector<PointComponent> control_points);
+    C0SplineComponent(uint32_t id);
     ~C0SplineComponent() = default;
 
     virtual std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();

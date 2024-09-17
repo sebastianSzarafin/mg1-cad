@@ -228,7 +228,7 @@ namespace mg1
 
     auto entity = s_instance->m_scene->create_entity();
 
-    entity->add_component<C0SplineComponent>(entity->get_id(), s_instance->m_scene, control_points);
+    entity->add_component<C0SplineComponent>(entity->get_id(), control_points);
     auto& spline             = entity->get_component<C0SplineComponent>();
     auto [vertices, indices] = spline.reconstruct();
 
@@ -266,7 +266,7 @@ namespace mg1
 
     auto entity = s_instance->m_scene->create_entity();
 
-    entity->add_component<C2SplineComponent>(entity->get_id(), s_instance->m_scene, control_points);
+    entity->add_component<C2SplineComponent>(entity->get_id(), control_points);
     auto& spline             = entity->get_component<C2SplineComponent>();
     auto [vertices, indices] = spline.reconstruct();
 
@@ -305,7 +305,7 @@ namespace mg1
 
     auto entity = s_instance->m_scene->create_entity();
 
-    entity->add_component<C2InterpolationSplineComponent>(entity->get_id(), s_instance->m_scene, control_points);
+    entity->add_component<C2InterpolationSplineComponent>(entity->get_id(), control_points);
     auto& spline             = entity->get_component<C2InterpolationSplineComponent>();
     auto [vertices, indices] = spline.reconstruct();
 
@@ -340,7 +340,7 @@ namespace mg1
   {
     auto entity = s_instance->m_scene->create_entity();
 
-    entity->add_component<C0BezierSurfaceComponent>(entity->get_id(), s_instance->m_scene, data);
+    entity->add_component<C0BezierSurfaceComponent>(entity->get_id(), data);
     auto& surface = entity->get_component<C0BezierSurfaceComponent>();
     surface.translate(position);
     auto [vertices, indices] = surface.reconstruct();
@@ -373,7 +373,7 @@ namespace mg1
   {
     auto entity = s_instance->m_scene->create_entity();
 
-    entity->add_component<C2BezierSurfaceComponent>(entity->get_id(), s_instance->m_scene, data);
+    entity->add_component<C2BezierSurfaceComponent>(entity->get_id(), data);
     auto& surface = entity->get_component<C2BezierSurfaceComponent>();
     surface.translate(position);
     auto [vertices, indices] = surface.reconstruct();

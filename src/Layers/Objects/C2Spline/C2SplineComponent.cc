@@ -3,8 +3,7 @@
 
 namespace mg1
 {
-  C2SplineComponent::C2SplineComponent(uint32_t id, Scene* scene, std::vector<PointComponent> control_points) :
-      C0SplineComponent(id, scene)
+  C2SplineComponent::C2SplineComponent(uint32_t id, std::vector<PointComponent> control_points) : C0SplineComponent(id)
   {
     sort_control_points(control_points);
 

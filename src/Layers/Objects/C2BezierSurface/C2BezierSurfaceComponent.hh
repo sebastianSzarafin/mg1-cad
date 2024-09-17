@@ -12,7 +12,7 @@ namespace mg1
     static const int s_patch_offset = 1;
 
    public:
-    C2BezierSurfaceComponent(int id, Scene* scene, CreateSurfaceData data);
+    C2BezierSurfaceComponent(int id, CreateSurfaceData data);
     ~C2BezierSurfaceComponent() = default;
 
     void handle_event(GuiCheckboxChangedEvent& event) override;
