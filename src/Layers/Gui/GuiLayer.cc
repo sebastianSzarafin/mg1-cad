@@ -66,7 +66,7 @@ namespace mg1
 
     update_camera_type((CameraType)type);
 
-    glm::vec3 pos = Scene::get_current_camera()->get_position();
+    glm::vec3 pos = CadRenderer::get_camera()->get_position();
     ImGui::Text("Camera pos: (%.2f,%.2f,%.2f)", pos.x, pos.y, pos.z);
     ImGui::Spacing();
     ImGui::Text("Mouse pos: (%.2f,%.2f)", Math::get_mouse_x_cs(), Math::get_mouse_y_cs());

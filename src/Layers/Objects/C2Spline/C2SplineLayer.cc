@@ -53,12 +53,12 @@ namespace mg1
 
       if (obj.display_control_line())
       {
-        model.choose({ 0, 1 });
+        model.choose(1);
 
         glm::vec3 color = ObjectConstants::bernstein_point_color;
         cl_uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(glm::vec3), &color);
       }
-      else { model.choose({ 0 }); }
+      else { model.skip(1); }
 
       glm::vec3 color = obj.get_info()->selected() ? ObjectConstants::selected_color : ObjectConstants::default_color;
       obj_uniform_manager.update_buffer_uniform(0, 1, 0, sizeof(glm::vec3), &color);

@@ -1,9 +1,9 @@
+#include "CadRenderer.hh"
 #include "ClientPoint.hh"
 #include "Layers/CadLayer.hh"
 
 class SandBoxApp : public esp::EspApplication
 {
- private:
  public:
   SandBoxApp() :
       EspApplication({ .m_title          = "My window",
@@ -12,8 +12,11 @@ class SandBoxApp : public esp::EspApplication
                        .m_disable_cursor = false,
                        .m_use_gui        = true })
   {
+    mg1::CadRenderer::create();
+
     push_layer(new mg1::CadLayer());
   }
+  ~SandBoxApp() override { mg1::CadRenderer::terminate(); }
 
   void virtual update(float dt) override
   {

@@ -1,6 +1,7 @@
 #ifndef ESPERT_SANDBOX_MATH_HH
 #define ESPERT_SANDBOX_MATH_HH
 
+#include "CadRenderer.hh"
 #include "Constants.hh"
 #include "Espert.hh"
 
@@ -81,9 +82,9 @@ namespace mg1
       return 1.f - mouse_y / window_height * 2.f;
     }
 
-    static void on_new_frame()
+    static void update()
     {
-      auto camera = Scene::get_current_camera();
+      auto camera = CadRenderer::get_camera();
 
       s_mouse_ray =
           Math::cast_ray(Math::get_mouse_x_cs(), Math::get_mouse_y_cs(), camera->get_view(), camera->get_projection());

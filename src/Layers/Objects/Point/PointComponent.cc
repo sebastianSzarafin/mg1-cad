@@ -33,7 +33,7 @@ namespace mg1
     auto button_code = event.get_button_code();
     if (button_code != GLFW_MOUSE_BUTTON_LEFT && button_code != GLFW_MOUSE_BUTTON_MIDDLE) { return; }
 
-    auto camera     = Scene::get_current_camera();
+    auto camera     = CadRenderer::get_camera();
     auto camera_pos = camera->get_position();
     auto node_pos   = m_node->get_translation();
     auto eps        = .75f * std::log2(glm::length2(node_pos - camera_pos));

@@ -25,7 +25,7 @@ std::vector<uint32_t> quad_idx{ 0, 1, 2, 2, 3, 0 };
 
 namespace mg1
 {
-  CadLayer::CadLayer()
+  CadLayer::CadLayer() : m_scene{ Scene::create() }
   {
     // create scene render plan [OFF-SCREEN]
     {
@@ -110,7 +110,7 @@ namespace mg1
       m_final_render.m_index_buffer  = EspIndexBuffer::create(quad_idx.data(), quad_idx.size());
     }
 
-    // create scene
+    // create cameras
     {
       m_orbit_camera = std::make_shared<OrbitCameraController>();
       m_orbit_camera->set_sensitivity(1.f / 4.f);
@@ -119,17 +119,16 @@ namespace mg1
       m_fps_camera->set_sensitivity(2.f);
       m_fps_camera->set_move_speed(4.f);
       m_fps_camera->set_perspective(EspWorkOrchestrator::get_swap_chain_extent_aspect_ratio());
-      m_scene = Scene::create();
-      m_scene->add_camera(m_orbit_camera.get());
-      m_scene->add_camera(m_fps_camera.get());
-
-      m_scene->set_current_camera(m_orbit_camera.get());
+      m_selected_camera = m_orbit_camera.get();
     }
+
+    CadRenderer::set_camera(m_selected_camera);
+    CadRenderer::set_scene(m_scene.get());
 
     // create children layers
     {
       m_gui_layer    = std::unique_ptr<Layer>(new GuiLayer());
-      m_object_layer = std::unique_ptr<Layer>(new ObjectLayer(m_scene.get()));
+      m_object_layer = std::unique_ptr<Layer>(new ObjectLayer(CadRenderer::get_scene()));
     }
   }
 
@@ -143,7 +142,7 @@ namespace mg1
   {
     m_orbit_camera->update(dt);
     m_fps_camera->update(dt);
-    Math::on_new_frame();
+    Math::update();
 
     if (EspGui::m_use_gui)
     {
@@ -184,18 +183,18 @@ namespace mg1
 
     m_object_layer->update(dt);
 
-    auto camera = Scene::get_current_camera();
     if (m_anaglyph_mode.m_on)
     {
-      camera->set_anaglyph_perspective(m_anaglyph_mode.m_eye_dist, m_anaglyph_mode.m_plane_dist, true);
+      m_selected_camera->set_anaglyph_perspective(m_anaglyph_mode.m_eye_dist, m_anaglyph_mode.m_plane_dist, true);
     }
-    else { camera->set_perspective(EspWorkOrchestrator::get_swap_chain_extent_aspect_ratio()); }
+    else { m_selected_camera->set_perspective(EspWorkOrchestrator::get_swap_chain_extent_aspect_ratio()); }
 
     // scene render plan [OFF-SCREEN]
     m_scene_render.m_plan->begin_plan();
     {
-      update_camera_on_scene(camera->get_projection(), camera->get_view());
-      m_scene->draw();
+      CadRenderer::begin_scene(m_selected_camera);
+      CadRenderer::render();
+      CadRenderer::end_scene();
     }
     m_scene_render.m_plan->end_plan();
     m_scene_render.m_depth_block->clear();
@@ -204,13 +203,14 @@ namespace mg1
     {
       EspWorkOrchestrator::split_frame();
 
-      camera->set_anaglyph_perspective(m_anaglyph_mode.m_eye_dist, m_anaglyph_mode.m_plane_dist, false);
+      m_selected_camera->set_anaglyph_perspective(m_anaglyph_mode.m_eye_dist, m_anaglyph_mode.m_plane_dist, false);
 
       // anaglyph scene render plan [OFF-SCREEN]
       m_anaglyph_mode_render.m_plan->begin_plan();
       {
-        update_camera_on_scene(camera->get_projection(), camera->get_view());
-        m_scene->draw();
+        CadRenderer::begin_scene(m_selected_camera);
+        CadRenderer::render();
+        CadRenderer::end_scene();
       }
       m_anaglyph_mode_render.m_plan->end_plan();
       m_anaglyph_mode_render.m_depth_block->clear();
@@ -299,12 +299,12 @@ namespace mg1
     {
     case Fps:
     {
-      Scene::set_current_camera(m_fps_camera.get());
+      m_selected_camera = m_fps_camera.get();
       break;
     }
     case Orbit:
     {
-      Scene::set_current_camera(m_orbit_camera.get());
+      m_selected_camera = m_orbit_camera.get();
       break;
     }
     }
@@ -324,30 +324,5 @@ namespace mg1
     if (event == GuiLabel::m_eye_distance_float_slider) { m_anaglyph_mode.m_eye_dist = event.get_value(); }
     if (event == GuiLabel::m_plane_distance_float_slider) { m_anaglyph_mode.m_plane_dist = event.get_value(); }
     return true;
-  }
-
-  void CadLayer::update_camera_on_scene(glm::mat4 projection, glm::mat4 view)
-  {
-    m_scene->get_root().act(
-        [&projection, &view](Node* node)
-        {
-          auto entity = node->get_entity();
-          auto model  = entity->try_get_component<ModelComponent>();
-          if (model)
-          {
-            auto uniform_managers = model->get_uniform_managers();
-            glm::mat4 mvp         = projection * view;
-            if (entity->has_component<CursorComponent>())
-            {
-              auto cursor = entity->get_component<CursorComponent>();
-              mvp         = glm::translate(mvp, cursor.get_position());
-            }
-            else { mvp *= node->get_model_mat(); }
-            for (auto& uniform_manager : uniform_managers)
-            {
-              uniform_manager->update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
-            }
-          }
-        });
   }
 } // namespace mg1
