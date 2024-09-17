@@ -1,28 +1,11 @@
 #include "CursorLayer.hh"
 #include "Events/Objects/ObjectEvents.hh"
+#include "Layers/Objects/ObjectFactory.hh"
 #include "Utils/Constants.hh"
 
 namespace mg1
 {
-  CursorLayer::CursorLayer(Scene* scene) : m_scene{ scene }
-  {
-    // create shader
-    {
-      auto uniform_meta_data = EspUniformMetaData::create();
-      uniform_meta_data->establish_descriptor_set();
-      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_VTX_STAGE, sizeof(glm::mat4));
-
-      m_shader = ShaderSystem::acquire("Shaders/Layers/Objects/CursorLayer/shader");
-      m_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
-      m_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
-      m_shader->set_rasterizer_settings(
-          { .m_polygon_mode = ESP_POLYGON_MODE_LINE, .m_cull_mode = ESP_CULL_MODE_NONE, .m_line_width = 5.f });
-      m_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT, EspCompareOp::ESP_COMPARE_OP_LESS);
-      m_shader->set_vertex_layouts({ CursorInit::S_MODEL_PARAMS.get_vertex_layouts() });
-      m_shader->set_worker_layout(std::move(uniform_meta_data));
-      m_shader->build_worker();
-    }
-  }
+  CursorLayer::CursorLayer(Scene* scene) : m_scene{ scene } {}
 
   void CursorLayer::update(float dt)
   {
@@ -51,7 +34,7 @@ namespace mg1
     if (first_loop)
     {
       // initial scene
-      create_cursor(CursorType::Mouse);
+      ObjectFactory::create_cursor(CursorType::Mouse);
       first_loop = false;
     }
   }
@@ -136,13 +119,13 @@ namespace mg1
         }
         else
         {
-          remove_cursor(cursor.get_node(), cursor.get_info());
+          ObjectFactory::remove_object(cursor);
           return false;
         }
       }
     }
 
-    if (event.create_or_update()) { create_cursor(CursorType::Object, event.get_position()); }
+    if (event.create_or_update()) { ObjectFactory::create_cursor(CursorType::Object, event.get_position()); }
 
     return false;
   }
@@ -168,53 +151,4 @@ namespace mg1
 
     return false;
   }
-
-  void CursorLayer::create_cursor(mg1::CursorType type, glm::vec3 position)
-  {
-    auto entity = m_scene->create_entity();
-
-    entity->add_component<CursorComponent>(entity->get_id(), type, position);
-    auto& cursor = entity->get_component<CursorComponent>();
-
-    auto [vertices, indices] = CursorComponent::construct();
-    auto model               = std::make_shared<Model>(vertices,
-                                         indices,
-                                         std::vector<std::shared_ptr<EspTexture>>{},
-                                         CursorInit::S_MODEL_PARAMS);
-    entity->add_component<ModelComponent>(model, m_shader);
-
-    cursor.get_node()->attach_entity(entity);
-    cursor.get_node()->translate(position);
-
-    m_scene->get_root().add_child(cursor.get_node());
-  }
-
-  void CursorLayer::remove_cursor(Node* node, ObjectInfo* info)
-  {
-    auto parent = node->get_parent();
-    parent->rebase_child(nullptr, node);
-
-    EspJob::done_all_jobs();
-    parent->remove_child(node);
-    ObjectRemovedEvent event{ info };
-    post_event(event);
-    m_scene->destroy_entity(info->m_id);
-  }
-
-  void CursorLayer::push_cursor()
-  {
-    for (auto&& [entity, cursor] : m_scene->get_view<CursorComponent>())
-    {
-      m_scene->get_root().add_child(cursor.get_node());
-    }
-  }
-
-  void CursorLayer::pop_cursor()
-  {
-    for (auto&& [entity, cursor] : m_scene->get_view<CursorComponent>())
-    {
-      m_scene->get_root().remove_child(cursor.get_node());
-    }
-  }
-
 } // namespace mg1

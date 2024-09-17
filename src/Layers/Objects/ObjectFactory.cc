@@ -5,8 +5,8 @@
 #include "C2InterpolationSpline/C2InterpolationSplineComponent.hh"
 #include "C2Spline/C2SplineComponent.hh"
 #include "ControlLine/ControlLineComponent.hh"
-#include "Grid/GridComponent.hh"
 #include "Cursor/CursorComponent.hh"
+#include "Grid/GridComponent.hh"
 #include "Point/PointComponent.hh"
 #include "Torus/TorusComponent.hh"
 #include "Utils/Constants.hh"
@@ -34,6 +34,23 @@ namespace mg1
       m_grid_shader->set_vertex_layouts({ GridInit::S_MODEL_PARAMS.get_vertex_layouts() });
       m_grid_shader->set_worker_layout(std::move(uniform_meta_data));
       m_grid_shader->build_worker();
+    }
+
+    // create cursor shader
+    {
+      auto uniform_meta_data = EspUniformMetaData::create();
+      uniform_meta_data->establish_descriptor_set();
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_VTX_STAGE, sizeof(glm::mat4));
+
+      m_cursor_shader = ShaderSystem::acquire("Shaders/Layers/Objects/CursorLayer/shader");
+      m_cursor_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
+      m_cursor_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
+      m_cursor_shader->set_rasterizer_settings(
+          { .m_polygon_mode = ESP_POLYGON_MODE_LINE, .m_cull_mode = ESP_CULL_MODE_NONE, .m_line_width = 5.f });
+      m_cursor_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT, EspCompareOp::ESP_COMPARE_OP_LESS);
+      m_cursor_shader->set_vertex_layouts({ CursorInit::S_MODEL_PARAMS.get_vertex_layouts() });
+      m_cursor_shader->set_worker_layout(std::move(uniform_meta_data));
+      m_cursor_shader->build_worker();
     }
 
     // create object shader
@@ -166,6 +183,26 @@ namespace mg1
     s_instance->m_scene->get_root().add_child(grid.get_node());
 
     return grid;
+  }
+
+  CursorComponent& ObjectFactory::create_cursor(mg1::CursorType type, glm::vec3 position)
+  {
+    auto entity = s_instance->m_scene->create_entity();
+
+    entity->add_component<CursorComponent>(entity->get_id(), type, position);
+    auto& cursor = entity->get_component<CursorComponent>();
+
+    auto [vertices, indices] = CursorComponent::construct();
+    auto model               = std::make_shared<Model>(vertices,
+                                         indices,
+                                         std::vector<std::shared_ptr<EspTexture>>{},
+                                         CursorInit::S_MODEL_PARAMS);
+    entity->add_component<ModelComponent>(model, s_instance->m_cursor_shader);
+
+    cursor.get_node()->attach_entity(entity);
+    cursor.get_node()->translate(position);
+
+    s_instance->m_scene->get_root().add_child(cursor.get_node());
   }
 
   TorusComponent& ObjectFactory::create_torus(glm::vec3 position)

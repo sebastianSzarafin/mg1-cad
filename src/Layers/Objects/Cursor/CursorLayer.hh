@@ -21,8 +21,6 @@ namespace mg1
 
     Scene* m_scene;
 
-    std::shared_ptr<EspShader> m_shader;
-
    public:
     CursorLayer(Scene* scene);
 
@@ -37,11 +35,6 @@ namespace mg1
     bool mouse_moved_event_handler(esp::MouseMovedEvent& event, float dt);
     bool mouse_scrolled_event_handler(MouseScrolledEvent& event);
     bool cursor_pos_changed_event_handler(CursorPosChangedEvent& event);
-
-    void create_cursor(CursorType type, glm::vec3 position = { 0, 0, 0 });
-    void remove_cursor(Node* node, ObjectInfo* info);
-    void push_cursor();
-    void pop_cursor();
   };
 } // namespace mg1
 
