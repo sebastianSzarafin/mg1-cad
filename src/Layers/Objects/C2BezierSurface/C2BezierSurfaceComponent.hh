@@ -12,7 +12,7 @@ namespace mg1
     static const int s_patch_offset = 1;
 
    public:
-    C2BezierSurfaceComponent(int id, CreateSurfaceData data);
+    C2BezierSurfaceComponent(int id, SurfaceComponentParams data);
     ~C2BezierSurfaceComponent() = default;
 
     void handle_event(GuiCheckboxChangedEvent& event) override;
@@ -20,7 +20,7 @@ namespace mg1
     void handle_event(CursorScaleChangedEvent& event) override;
 
    private:
-    std::vector<uint32_t> create_control_points(CreateSurfaceData data) override;
+    std::vector<uint32_t> create_control_points(SurfaceComponentParams data) override;
     inline const int patch_size() override { return s_patch_size; }
     inline const int patch_offset() override { return s_patch_offset; }
   };

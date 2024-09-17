@@ -4,7 +4,7 @@
 #include "C2BezierSurface/C2BezierSurfaceLayer.hh"
 #include "C2InterpolationSpline/C2InterpolationSplineLayer.hh"
 #include "C2Spline/C2SplineLayer.hh"
-#include "CoordinateSystemGrid/CoordinateSystemGridLayer.hh"
+#include "Grid/GridLayer.hh"
 #include "Cursor/CursorLayer.hh"
 #include "Point/PointLayer.hh"
 #include "Torus/TorusLayer.hh"
@@ -19,7 +19,7 @@ namespace mg1
     // create children layers
     {
       m_children.emplace_back(new CursorLayer(m_scene));
-      m_children.emplace_back(new CoordinateSystemGridLayer(m_scene));
+      m_children.emplace_back(new GridLayer(m_scene));
       m_children.emplace_back(new TorusLayer(m_scene));
       m_children.emplace_back(new PointLayer(m_scene));
       m_children.emplace_back(new C0SplineLayer(m_scene));

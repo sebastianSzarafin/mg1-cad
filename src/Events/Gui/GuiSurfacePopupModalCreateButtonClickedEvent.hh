@@ -6,7 +6,7 @@
 
 namespace mg1
 {
-  struct CreateSurfaceData
+  struct SurfaceComponentParams
   {
     SurfaceType m_type;
     SurfaceContinuity m_continuity;
@@ -19,15 +19,15 @@ namespace mg1
   class GuiSurfacePopupModalCreateButtonClickedEvent : public GuiEvent
   {
    private:
-    CreateSurfaceData m_create_surface_data;
+    SurfaceComponentParams m_surface_component_params;
 
    public:
-    GuiSurfacePopupModalCreateButtonClickedEvent(const std::string& label, CreateSurfaceData data) :
-        GuiEvent(label), m_create_surface_data{ data }
+    GuiSurfacePopupModalCreateButtonClickedEvent(const std::string& label, SurfaceComponentParams params) :
+        GuiEvent(label), m_surface_component_params{ params }
     {
     }
 
-    inline CreateSurfaceData get_data() { return m_create_surface_data; }
+    inline SurfaceComponentParams get_data() { return m_surface_component_params; }
   };
 } // namespace mg1
 

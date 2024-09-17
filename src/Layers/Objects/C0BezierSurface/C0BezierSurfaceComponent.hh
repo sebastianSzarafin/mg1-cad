@@ -33,7 +33,7 @@ namespace mg1
     bool m_wrap_u;
 
    public:
-    C0BezierSurfaceComponent(int id, CreateSurfaceData data);
+    C0BezierSurfaceComponent(int id, SurfaceComponentParams data);
     C0BezierSurfaceComponent(int id);
     ~C0BezierSurfaceComponent() = default;
 
@@ -54,7 +54,7 @@ namespace mg1
     virtual void handle_event(CursorScaleChangedEvent& event);
 
    protected:
-    virtual std::vector<uint32_t> create_control_points(CreateSurfaceData data);
+    virtual std::vector<uint32_t> create_control_points(SurfaceComponentParams data);
     virtual inline const int patch_size() { return s_patch_size; }
     virtual inline const int patch_offset() { return s_patch_offset; }
 

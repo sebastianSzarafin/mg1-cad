@@ -9,6 +9,7 @@ using namespace esp;
 
 namespace mg1
 {
+  class GridComponent;
   class TorusComponent;
   class PointComponent;
   class C0SplineComponent;
@@ -16,13 +17,15 @@ namespace mg1
   class C2InterpolationSplineComponent;
   class C0BezierSurfaceComponent;
   class C2BezierSurfaceComponent;
-  struct CreateSurfaceData;
+  struct GridComponentParams;
+  struct SurfaceComponentParams;
 
   class ObjectFactory : IEventable
   {
    private:
     static ObjectFactory* s_instance;
 
+    std::shared_ptr<EspShader> m_grid_shader;
     std::shared_ptr<EspShader> m_object_shader;
     std::shared_ptr<EspShader> m_spline_shader;
     std::shared_ptr<EspShader> m_c0_surface_shader;
@@ -38,6 +41,7 @@ namespace mg1
 
     static std::unique_ptr<ObjectFactory> create(Scene* scene, ObjectSelector* object_selector);
 
+    static GridComponent& create_grid(GridComponentParams params);
     static TorusComponent& create_torus(glm::vec3 position = { 0, 0, 0 });
     static PointComponent& create_point(glm::vec3 position = { 0, 0, 0 });
     static PointComponent& create_bernstein_point(glm::vec3 position = { 0, 0, 0 });
@@ -45,8 +49,10 @@ namespace mg1
     static C0SplineComponent& create_c0_spline();
     static C2SplineComponent& create_c2_spline();
     static C2InterpolationSplineComponent& create_c2_interpolation_spline();
-    static C0BezierSurfaceComponent& create_c0_bezier_surface(CreateSurfaceData data, glm::vec3 position = { 0, 0, 0 });
-    static C2BezierSurfaceComponent& create_c2_bezier_surface(CreateSurfaceData data, glm::vec3 position = { 0, 0, 0 });
+    static C0BezierSurfaceComponent& create_c0_bezier_surface(SurfaceComponentParams data,
+                                                              glm::vec3 position = { 0, 0, 0 });
+    static C2BezierSurfaceComponent& create_c2_bezier_surface(SurfaceComponentParams data,
+                                                              glm::vec3 position = { 0, 0, 0 });
 
     static PointComponent& get_control_point(uint32_t id);
 

@@ -5,7 +5,7 @@
 #include "C2InterpolationSpline/C2InterpolationSplineComponent.hh"
 #include "C2Spline/C2SplineComponent.hh"
 #include "ControlLine/ControlLineComponent.hh"
-#include "CoordinateSystemGrid/GridComponent.hh"
+#include "Grid/GridComponent.hh"
 #include "Cursor/CursorComponent.hh"
 #include "Point/PointComponent.hh"
 #include "Torus/TorusComponent.hh"
@@ -18,7 +18,25 @@ namespace mg1
   ObjectFactory::ObjectFactory(esp::Scene* scene, ObjectSelector* object_selector) :
       IEventable(), m_scene{ scene }, m_object_selector{ object_selector }
   {
-    // create shader
+    // create grid shader
+    {
+      auto uniform_meta_data = EspUniformMetaData::create();
+      uniform_meta_data->establish_descriptor_set();
+      uniform_meta_data->add_buffer_uniform(EspUniformShaderStage::ESP_VTX_STAGE, sizeof(glm::mat4));
+
+      m_grid_shader = ShaderSystem::acquire("Shaders/Layers/Objects/GridLayer/shader");
+      m_grid_shader->set_attachment_formats({ EspBlockFormat::ESP_FORMAT_R8G8B8A8_UNORM });
+      m_grid_shader->enable_multisampling(EspSampleCountFlag::ESP_SAMPLE_COUNT_4_BIT);
+      m_grid_shader->enable_alpha_blending();
+      m_grid_shader->set_rasterizer_settings(
+          { .m_polygon_mode = ESP_POLYGON_MODE_LINE, .m_cull_mode = ESP_CULL_MODE_NONE });
+      m_grid_shader->enable_depth_test(EspDepthBlockFormat::ESP_FORMAT_D32_SFLOAT, EspCompareOp::ESP_COMPARE_OP_LESS);
+      m_grid_shader->set_vertex_layouts({ GridInit::S_MODEL_PARAMS.get_vertex_layouts() });
+      m_grid_shader->set_worker_layout(std::move(uniform_meta_data));
+      m_grid_shader->build_worker();
+    }
+
+    // create object shader
     {
       auto uniform_meta_data = EspUniformMetaData::create();
       uniform_meta_data->establish_descriptor_set();
@@ -127,6 +145,27 @@ namespace mg1
     ObjectFactory::s_instance = new ObjectFactory(scene, object_selector);
 
     return std::unique_ptr<ObjectFactory>{ ObjectFactory::s_instance };
+  }
+
+  GridComponent& ObjectFactory::create_grid(GridComponentParams params)
+  {
+    auto entity = s_instance->m_scene->create_entity();
+
+    entity->add_component<GridComponent>(entity->get_id());
+    auto& grid = entity->get_component<GridComponent>();
+
+    auto [vertices, indices] = GridComponent::construct(params);
+    auto model               = std::make_shared<Model>(vertices,
+                                         indices,
+                                         std::vector<std::shared_ptr<EspTexture>>{},
+                                         GridInit::S_MODEL_PARAMS);
+    entity->add_component<ModelComponent>(model, s_instance->m_grid_shader);
+
+    grid.get_node()->attach_entity(entity);
+
+    s_instance->m_scene->get_root().add_child(grid.get_node());
+
+    return grid;
   }
 
   TorusComponent& ObjectFactory::create_torus(glm::vec3 position)
@@ -336,7 +375,7 @@ namespace mg1
     return spline;
   }
 
-  C0BezierSurfaceComponent& ObjectFactory::create_c0_bezier_surface(CreateSurfaceData data, glm::vec3 position)
+  C0BezierSurfaceComponent& ObjectFactory::create_c0_bezier_surface(SurfaceComponentParams data, glm::vec3 position)
   {
     auto entity = s_instance->m_scene->create_entity();
 
@@ -369,7 +408,7 @@ namespace mg1
     return surface;
   }
 
-  C2BezierSurfaceComponent& ObjectFactory::create_c2_bezier_surface(CreateSurfaceData data, glm::vec3 position)
+  C2BezierSurfaceComponent& ObjectFactory::create_c2_bezier_surface(SurfaceComponentParams data, glm::vec3 position)
   {
     auto entity = s_instance->m_scene->create_entity();
 

@@ -4,7 +4,7 @@
 namespace mg1
 {
 
-  C2BezierSurfaceComponent::C2BezierSurfaceComponent(int id, CreateSurfaceData data) : C0BezierSurfaceComponent(id)
+  C2BezierSurfaceComponent::C2BezierSurfaceComponent(int id, SurfaceComponentParams data) : C0BezierSurfaceComponent(id)
   {
     m_type      = data.m_type;
     m_patches_u = data.m_segments_u;
@@ -42,7 +42,7 @@ namespace mg1
     C0BezierSurfaceComponent::handle_event(event);
   }
 
-  std::vector<uint32_t> C2BezierSurfaceComponent::create_control_points(CreateSurfaceData data)
+  std::vector<uint32_t> C2BezierSurfaceComponent::create_control_points(SurfaceComponentParams data)
   {
     std::vector<uint32_t> control_points{};
 

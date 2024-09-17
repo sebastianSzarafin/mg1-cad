@@ -1,5 +1,5 @@
-#ifndef ESPERT_SANDBOX_COORDINATESYSTEMGRIDLAYER_HH
-#define ESPERT_SANDBOX_COORDINATESYSTEMGRIDLAYER_HH
+#ifndef ESPERT_SANDBOX_GRIDLAYER_HH
+#define ESPERT_SANDBOX_GRIDLAYER_HH
 
 #include "Espert.hh"
 #include "Events/Gui/GuiEvents.hh"
@@ -9,26 +9,25 @@ using namespace esp;
 
 namespace mg1
 {
-  class CoordinateSystemGridLayer : public Layer
+  class GridLayer : public Layer
   {
    private:
     Scene* m_scene;
 
-    std::shared_ptr<EspShader> m_shader;
-
    public:
-    CoordinateSystemGridLayer(Scene* scene);
+    GridLayer(Scene* scene);
 
+    virtual void pre_update(float dt) override;
     virtual void update(float dt) override;
+    virtual void post_update(float dt) override;
     virtual void handle_event(Event& event, float dt) override;
 
    private:
     bool gui_checkbox_changed_event_handler(GuiCheckboxChangedEvent& event);
 
-    void create_grid(GridComponentParams params);
     void push_grid();
     void pop_grid();
   };
 } // namespace mg1
 
-#endif // ESPERT_SANDBOX_COORDINATESYSTEMGRIDLAYER_HH
+#endif // ESPERT_SANDBOX_GRIDLAYER_HH
