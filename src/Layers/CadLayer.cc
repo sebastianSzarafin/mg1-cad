@@ -122,6 +122,7 @@ namespace mg1
       m_selected_camera = m_orbit_camera.get();
     }
 
+    TransformManager::set_scene(m_scene.get());
     CadRenderer::set_camera(m_selected_camera);
     CadRenderer::set_scene(m_scene.get());
 

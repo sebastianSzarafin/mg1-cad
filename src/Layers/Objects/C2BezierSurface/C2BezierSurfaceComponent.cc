@@ -4,7 +4,8 @@
 namespace mg1
 {
 
-  C2BezierSurfaceComponent::C2BezierSurfaceComponent(int id, SurfaceComponentParams data) : C0BezierSurfaceComponent(id)
+  C2BezierSurfaceComponent::C2BezierSurfaceComponent(entt::entity id, SurfaceComponentParams data) :
+      C0BezierSurfaceComponent(id)
   {
     m_type      = data.m_type;
     m_patches_u = data.m_segments_u;
@@ -16,8 +17,8 @@ namespace mg1
     m_control_points = create_control_points(data);
     m_vertex_count   = generate_patches().size();
 
-    m_info = std::make_shared<C0BezierSurfaceInfo>(m_id,
-                                                   "C2 bezier surface " + std::to_string(m_id),
+    m_info = std::make_shared<C0BezierSurfaceInfo>(get_id(),
+                                                   "C2 bezier surface " + std::to_string(get_id()),
                                                    create_point_infos(m_control_points));
 
     m_surface_indices      = generate_surface_indices();

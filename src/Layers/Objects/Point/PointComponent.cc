@@ -6,9 +6,9 @@ static void generate_point(float r, std::vector<Vertex>& vertices, std::vector<u
 
 namespace mg1
 {
-  PointComponent::PointComponent(uint32_t id, bool bernstein_point, float r) : IComponent(id)
+  PointComponent::PointComponent(entt::entity id, bool bernstein_point, float r) : IComponent(id)
   {
-    m_info      = std::make_shared<PointInfo>(m_id, "Point " + std::to_string(m_id));
+    m_info      = std::make_shared<PointInfo>(get_id(), "Point " + std::to_string(get_id()));
     m_info->m_r = r;
 
     m_bernstein_point = bernstein_point;
@@ -35,7 +35,7 @@ namespace mg1
 
     auto camera     = CadRenderer::get_camera();
     auto camera_pos = camera->get_position();
-    auto node_pos   = m_node->get_translation();
+    auto node_pos   = TransformManager::get_translation(m_id);
     auto eps        = .75f * std::log2(glm::length2(node_pos - camera_pos));
     if (Math::intersect_vector_sphere(camera_pos, Math::s_mouse_ray, { { node_pos }, m_info->m_r * eps }))
     {

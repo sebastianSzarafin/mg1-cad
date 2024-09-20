@@ -7,7 +7,7 @@ static void generate_grid(std::vector<Vertex>& vertices,
 namespace mg1
 {
 
-  GridComponent::GridComponent(uint32_t id) : IComponent(id) {}
+  GridComponent::GridComponent(entt::entity id) : IComponent(id) {}
 
   std::tuple<std::vector<Vertex>, std::vector<uint32_t>> GridComponent::construct(GridComponentParams params)
   {

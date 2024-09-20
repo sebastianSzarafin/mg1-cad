@@ -13,7 +13,7 @@ static std::vector<uint32_t> generate_cursor_indices();
 
 namespace mg1
 {
-  CursorComponent::CursorComponent(uint32_t id, CursorType type, glm::vec3 position) :
+  CursorComponent::CursorComponent(entt::entity id, CursorType type, glm::vec3 position) :
       IComponent(id), m_previous_position{ position }
   {
     std::string name;
@@ -27,7 +27,7 @@ namespace mg1
       break;
     }
 
-    m_info = std::make_shared<CursorInfo>(m_id, name, type, position);
+    m_info = std::make_shared<CursorInfo>(get_id(), name, type, position);
 
     ObjectAddedEvent e{ m_info.get() };
     post_event(e);
@@ -61,9 +61,10 @@ namespace mg1
   void CursorComponent::update_mouse()
   {
     auto camera         = CadRenderer::get_camera();
-    m_previous_position = m_node->get_translation();
-    m_node->set_translation(Math::intersect_vector_plane(camera->get_position(), Math::s_mouse_ray, scene_plane));
-    m_info->m_position = m_node->get_translation();
+    m_previous_position = get_position();
+    auto new_pos        = Math::intersect_vector_plane(camera->get_position(), Math::s_mouse_ray, scene_plane);
+    TransformManager::set_translation(m_id, new_pos);
+    m_info->m_position = get_position();
   }
 
   void CursorComponent::handle_event(MouseMovedEvent& event, float dt, RotationAxis rotation_axis)
@@ -76,19 +77,19 @@ namespace mg1
       {
       case RotationOX:
       {
-        m_node->rotate(dt * event.get_dy(), { 1, 0, 0 });
+        TransformManager::rotate(m_id, dt * event.get_dy(), { 1, 0, 0 });
         rotated = true;
         break;
       }
       case RotationOY:
       {
-        m_node->rotate(dt * event.get_dx(), { 0, 1, 0 });
+        TransformManager::rotate(m_id, dt * event.get_dx(), { 0, 1, 0 });
         rotated = true;
         break;
       }
       case RotationOZ:
       {
-        m_node->rotate(dt * (event.get_dx() + event.get_dy()) / 2, { 0, 0, 1 });
+        TransformManager::rotate(m_id, dt * (event.get_dx() + event.get_dy()) / 2, { 0, 0, 1 });
         rotated = true;
         break;
       }
@@ -100,7 +101,7 @@ namespace mg1
 
       if (rotated)
       {
-        CursorRotChangedEvent rot_event{ m_info->m_type, m_node->get_rotation() };
+        CursorRotChangedEvent rot_event{ m_info->m_type, TransformManager::get_rotation(m_id) };
         post_event(rot_event);
       }
     }
@@ -117,25 +118,25 @@ namespace mg1
     {
     case Scale:
     {
-      m_node->scale(scale_factor);
+      TransformManager::scale(m_id, scale_factor);
       scaled = true;
       break;
     }
     case ScaleOX:
     {
-      m_node->scale_ox(scale_factor);
+      TransformManager::scale_ox(m_id, scale_factor);
       scaled = true;
       break;
     }
     case ScaleOY:
     {
-      m_node->scale_oy(scale_factor);
+      TransformManager::scale_oy(m_id, scale_factor);
       scaled = true;
       break;
     }
     case ScaleOZ:
     {
-      m_node->scale_oz(scale_factor);
+      TransformManager::scale_oz(m_id, scale_factor);
       scaled = true;
       break;
     }
@@ -147,7 +148,7 @@ namespace mg1
 
     if (scaled)
     {
-      CursorScaleChangedEvent scale_event{ m_info->m_type, m_node->get_scale() };
+      CursorScaleChangedEvent scale_event{ m_info->m_type, TransformManager::get_scale(m_id) };
       post_event(scale_event);
     }
   }

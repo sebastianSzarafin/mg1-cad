@@ -4,8 +4,8 @@
 #include "C2BezierSurface/C2BezierSurfaceLayer.hh"
 #include "C2InterpolationSpline/C2InterpolationSplineLayer.hh"
 #include "C2Spline/C2SplineLayer.hh"
-#include "Grid/GridLayer.hh"
 #include "Cursor/CursorLayer.hh"
+#include "Grid/GridLayer.hh"
 #include "Point/PointLayer.hh"
 #include "Torus/TorusLayer.hh"
 

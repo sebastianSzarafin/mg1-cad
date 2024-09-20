@@ -10,14 +10,12 @@ namespace mg1
   class IComponent
   {
    protected:
-    uint32_t m_id;
-    std::shared_ptr<Node> m_node;
+    entt::entity m_id;
 
    public:
-    IComponent(uint32_t id) : m_id{ id }, m_node{ Node::create() } {}
+    IComponent(entt::entity id) : m_id{ id } {}
 
-    inline Node* get_node() { return m_node.get(); }
-    inline uint32_t get_id() { return m_id; }
+    inline uint32_t get_id() { return (uint32_t)m_id; }
   };
 } // namespace mg1
 

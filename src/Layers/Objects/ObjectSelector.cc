@@ -14,30 +14,30 @@ namespace mg1
 
   void ObjectSelector::pre_update()
   {
-    for (auto&& [entity, obj] : m_scene->get_view<TorusComponent>())
+    for (auto&& [entity, obj, node] : m_scene->get_view<TorusComponent, NodeComponent>())
     {
-      if (!obj.get_info()->selected()) { try_deselect_node(obj.get_node()); }
+      if (!obj.get_info()->selected()) { try_deselect_node(node); }
     }
-    for (auto&& [entity, obj] : m_scene->get_view<PointComponent>())
+    for (auto&& [entity, obj, node] : m_scene->get_view<PointComponent, NodeComponent>())
     {
       if (obj.bernstein_point()) { continue; }
-      if (!obj.get_info()->selected()) { try_deselect_node(obj.get_node()); }
+      if (!obj.get_info()->selected()) { try_deselect_node(node); }
     }
 
     update_mass_centre();
 
-    for (auto&& [entity, obj] : m_scene->get_view<TorusComponent>())
+    for (auto&& [entity, obj, node] : m_scene->get_view<TorusComponent, NodeComponent>())
     {
-      if (obj.get_info()->selected()) { try_select_node(obj.get_node()); }
+      if (obj.get_info()->selected()) { try_select_node(node); }
     }
-    for (auto&& [entity, obj] : m_scene->get_view<PointComponent>())
+    for (auto&& [entity, obj, node] : m_scene->get_view<PointComponent, NodeComponent>())
     {
       if (obj.bernstein_point()) { continue; }
-      if (obj.get_info()->selected()) { try_select_node(obj.get_node()); }
+      if (obj.get_info()->selected()) { try_select_node(node); }
     }
   }
 
-  void ObjectSelector::try_select_node(Node* node)
+  void ObjectSelector::try_select_node(NodeComponent& node)
   {
     // check if node is already selected, add if isn't
     if (!m_selected.try_add(node)) { return; }
@@ -46,47 +46,37 @@ namespace mg1
     update_mass_centre();
 
     // reattach node
-    Node* cursor_node;
-    for (auto&& [entity, cursor] : m_scene->get_view<CursorComponent>())
+    for (auto&& [entity, cursor, cursor_node] : m_scene->get_view<CursorComponent, NodeComponent>())
     {
       if (cursor.is_type(CursorType::Object))
       {
-        cursor_node = cursor.get_node();
-        break;
-      }
-    }
+        auto& parent = node.m_parent;
+        // parent->add_child(&cursor_node);
+        NodeComponent::get_node(parent).remove_child(node.m_handle);
+        NodeComponent::get_node(cursor_node.m_handle).add_child(node.m_handle);
 
-    if (cursor_node)
-    {
-      auto parent = node->get_parent();
-      parent->add_child(cursor_node);
-      parent->remove_child(node);
-      cursor_node->add_child(node);
+        return;
+      }
     }
   }
 
-  void ObjectSelector::try_deselect_node(Node* node)
+  void ObjectSelector::try_deselect_node(NodeComponent& node)
   {
     // check if node is already selected, remove if is
     if (!m_selected.try_remove(node)) { return; }
 
     // reattach node
-    Node* cursor_node = nullptr;
-    for (auto&& [entity, cursor] : m_scene->get_view<CursorComponent>())
+    for (auto&& [entity, cursor, cursor_node] : m_scene->get_view<CursorComponent, NodeComponent>())
     {
       if (cursor.is_type(CursorType::Object))
       {
-        cursor_node = cursor.get_node();
-        break;
-      }
-    }
+        auto& parent       = cursor_node;
+        auto& grand_parent = parent.m_parent;
+        NodeComponent::get_node(parent.m_handle).remove_child(node.m_handle);
+        NodeComponent::get_node(grand_parent).add_child(node.m_handle);
 
-    if (cursor_node)
-    {
-      auto parent       = cursor_node;
-      auto grand_parent = parent->get_parent();
-      parent->remove_child(node);
-      grand_parent->add_child(node);
+        return;
+      }
     }
   }
 
@@ -95,7 +85,7 @@ namespace mg1
     glm::vec3 mass_sum = { 0, 0, 0 };
     for (auto& selected : m_selected.m_nodes)
     {
-      mass_sum += selected->get_translation();
+      mass_sum += TransformManager::get_translation(selected);
     }
     glm::vec3 new_mass_centre = mass_sum / (float)m_selected.m_nodes.size();
     if (m_selected.m_mass_centre != new_mass_centre)

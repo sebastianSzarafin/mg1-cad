@@ -19,7 +19,7 @@ namespace mg1
   class GridComponent : public IComponent
   {
    public:
-    GridComponent(uint32_t id);
+    GridComponent(entt::entity id);
 
     static std::tuple<std::vector<Vertex>, std::vector<uint32_t>> construct(GridComponentParams params);
   };

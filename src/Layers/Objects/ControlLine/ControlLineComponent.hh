@@ -14,7 +14,7 @@ namespace mg1
     uint32_t m_vertex_count;
 
    public:
-    ControlLineComponent(uint32_t id, uint32_t vertex_count);
+    ControlLineComponent(entt::entity id, uint32_t vertex_count);
     ~ControlLineComponent() = default;
 
     inline void set_vertex_count(uint32_t val) { m_vertex_count = val; }

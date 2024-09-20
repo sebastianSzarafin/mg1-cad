@@ -12,7 +12,7 @@ namespace mg1
     std::vector<glm::vec3> m_control_points_pow{};
 
    public:
-    C2InterpolationSplineComponent(uint32_t id, std::vector<PointComponent> control_points);
+    C2InterpolationSplineComponent(entt::entity id, std::vector<PointComponent> control_points);
     ~C2InterpolationSplineComponent() = default;
 
     std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct() override;

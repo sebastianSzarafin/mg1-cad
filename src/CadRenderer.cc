@@ -49,41 +49,16 @@ static void prepare_camera_on_scene()
 {
   glm::mat4 vp = s_camera->get_projection() * s_camera->get_view();
 
-  //  // special handling for cursor component
-  //  for (auto&& [entity, cursor, model] : s_scene->get_view<mg1::CursorComponent, ModelComponent>())
-  //  {
-  //    glm::mat4 mvp = glm::translate(vp, cursor.get_position());
-  //    for (auto& draw : model.get_draw_data())
-  //    {
-  //      draw->m_uniform_manager->update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
-  //    }
-  //  }
-  //
-  //  for (auto&& [entity, transform, model] :
-  //       s_scene->get_view<TransformComponent, ModelComponent>(entt::exclude<mg1::CursorComponent>))
-  //  {
-  //    glm::mat4 mvp = vp * transform.get_model_mat(); // TODO:
-  //    for (auto& draw : model.get_draw_data())
-  //    {
-  //      draw->m_uniform_manager->update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
-  //    }
-  //  }
+  // special handling for cursor component
+  for (auto&& [entity, cursor, model] : s_scene->get_view<mg1::CursorComponent, ModelComponent>())
+  {
+    glm::mat4 mvp = glm::translate(vp, cursor.get_position());
+    model.update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
+  }
 
-  s_scene->get_root().act(
-      [&vp](Node* node)
-      {
-        auto entity = node->get_entity();
-        auto model  = entity->try_get_component<ModelComponent>();
-        if (model)
-        {
-          glm::mat4 mvp = vp;
-          if (entity->has_component<mg1::CursorComponent>())
-          {
-            auto cursor = entity->get_component<mg1::CursorComponent>();
-            mvp         = glm::translate(mvp, cursor.get_position());
-          }
-          else { mvp *= node->get_model_mat(); }
-          model->update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
-        }
-      });
+  for (auto&& [entity, model] : s_scene->get_view<ModelComponent>(entt::exclude<mg1::CursorComponent>))
+  {
+    glm::mat4 mvp = vp * TransformManager::get_model_mat(entity);
+    model.update_buffer_uniform(0, 0, 0, sizeof(glm::mat4), &mvp);
+  }
 }

@@ -2,7 +2,7 @@
 
 namespace mg1
 {
-  ControlLineComponent::ControlLineComponent(uint32_t id, uint32_t vertex_count) :
+  ControlLineComponent::ControlLineComponent(entt::entity id, uint32_t vertex_count) :
       IComponent(id), m_vertex_count{ vertex_count }
   {
   }

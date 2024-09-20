@@ -6,9 +6,9 @@ static std::vector<uint32_t> generate_torus_indices(int num_segments_theta, int 
 
 namespace mg1
 {
-  TorusComponent::TorusComponent(uint32_t id, float R, float r, int density_theta, int density_phi) : IComponent(id)
+  TorusComponent::TorusComponent(entt::entity id, float R, float r, int density_theta, int density_phi) : IComponent(id)
   {
-    m_info                  = std::make_shared<TorusInfo>(m_id, "Torus " + std::to_string(m_id));
+    m_info                  = std::make_shared<TorusInfo>(get_id(), "Torus " + std::to_string(get_id()));
     m_info->m_R             = R;
     m_info->m_r             = r;
     m_info->m_density_theta = density_theta;
@@ -33,9 +33,9 @@ namespace mg1
     if (EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_LEFT))
     {
       auto d_pos = event.get_delta_position();
-      m_node->translate({ d_pos.x, 0, 0 });
-      if (EspInput::is_key_pressed(GLFW_KEY_Y)) { m_node->translate({ 0, -d_pos.z, 0 }); }
-      if (EspInput::is_key_pressed(GLFW_KEY_Z)) { m_node->translate({ 0, 0, d_pos.z }); }
+      TransformManager::translate(m_id, { d_pos.x, 0, 0 });
+      if (EspInput::is_key_pressed(GLFW_KEY_Y)) { TransformManager::translate(m_id, { 0, -d_pos.z, 0 }); }
+      if (EspInput::is_key_pressed(GLFW_KEY_Z)) { TransformManager::translate(m_id, { 0, 0, d_pos.z }); }
     }
   }
 } // namespace mg1

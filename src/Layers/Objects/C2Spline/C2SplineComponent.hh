@@ -14,7 +14,7 @@ namespace mg1
     std::vector<uint32_t> m_bernstein_control_points{};
 
    public:
-    C2SplineComponent(uint32_t id, std::vector<PointComponent> control_points);
+    C2SplineComponent(entt::entity id, std::vector<PointComponent> control_points);
     ~C2SplineComponent() = default;
 
     std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct() override;

@@ -14,9 +14,10 @@ namespace mg1
    private:
     std::shared_ptr<CursorInfo> m_info;
     glm::vec3 m_previous_position;
+    bool m_visible;
 
    public:
-    CursorComponent(uint32_t id, CursorType type, glm::vec3 position = { 0, 0, 0 });
+    CursorComponent(entt::entity id, CursorType type, glm::vec3 position = { 0, 0, 0 });
     ~CursorComponent() = default;
 
     static std::tuple<std::vector<Vertex>, std::vector<uint32_t>> construct();
@@ -26,10 +27,13 @@ namespace mg1
     void update();
     void update_when_mouse_pressed();
 
-    inline glm::vec3 get_position() { return m_node->get_translation(); }
-    inline glm::vec3 get_delta_position() { return m_node->get_translation() - m_previous_position; }
+    inline glm::vec3 get_position() { return TransformManager::get_translation(m_id); }
+    inline glm::vec3 get_delta_position() { return get_position() - m_previous_position; }
     inline CursorType get_type() { return m_info->m_type; }
     inline bool is_type(CursorType type) { return m_info->m_type == type; }
+    inline bool visible() const { return m_visible; }
+    inline void show() { m_visible = true; }
+    inline void hide() { m_visible = false; }
 
     void handle_event(MouseMovedEvent& event, float dt, RotationAxis rotation_axis);
     void handle_event(MouseScrolledEvent& event, ScaleAxis scale_axis);

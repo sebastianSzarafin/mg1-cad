@@ -3,7 +3,7 @@
 
 namespace mg1
 {
-  C0BezierSurfaceComponent::C0BezierSurfaceComponent(int id, mg1::SurfaceComponentParams data) : IComponent(id)
+  C0BezierSurfaceComponent::C0BezierSurfaceComponent(entt::entity id, mg1::SurfaceComponentParams data) : IComponent(id)
   {
     m_type      = data.m_type;
     m_patches_u = data.m_segments_u;
@@ -15,8 +15,8 @@ namespace mg1
     m_control_points = create_control_points(data);
     m_vertex_count   = generate_patches().size();
 
-    m_info = std::make_shared<C0BezierSurfaceInfo>(m_id,
-                                                   "C0 bezier surface " + std::to_string(m_id),
+    m_info = std::make_shared<C0BezierSurfaceInfo>(get_id(),
+                                                   "C0 bezier surface " + std::to_string(get_id()),
                                                    create_point_infos(m_control_points));
 
     m_surface_indices      = generate_surface_indices();
@@ -26,7 +26,7 @@ namespace mg1
     post_event(e);
   }
 
-  C0BezierSurfaceComponent::C0BezierSurfaceComponent(int id) : IComponent(id) {}
+  C0BezierSurfaceComponent::C0BezierSurfaceComponent(entt::entity id) : IComponent(id) {}
 
   std::tuple<std::vector<Vertex>, std::vector<uint32_t>> C0BezierSurfaceComponent::reconstruct()
   {
@@ -53,7 +53,7 @@ namespace mg1
   {
     for (auto& id : m_control_points)
     {
-      ObjectFactory::get_control_point(id).get_node()->translate(position);
+      TransformManager::translate(id, position);
     }
   }
 

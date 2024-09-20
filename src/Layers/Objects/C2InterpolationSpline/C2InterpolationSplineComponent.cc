@@ -4,14 +4,14 @@
 namespace mg1
 {
 
-  C2InterpolationSplineComponent::C2InterpolationSplineComponent(uint32_t id,
+  C2InterpolationSplineComponent::C2InterpolationSplineComponent(entt::entity id,
                                                                  std::vector<PointComponent> control_points) :
       C0SplineComponent(id)
   {
     sort_control_points(control_points);
 
-    m_info = std::make_shared<C0SplineInfo>(m_id,
-                                            "C2 interpolation spline " + std::to_string(m_id),
+    m_info = std::make_shared<C0SplineInfo>(get_id(),
+                                            "C2 interpolation spline " + std::to_string(get_id()),
                                             create_point_infos(control_points));
 
     m_control_points = create_control_points(control_points);

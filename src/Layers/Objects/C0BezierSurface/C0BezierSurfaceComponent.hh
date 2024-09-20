@@ -33,8 +33,8 @@ namespace mg1
     bool m_wrap_u;
 
    public:
-    C0BezierSurfaceComponent(int id, SurfaceComponentParams data);
-    C0BezierSurfaceComponent(int id);
+    C0BezierSurfaceComponent(entt::entity id, SurfaceComponentParams data);
+    C0BezierSurfaceComponent(entt::entity id);
     ~C0BezierSurfaceComponent() = default;
 
     std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();

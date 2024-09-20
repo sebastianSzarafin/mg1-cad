@@ -178,10 +178,6 @@ namespace mg1
                                          GridInit::S_MODEL_PARAMS);
     entity->add_component<ModelComponent>(model, s_instance->m_grid_shader);
 
-    grid.get_node()->attach_entity(entity);
-
-    s_instance->m_scene->get_root().add_child(grid.get_node());
-
     return grid;
   }
 
@@ -199,10 +195,9 @@ namespace mg1
                                          CursorInit::S_MODEL_PARAMS);
     entity->add_component<ModelComponent>(model, s_instance->m_cursor_shader);
 
-    cursor.get_node()->attach_entity(entity);
-    cursor.get_node()->translate(position);
+    TransformManager::translate(entity->get_id(), position);
 
-    s_instance->m_scene->get_root().add_child(cursor.get_node());
+    return cursor;
   }
 
   TorusComponent& ObjectFactory::create_torus(glm::vec3 position)
@@ -219,10 +214,7 @@ namespace mg1
                                          TorusInit::S_MODEL_PARAMS);
     entity->add_component<ModelComponent>(model, s_instance->m_object_shader);
 
-    torus.get_node()->attach_entity(entity);
-    torus.get_node()->translate(position);
-
-    s_instance->m_scene->get_root().add_child(torus.get_node());
+    TransformManager::translate(entity->get_id(), position);
 
     return torus;
   }
@@ -241,10 +233,7 @@ namespace mg1
                                          PointInit::S_MODEL_PARAMS);
     entity->add_component<ModelComponent>(model, s_instance->m_object_shader);
 
-    point.get_node()->attach_entity(entity);
-    point.get_node()->translate(position);
-
-    s_instance->m_scene->get_root().add_child(point.get_node());
+    TransformManager::translate(entity->get_id(), position);
 
     return point;
   }
@@ -263,10 +252,7 @@ namespace mg1
                                          PointInit::S_MODEL_PARAMS);
     entity->add_component<ModelComponent>(model, s_instance->m_object_shader);
 
-    point.get_node()->attach_entity(entity);
-    point.get_node()->translate(position);
-
-    s_instance->m_scene->get_root().add_child(point.get_node());
+    TransformManager::translate(entity->get_id(), position);
 
     return point;
   }
@@ -286,10 +272,7 @@ namespace mg1
                                          PointInit::S_MODEL_PARAMS);
     entity->add_component<ModelComponent>(model, s_instance->m_object_shader);
 
-    point.get_node()->attach_entity(entity);
-    point.get_node()->translate(position);
-
-    s_instance->m_scene->get_root().add_child(point.get_node());
+    TransformManager::translate(entity->get_id(), position);
 
     return point;
   }
@@ -325,10 +308,6 @@ namespace mg1
         std::vector<ModelComponentParams>{ { spline_model, s_instance->m_spline_shader },
                                            { control_line_model, s_instance->m_control_line_shader } });
 
-    spline.get_node()->attach_entity(entity);
-
-    s_instance->m_scene->get_root().add_child(spline.get_node());
-
     return spline;
   }
 
@@ -363,10 +342,6 @@ namespace mg1
     entity->add_component<ModelComponent>(
         std::vector<ModelComponentParams>{ { spline_model, s_instance->m_spline_shader },
                                            { control_line_model, s_instance->m_control_line_shader } });
-
-    spline.get_node()->attach_entity(entity);
-
-    s_instance->m_scene->get_root().add_child(spline.get_node());
 
     return spline;
   }
@@ -405,10 +380,6 @@ namespace mg1
         std::vector<ModelComponentParams>{ { spline_model, s_instance->m_spline_shader },
                                            { control_line_model, s_instance->m_control_line_shader } });
 
-    spline.get_node()->attach_entity(entity);
-
-    s_instance->m_scene->get_root().add_child(spline.get_node());
-
     return spline;
   }
 
@@ -438,10 +409,6 @@ namespace mg1
         std::vector<ModelComponentParams>{ { surface_model, s_instance->m_c0_surface_shader, 0, 1 },
                                            { control_line_model, s_instance->m_control_line_shader } });
 
-    surface.get_node()->attach_entity(entity);
-
-    s_instance->m_scene->get_root().add_child(surface.get_node());
-
     return surface;
   }
 
@@ -470,10 +437,6 @@ namespace mg1
     entity->add_component<ModelComponent>(
         std::vector<ModelComponentParams>{ { surface_model, s_instance->m_c2_surface_shader, 0, 1 },
                                            { control_line_model, s_instance->m_control_line_shader } });
-
-    surface.get_node()->attach_entity(entity);
-
-    s_instance->m_scene->get_root().add_child(surface.get_node());
 
     return surface;
   }

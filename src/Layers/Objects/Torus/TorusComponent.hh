@@ -18,7 +18,7 @@ namespace mg1
     std::shared_ptr<TorusInfo> m_info;
 
    public:
-    TorusComponent(uint32_t id,
+    TorusComponent(entt::entity id,
                    float R           = TorusInit::S_R,
                    float r           = TorusInit::S_r,
                    int density_theta = TorusInit::S_DENSITY_THETA,

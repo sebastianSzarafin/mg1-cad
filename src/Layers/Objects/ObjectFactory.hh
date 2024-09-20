@@ -60,22 +60,18 @@ namespace mg1
     static PointComponent& get_control_point(uint32_t id);
 
     // ---------------------------------------- TEMPLATE FUNCTIONS ----------------------------------------
-    template<typename ObjComponent> static void remove_object(ObjComponent obj)
+    template<typename ObjComponent> static void remove_object(ObjComponent& obj)
     {
-      auto node   = obj.get_node();
-      auto parent = node->get_parent();
-
-      // cursor special handling
-      if constexpr (std::is_same<ObjComponent, CursorComponent>::value) { parent->rebase_child(nullptr, node); }
-      //
+      auto& node  = NodeComponent::get_node(obj.get_id());
+      auto parent = node.m_parent;
 
       s_instance->m_object_selector->try_deselect_node(node);
 
       EspJob::done_all_jobs();
-      parent->remove_child(node);
+      NodeComponent::get_node(parent).remove_child(node.m_handle);
       ObjectRemovedEvent obj_removed_event{ obj.get_info() };
       s_instance->post_event(obj_removed_event);
-      s_instance->m_scene->destroy_entity(obj.get_info()->m_id);
+      s_instance->m_scene->destroy_entity(obj.get_id());
     }
   };
 } // namespace mg1

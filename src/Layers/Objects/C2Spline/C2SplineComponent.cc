@@ -3,12 +3,14 @@
 
 namespace mg1
 {
-  C2SplineComponent::C2SplineComponent(uint32_t id, std::vector<PointComponent> control_points) : C0SplineComponent(id)
+  C2SplineComponent::C2SplineComponent(entt::entity id, std::vector<PointComponent> control_points) :
+      C0SplineComponent(id)
   {
     sort_control_points(control_points);
 
-    m_info =
-        std::make_shared<C2SplineInfo>(m_id, "C2 spline " + std::to_string(m_id), create_point_infos(control_points));
+    m_info = std::make_shared<C2SplineInfo>(get_id(),
+                                            "C2 spline " + std::to_string(get_id()),
+                                            create_point_infos(control_points));
 
     m_control_points           = create_control_points(control_points);
     m_bernstein_control_points = create_bernstein_control_points();
@@ -35,7 +37,7 @@ namespace mg1
       for (int i = 0; i < m_bernstein_control_points.size(); ++i)
       {
         auto& bernstein_point = ObjectFactory::get_control_point(m_bernstein_control_points[i]);
-        bernstein_point.get_node()->set_translation(vertices[i + 2].m_position);
+        TransformManager::set_translation(bernstein_point.get_id(), vertices[i + 2].m_position);
       }
     }
 
@@ -150,7 +152,7 @@ namespace mg1
 
     auto scale = glm::length(p0_pos - far_point) / glm::length(-bernstein_point.get_position() + far_point);
     auto diff  = scale * pos_diff;
-    p0.get_node()->translate(diff);
+    TransformManager::translate(p0.get_id(), diff);
   }
 
   std::vector<Vertex> C2SplineComponent::create_bernstein_vertices()

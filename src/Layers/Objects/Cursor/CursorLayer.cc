@@ -21,6 +21,10 @@ namespace mg1
         }
         else { cursor.update(); }
       }
+
+      if (cursor.visible()) { model.choose(0); }
+      else { model.skip(0); }
+
       CursorPosChangedEvent event{ cursor.get_info()->m_type,
                                    cursor.get_info()->m_position,
                                    cursor.get_delta_position() };
@@ -34,7 +38,8 @@ namespace mg1
     if (first_loop)
     {
       // initial scene
-      ObjectFactory::create_cursor(CursorType::Mouse);
+      ObjectFactory::create_cursor(CursorType::Mouse).show();
+      ObjectFactory::create_cursor(CursorType::Object).hide();
       first_loop = false;
     }
   }
@@ -59,19 +64,12 @@ namespace mg1
   bool CursorLayer::gui_mouse_state_changed_event_handler(mg1::GuiMouseStateChangedEvent& event)
   {
     m_gui_captured = (bool)event.get_state();
-    // m_update = !(bool)event.get_state();
-    //    if (m_update) { push_cursor(); }
-    //    else { pop_cursor(); }
+
     return false;
   }
 
   bool CursorLayer::gui_selectable_changed_event_handler(GuiSelectableChangedEvent& event)
   {
-    /*if (event == GuiLabel::action_none)
-    {
-      m_rotation_axis = RotationNone;
-      m_scale_axis    = ScaleNone;
-    }*/
     if (event == GuiLabel::action_rot_ox) { m_rotation_axis = event.get_value() ? RotationOX : RotationNone; }
     if (event == GuiLabel::action_rot_oy) { m_rotation_axis = event.get_value() ? RotationOY : RotationNone; }
     if (event == GuiLabel::action_rot_oz) { m_rotation_axis = event.get_value() ? RotationOZ : RotationNone; }
@@ -114,18 +112,19 @@ namespace mg1
       {
         if (event.create_or_update())
         {
-          cursor.get_node()->set_translation(event.get_position(), action::ESP_RELATIVE);
+          cursor.show();
+          TransformManager::set_translation(entity, event.get_position(), action::ESP_RELATIVE);
           return false;
         }
         else
         {
-          ObjectFactory::remove_object(cursor);
+          cursor.hide();
+          TransformManager::set_scale(entity, { 1, 1, 1 });
+          TransformManager::set_rotation(entity, { 1, 0, 0, 0 });
           return false;
         }
       }
     }
-
-    if (event.create_or_update()) { ObjectFactory::create_cursor(CursorType::Object, event.get_position()); }
 
     return false;
   }
@@ -141,9 +140,9 @@ namespace mg1
         if (EspInput::is_mouse_button_pressed(GLFW_MOUSE_BUTTON_LEFT))
         {
           auto d_pos = event.get_delta_position();
-          cursor.get_node()->translate({ d_pos.x, 0, 0 });
-          if (EspInput::is_key_pressed(GLFW_KEY_Y)) { cursor.get_node()->translate({ 0, -d_pos.z, 0 }); }
-          if (EspInput::is_key_pressed(GLFW_KEY_Z)) { cursor.get_node()->translate({ 0, 0, d_pos.z }); }
+          TransformManager::translate(entity, { d_pos.x, 0, 0 });
+          if (EspInput::is_key_pressed(GLFW_KEY_Y)) { TransformManager::translate(entity, { 0, -d_pos.z, 0 }); }
+          if (EspInput::is_key_pressed(GLFW_KEY_Z)) { TransformManager::translate(entity, { 0, 0, d_pos.z }); }
         }
         break;
       }

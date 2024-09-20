@@ -3,12 +3,13 @@
 
 namespace mg1
 {
-  C0SplineComponent::C0SplineComponent(uint32_t id, std::vector<PointComponent> control_points) : IComponent(id)
+  C0SplineComponent::C0SplineComponent(entt::entity id, std::vector<PointComponent> control_points) : IComponent(id)
   {
     sort_control_points(control_points);
 
-    m_info =
-        std::make_shared<C0SplineInfo>(m_id, "C0 Spline " + std::to_string(m_id), create_point_infos(control_points));
+    m_info = std::make_shared<C0SplineInfo>(get_id(),
+                                            "C0 Spline " + std::to_string(get_id()),
+                                            create_point_infos(control_points));
 
     m_control_points = create_control_points(control_points);
 
@@ -16,7 +17,7 @@ namespace mg1
     post_event(e);
   }
 
-  C0SplineComponent::C0SplineComponent(uint32_t id) : IComponent(id) {}
+  C0SplineComponent::C0SplineComponent(entt::entity id) : IComponent(id) {}
 
   std::tuple<std::vector<Vertex>, std::vector<uint32_t>> C0SplineComponent::reconstruct()
   {

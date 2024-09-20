@@ -23,7 +23,7 @@ namespace mg1
     glm::vec3 m_delta_position{ 0.f };
 
    public:
-    PointComponent(uint32_t id, bool bernstein_point, float r = PointInit::S_R);
+    PointComponent(entt::entity id, bool bernstein_point, float r = PointInit::S_R);
     ~PointComponent() = default;
 
     std::tuple<std::vector<Vertex>, std::vector<uint32_t>> reconstruct();
@@ -33,11 +33,7 @@ namespace mg1
     inline bool bernstein_point() const { return m_bernstein_point; }
     inline bool moved() const { return glm::length2(m_delta_position) > 0.f; }
 
-    inline glm::vec3 get_position() const
-    {
-      auto model = m_node->get_model_mat();
-      return { model[3][0], model[3][1], model[3][2] };
-    }
+    inline glm::vec3 get_position() const { return TransformManager::get_model_mat(m_id)[3]; }
     inline glm::vec3 get_delta_position() const { return m_delta_position; }
 
     void handle_event(MouseButtonPressedEvent& event);
