@@ -62,13 +62,13 @@ namespace mg1
     // ---------------------------------------- TEMPLATE FUNCTIONS ----------------------------------------
     template<typename ObjComponent> static void remove_object(ObjComponent& obj)
     {
-      auto& node  = NodeComponent::get_node(obj.get_id());
+      auto& node  = NodeManager::get_node(obj.get_id());
       auto parent = node.m_parent;
 
       s_instance->m_object_selector->try_deselect_node(node);
 
       EspJob::done_all_jobs();
-      NodeComponent::get_node(parent).remove_child(node.m_handle);
+      NodeManager::get_node(parent).remove_child(node.m_handle);
       ObjectRemovedEvent obj_removed_event{ obj.get_info() };
       s_instance->post_event(obj_removed_event);
       s_instance->m_scene->destroy_entity(obj.get_id());

@@ -52,8 +52,8 @@ namespace mg1
       {
         auto& parent = node.m_parent;
         // parent->add_child(&cursor_node);
-        NodeComponent::get_node(parent).remove_child(node.m_handle);
-        NodeComponent::get_node(cursor_node.m_handle).add_child(node.m_handle);
+        NodeManager::get_node(parent).remove_child(node.m_handle);
+        NodeManager::get_node(cursor_node.m_handle).add_child(node.m_handle);
 
         return;
       }
@@ -72,8 +72,8 @@ namespace mg1
       {
         auto& parent       = cursor_node;
         auto& grand_parent = parent.m_parent;
-        NodeComponent::get_node(parent.m_handle).remove_child(node.m_handle);
-        NodeComponent::get_node(grand_parent).add_child(node.m_handle);
+        NodeManager::get_node(parent.m_handle).remove_child(node.m_handle);
+        NodeManager::get_node(grand_parent).add_child(node.m_handle);
 
         return;
       }

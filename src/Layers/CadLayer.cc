@@ -122,10 +122,6 @@ namespace mg1
       m_selected_camera = m_orbit_camera.get();
     }
 
-    TransformManager::set_scene(m_scene.get());
-    CadRenderer::set_camera(m_selected_camera);
-    CadRenderer::set_scene(m_scene.get());
-
     // create children layers
     {
       m_gui_layer    = std::unique_ptr<Layer>(new GuiLayer());
@@ -141,6 +137,11 @@ namespace mg1
 
   void CadLayer::update(float dt)
   {
+    TransformManager::set_scene(m_scene.get());
+    NodeManager::set_scene(m_scene.get());
+    CadRenderer::set_camera(m_selected_camera);
+    CadRenderer::set_scene(m_scene.get());
+
     m_orbit_camera->update(dt);
     m_fps_camera->update(dt);
     Math::update();
